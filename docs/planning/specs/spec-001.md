@@ -1,6 +1,6 @@
 # SPEC-001 — Phase 1 Foundation
 
-**Status:** Draft
+**Status:** Approved
 **References:** `project-charter.md` (why/governance), `scope-boundary.md` §1 (what's in/out), `solution-design.md` (how)
 
 This spec turns Phase 1's charter and scope decisions into an implementation-ready contract. It doesn't re-explain decisions already made elsewhere — where something has a charter section, scope-boundary section, or ADR, this spec references it and states only what's new: concrete, testable requirements.

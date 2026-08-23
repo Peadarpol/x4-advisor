@@ -33,4 +33,4 @@ This file is the working reference for any agent operating in this repository. K
 See CONTRIBUTING.md for the short version. In brief: architectural changes need an ADR before implementation; behavioral changes need a spec/test update; nothing outside stated scope without discussion first.
 
 ## Current Status
-SPEC-001 (Phase 1) is drafted. M1 (structured extraction) is the next milestone to build. The retrieval-grounding evaluation harness (part of M6) does not exist yet -- nothing should be treated as fully gated on grounding until it does.
+SPEC-001 (Phase 1) is approved. M1 (structured extraction) is the next milestone to build. The retrieval-grounding evaluation harness (part of M6) does not exist yet -- nothing should be treated as fully gated on grounding until it does.

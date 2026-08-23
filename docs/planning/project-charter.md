@@ -1,6 +1,6 @@
 # Project Charter — X4 Advisor
 
-**Status:** Draft
+**Status:** Approved
 **Repository:** github.com/Peadarpol/x4-advisor
 **License:** MIT
 **Owner / Sponsor / Approver:** Peter (Peadarpol)

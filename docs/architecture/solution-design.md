@@ -1,6 +1,6 @@
 # Solution Design — X4 Advisor
 
-**Status:** Draft
+**Status:** Approved
 **Companion documents:** `project-charter.md` (why/what), `scope-boundary.md` (Phase 1 in/out boundaries, to be drafted separately)
 
 This document describes *how* X4 Advisor is built. It assumes the charter's decisions as given and does not re-justify them; where a decision has a dedicated ADR, this document references it rather than re-explaining the reasoning.

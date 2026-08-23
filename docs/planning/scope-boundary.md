@@ -1,6 +1,6 @@
 # Scope Boundary — X4 Advisor (All Phases)
 
-**Status:** Draft
+**Status:** Approved
 **Companion documents:** `project-charter.md` (why/what), `solution-design.md` (how, Phase 1 detail)
 
 This document bounds scope across the whole project, not just Phase 1. Phase 1 is specified in full detail, since it's next to be built. Phases 2 and 3 are specified at the level of detail already decided during planning — real constraints and decisions, not vague aspirations — with open items explicitly marked as deferred to that phase's own spec, rather than omitted as if undecided.
