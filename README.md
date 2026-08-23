@@ -10,6 +10,13 @@ x4-advisor is an AI-powered assistant and decision support tool designed to anal
 ## Hardware requirements
 *(TODO — document only the actually-tested configuration once one exists; see the "supported vs. expected-to-work vs. unsupported" distinction before writing this)*
 
+## Dependencies and prerequisites
+*(TODO — once versions are pinned, this section summarizes and links out rather than duplicating numbers:
+Python packages: see `pyproject.toml`/`poetry.lock`.
+External tools: Ollama, `x4cat` — see ADR-0004 and ADR-0006 for version/pinning rationale.
+Models: whichever wins the Phase 1 empirical bake-off (ADR-0005) plus the embedding model (ADR-0001).
+X4: Foundations itself, owned separately by the user — this project reads from an existing installation, it doesn't provide the game.)*
+
 ## Installation
 *(TODO — after M1–M7 exist to actually describe)*
 
