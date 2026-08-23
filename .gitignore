@@ -1,0 +1,23 @@
+# Data directories (copyrighted game/wiki content, derived data, local DB)
+data/raw/
+data/processed/
+data/db/
+
+# Python / Environment / IDE
+__pycache__/
+*.py[cod]
+*.class
+.venv/
+env/
+venv/
+.env
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build / Distribution
+dist/
+build/
+*.egg-info/
