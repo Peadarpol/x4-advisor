@@ -18,5 +18,5 @@ This project's own domain schema and normalization layer stay independent of `x4
 
 ## Consequences
 
-- A dependency on an actively-maintained but small community project. Mitigation: golden extraction fixtures (a handful of known ship/ware/recipe records with expected output) so an `x4cat` version bump is tested against known-good results rather than trusted blindly.
+- A dependency on an actively-maintained but small community project. Proven installation pathway: `uv tool install git+https://github.com/meethune/x4cat.git` (confirmed `x4cat==1.2.6` @ `62148b0`). Mitigation: golden extraction fixtures (a handful of known ship/ware/recipe records with expected output) so an `x4cat` version bump is tested against known-good results rather than trusted blindly.
 - DLC/base-game separation is enforced by this project's own ingestion logic (root-archive-only extraction), not delegated to any of the three tools as a policy engine
