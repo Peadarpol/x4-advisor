@@ -16,5 +16,5 @@ For a single-operator, single-corpus project, an embedded store wins on every di
 
 ## Consequences
 
-- **sqlite-vec is pre-1.0** and its own documentation warns of possible breaking changes. The version in use must be pinned explicitly (in `pyproject.toml`), with an upgrade procedure documented before bumping it — not left floating on "latest."
+- **sqlite-vec is pre-1.0** and its own documentation warns of possible breaking changes. Pinned version: `sqlite-vec==0.1.9` (`^0.1.9` in `pyproject.toml` / `poetry.lock`), confirmed loading correctly (`vec_version() -> 'v0.1.9'`) on 2026-08-23. An upgrade procedure must be documented before bumping it — not left floating on "latest."
 - One database file serves both structured and vector data — simpler operationally, but means the whole file is the unit of backup/versioning, not two independent systems

@@ -9,6 +9,7 @@ packages = [{ include = "x4_advisor", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.12"
+sqlite-vec = "^0.1.9"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
