@@ -93,28 +93,58 @@ Three distinct reasons, surfaced differently to the user, not collapsed into one
 | Router emits a malformed/invalid tool call | Rejected, retried once, then abstain — never silently ignored |
 | A save-related or DLC entity appears (Phase 2 territory, noted for consistency) | Never silently omitted from a count — "9 of 10 supported, 1 unrecognized," not a quietly wrong total |
 
-## 9. Non-functional requirements
+## 9. Configuration and startup contract
+
+For Phase 1, required configuration is minimal:
+
+```
+X4_INSTALL_PATH
+OLLAMA_ENDPOINT
+MODEL_NAME
+EMBEDDING_MODEL
+DATABASE_PATH
+VECTOR_RELEVANCE_THRESHOLD
+```
+
+- **`VECTOR_RELEVANCE_THRESHOLD` is a special case:** unlike the others, it's not a value the user sets — it's determined empirically against the evaluation corpus (§11) during M6, then set as the default. Don't hardcode a number because it "sounds about right"; the threshold that separates "relevant enough to use" from "no-evidence abstention" (§7, §8) needs to come from actually measuring against real cases.
+
+- **Where defined:** `.env`, per `.env.example` in the repository root
+- **Defaults:** `OLLAMA_ENDPOINT` defaults to Ollama's standard local address; the others have no safe default (an install path or database path guessed wrong is worse than an explicit required value) and must be set explicitly
+- **Startup validation:** the application checks required configuration is present and points at something real (the install path exists and looks like an X4 installation, the database path either exists or ingestion clearly hasn't run yet, Ollama actually responds at the configured endpoint) before doing anything else
+- **Fail fast:** invalid or missing configuration produces a clear, specific error naming exactly what's wrong and where to fix it, at startup — never a delayed failure partway through answering a question, and never a silent fallback to a guessed value
+
+## 10. Non-functional requirements
 
 - No network access required at runtime (fully local/offline)
 - Warm-request latency (model already loaded): under 20 seconds single-path, under 30 seconds hybrid — measured on the actual target hardware, not estimated (`scope-boundary.md` §1.5)
 - Single-turn only — no conversation history passed to router or synthesizer (`scope-boundary.md` §1.4)
 - Structured database is read-only during query execution — no write path from the query engine
 
-## 10. Evaluation corpus (M6 requirement)
+## 11. Evaluation corpus (M6 requirement)
 
 Minimum 30 question/expected-answer pairs (`scope-boundary.md` §1.6). Coverage should reasonably span, not exhaustively enumerate:
 - All four query templates, plus at least one knowledge-base-only and one hybrid question
 - At least one deliberate no-evidence case and one out-of-scope (DLC) case, to verify abstention actually fires
 - At least one case per grounding class (§6) so the offline gate has something of each type to score
+- **At least one "inference laundering" case** — evidence supports a narrower claim than the answer asserts (e.g., evidence gives one ship's cargo capacity; a bad answer claims that makes it "the best choice for large-scale trading" as if that followed logically, when it's actually ADVICE, not SUPPORTED_INFERENCE). This specific boundary is the most likely place for the claim taxonomy to leak.
+- **At least one structured-vs-community conflict case** — a question where structured data and a community source would give different answers, to verify the source-authority hierarchy (§5) actually wins in practice, not just in the prompt text
+
+**Ground truth format**, not just a question/answer pair — each case needs enough structure that scoring isn't circular (the judge model shouldn't be the only thing deciding whether an answer was right):
+
+```
+case_id, question, expected_route, expected_entities,
+expected_facts, allowed_inferences, expected_abstention,
+expected_evidence_ids
+```
 
 This is a floor to clear M6/Phase 1, not a target corpus size to stop at — it grows afterward as real usage surfaces gaps.
 
-## 11. Dependencies requiring their own ADR before or during this spec
+## 12. Dependencies requiring their own ADR before or during this spec
 
 - LLM selection: empirical bake-off between Gemma 4 12B, Granite 4.1 8B, and Qwen3 14B (control) using this spec's own evaluation harness (§10) — not decided from desk research (charter §7, already established)
 - `sqlite-vec` version pin + upgrade procedure
 - Golden extraction fixtures for `x4cat` (a handful of known ship/ware/recipe records with expected output, so an `x4cat` version bump is tested against known-good results rather than trusted blindly)
 
-## 12. Exit criteria
+## 13. Exit criteria
 
 Per `scope-boundary.md` §1.9, restated here as the acceptance gate for this spec specifically: all four query templates return correct, grounded answers against the evaluation corpus; the 30-question floor passes the offline grounding gate; the full loop runs via Streamlit, single-turn, within the latency targets; a third party could clone and run both pipelines against their own inputs (secondary, not gating, per the charter's revised priority ordering).

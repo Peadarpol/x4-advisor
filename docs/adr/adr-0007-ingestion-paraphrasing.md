@@ -18,6 +18,10 @@ The comparison checks entity/numeric/unit preservation and, specifically, **epis
 
 There's solid research support for fact-aware generation and claim-level verification as an approach to reducing factual drift in paraphrase/summarization tasks, though no controlled study establishes a specific quantitative improvement for this exact task — this is adopted as a sound engineering control, not a proven percentage reduction. The practical benefit is changing the human reviewer's task from "spot anything wrong in a paragraph" (doesn't scale, easy to miss subtle drift) to "resolve the specific claims the automated comparison couldn't confidently match" (scales with corpus size, and targets exactly the failure mode most likely to slip past a skim-read).
 
+## Principle
+
+The model used for build-time ingestion (claim extraction, paraphrase generation) is not part of the runtime architecture and is not bound by the runtime VRAM/hardware constraints that govern LLM selection (ADR-0005). It may be selected purely for output quality, provided the resulting artifacts satisfy the project's provenance and licensing policy (`solution-design.md` §3.3) — the "local, offline" positioning applies to what the deployed advisor runs at query time, not to the curator's own one-time or occasional tooling.
+
 ## Consequences
 
 - `source_manifest` needs additional curation-status states (`claims_extracted`, `flagged_review`) beyond simple draft/approved
