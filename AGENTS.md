@@ -12,7 +12,7 @@ This file is the working reference for any agent operating in this repository. K
 ## Specifications Lifecycle
 - All specs live under docs/planning/specs/.
 - Lifecycle status flow: DRAFT → APPROVED → DELIVERED.
-- Follows the same governance conventions established in ai-delivery-control, deliberately scaled down -- this is a solo personal/learning project, not a multi-contributor system. No CDR ledger, no posture configurability, no formal REQ-xxx traceability ID system. See project-charter.md for the explicit reasoning.
+- Follows the same governance conventions established in ai-delivery-control, deliberately scaled down -- this is a solo personal/learning project, not a multi-contributor system. No CDR ledger, no posture configurability, no formal REQ-xxx traceability ID system. See project-charter.md for the explicit reasoning.
 
 ## Core Governance & Safety Rules
 - **Self-approval rule**: An agent cannot mark its own spec APPROVED or DELIVERED.
