@@ -17,6 +17,7 @@ This file is the working reference for any agent operating in this repository. K
 ## Core Governance & Safety Rules
 - **Self-approval rule**: An agent cannot mark its own spec APPROVED or DELIVERED.
 - **Adversarial review**: Required before any merge to main. In practice this is enforced by GitHub branch protection on main (PR + human approval required) plus the delivery agent (Peadarpol-AiDelivery) holding Write, not Admin, access with no bypass -- not a separate automated review script. Nothing merges without the repository owner's actual review and approval.
+- **GitHub Authentication Rule**: Any `gh` CLI or GitHub API operation performed by an agent MUST set `$env:GH_TOKEN = $env:AIDELIVERY_GH_TOKEN` prior to invocation to guarantee operations are authored by `peadarpol-aidelivery` rather than falling back to the system owner's default `gh` keyring session.
 
 - **Pre-commit gates that actually run** (.pre-commit-config.yaml): check-active-repo (verifies commits land in the correct repo) and a pytest gate (test suite must pass).
 
@@ -33,4 +34,4 @@ This file is the working reference for any agent operating in this repository. K
 See CONTRIBUTING.md for the short version. In brief: architectural changes need an ADR before implementation; behavioral changes need a spec/test update; nothing outside stated scope without discussion first.
 
 ## Current Status
-SPEC-001 (Phase 1) is approved. M1 (structured extraction) is the next milestone to build. The retrieval-grounding evaluation harness (part of M6) does not exist yet -- nothing should be treated as fully gated on grounding until it does.
+SPEC-001 (Phase 1) is approved. Milestone M1 (structured game extraction — `x4cat` extraction tooling, SQLite schema/tables, data ingest with domain invariants, and golden fixtures) is implemented and verified. PR #4 is submitted by `peadarpol-aidelivery` on branch `feat/spec-001-m1-extraction` awaiting owner review. The retrieval-grounding evaluation harness (part of M6) does not exist yet -- nothing should be treated as fully gated on grounding until it does.

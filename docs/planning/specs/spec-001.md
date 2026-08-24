@@ -110,7 +110,7 @@ VECTOR_RELEVANCE_THRESHOLD
 - **`VECTOR_RELEVANCE_THRESHOLD` is a special case:** unlike the others, it's not a value the user sets — it's determined empirically against the evaluation corpus (§11) during M6, then set as the default. Don't hardcode a number because it "sounds about right"; the threshold that separates "relevant enough to use" from "no-evidence abstention" (§7, §8) needs to come from actually measuring against real cases.
 
 - **Where defined:** `.env`, per `.env.example` in the repository root
-- **Defaults:** `OLLAMA_ENDPOINT` defaults to Ollama's standard local address; the others have no safe default (an install path or database path guessed wrong is worse than an explicit required value) and must be set explicitly
+- **Defaults:** `OLLAMA_ENDPOINT` defaults to Ollama's standard local address (`http://localhost:11434`); `DATABASE_PATH` is the exception to "no machine-specific default", defaulting safely to the project-local relative path `data/db/x4_advisor.db` (matching `.env.example`). `X4_INSTALL_PATH`, `MODEL_NAME`, and `EMBEDDING_MODEL` have no safe default (a path or model guessed wrong is worse than an explicit required value) and must be set explicitly.
 - **Startup validation:** the application checks required configuration is present and points at something real (the install path exists and looks like an X4 installation, the database path either exists or ingestion clearly hasn't run yet, Ollama actually responds at the configured endpoint) before doing anything else
 - **Fail fast:** invalid or missing configuration produces a clear, specific error naming exactly what's wrong and where to fix it, at startup — never a delayed failure partway through answering a question, and never a silent fallback to a guessed value
 

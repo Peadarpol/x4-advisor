@@ -1,0 +1,23 @@
+{
+  "factions_count": 2,
+  "wares_count": 4,
+  "sectors_count": 1,
+  "sector_resources_count": 2,
+  "ships_count": 1,
+  "recipes_count": 5,
+  "sample_ship": {
+    "id": "ship_arg_m_frigate_01_a_macro",
+    "name": "Cerberus Vanguard",
+    "ship_class": "ship_m",
+    "hull": 19000.0,
+    "shields": 1000.0,
+    "cargo_capacity": 1760.0,
+    "cargo_type": "container",
+    "speed": 300.0,
+    "weapon_slots": 2,
+    "turret_slots": 2,
+    "shield_slots": 2,
+    "faction_id": "argon",
+    "ware_id": "ship_arg_m_frigate_01_a"
+  }
+}

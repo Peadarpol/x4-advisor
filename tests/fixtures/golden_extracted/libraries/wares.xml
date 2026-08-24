@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wares>
+  <production>
+    <method id="default" name="{20206,101}" />
+    <method id="teladi" name="{20206,401}" />
+  </production>
+  <ware id="energycells" name="Energy Cells" group="energy" transport="container" volume="1" tags="container">
+    <price min="10" average="16" max="22" />
+    <production time="60" amount="100" method="default" />
+  </ware>
+  <ware id="graphene" name="Graphene" group="refined" transport="container" volume="20" tags="container">
+    <price min="100" average="150" max="200" />
+    <production time="120" amount="40" method="default">
+      <primary>
+        <ware ware="energycells" amount="20" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="advancedcomposites" name="Advanced Composites" group="hightech" transport="container" volume="32" tags="container">
+    <price min="432" average="540" max="648" />
+    <production time="300" amount="54" method="default">
+      <primary>
+        <ware ware="energycells" amount="50" />
+        <ware ware="graphene" amount="80" />
+      </primary>
+    </production>
+    <production time="300" amount="54" method="teladi">
+      <primary>
+        <ware ware="energycells" amount="50" />
+        <ware ware="graphene" amount="80" />
+      </primary>
+    </production>
+  </ware>
+  <ware id="ship_arg_m_frigate_01_a" name="{20101,10602}" group="ship" transport="ship" volume="1" tags="ship">
+    <price min="1000000" average="1500000" max="2000000" />
+    <component ref="ship_arg_m_frigate_01_a_macro" />
+  </ware>
+</wares>
