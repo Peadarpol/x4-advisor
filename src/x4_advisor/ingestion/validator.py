@@ -31,6 +31,8 @@ class ValidationReport:
         self.total_processed: int = 0
         self.total_valid: int = 0
         self.total_skipped: int = 0
+        self.raw_counts: Dict[str, int] = {}
+        self.valid_counts: Dict[str, int] = {}
         self.warnings: List[str] = []
         self.skipped_records: List[str] = []
 
@@ -259,6 +261,23 @@ class DomainValidator:
 
             valid_recipes.append(r)
             report.total_valid += 1
+
+        report.raw_counts = {
+            "factions": len(factions),
+            "wares": len(wares),
+            "sectors": len(sectors),
+            "sector_resources": len(sector_resources),
+            "ships": len(ships),
+            "recipes": len(recipes),
+        }
+        report.valid_counts = {
+            "factions": len(valid_factions),
+            "wares": len(valid_wares),
+            "sectors": len(valid_sectors),
+            "sector_resources": len(valid_sector_resources),
+            "ships": len(valid_ships),
+            "recipes": len(valid_recipes),
+        }
 
         return (
             valid_factions,

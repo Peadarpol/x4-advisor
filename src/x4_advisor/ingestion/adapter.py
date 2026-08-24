@@ -353,6 +353,9 @@ class NormalizationAdapter:
                         if storage_ref and storage_ref in storage_macros:
                             cargo_capacity = storage_macros[storage_ref]
 
+            purpose_elem = props_elem.find("purpose")
+            purpose = purpose_elem.attrib.get("primary") if purpose_elem is not None else None
+
             ware_id = macro_to_ware_id.get(macro_id)
 
             return ShipRecord(
@@ -367,6 +370,7 @@ class NormalizationAdapter:
                 weapon_slots=weapon_slots,
                 turret_slots=turret_slots,
                 shield_slots=shield_slots,
+                purpose=purpose,
                 faction_id=faction_id,
                 ware_id=ware_id,
                 raw_macro=macro_id,

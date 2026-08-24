@@ -45,3 +45,4 @@ def test_golden_fixtures_extracted():
     assert sample_ship.cargo_capacity == expected_ship["cargo_capacity"]
     assert sample_ship.faction_id == expected_ship["faction_id"]
     assert sample_ship.ware_id == expected_ship["ware_id"]
+    assert sample_ship.purpose == expected_ship["purpose"]

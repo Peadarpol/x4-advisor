@@ -131,9 +131,9 @@ def insert_domain_data(
                 """
                 INSERT INTO ships (
                     id, name, class, hull, shields, cargo_capacity, cargo_type,
-                    speed, weapon_slots, turret_slots, shield_slots, faction_id, ware_id, raw_macro
+                    speed, weapon_slots, turret_slots, shield_slots, purpose, faction_id, ware_id, raw_macro
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     sh.id,
@@ -147,6 +147,7 @@ def insert_domain_data(
                     sh.weapon_slots,
                     sh.turret_slots,
                     sh.shield_slots,
+                    sh.purpose,
                     sh.faction_id,
                     sh.ware_id,
                     sh.raw_macro,

@@ -68,6 +68,7 @@ DDL_STATEMENTS = [
         weapon_slots INTEGER NOT NULL DEFAULT 0,
         turret_slots INTEGER NOT NULL DEFAULT 0,
         shield_slots INTEGER NOT NULL DEFAULT 0,
+        purpose TEXT,
         faction_id TEXT,
         ware_id TEXT,
         raw_macro TEXT,
@@ -77,6 +78,8 @@ DDL_STATEMENTS = [
     """,
     "CREATE INDEX IF NOT EXISTS idx_ships_name ON ships(name COLLATE NOCASE);",
     "CREATE INDEX IF NOT EXISTS idx_ships_class ON ships(class);",
+    "CREATE INDEX IF NOT EXISTS idx_ships_purpose ON ships(purpose);",
+    "CREATE INDEX IF NOT EXISTS idx_ships_class_purpose ON ships(class, purpose);",
     "CREATE INDEX IF NOT EXISTS idx_ships_ware ON ships(ware_id);",
     """
     CREATE TABLE IF NOT EXISTS production_recipes (
