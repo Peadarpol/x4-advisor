@@ -1,6 +1,8 @@
 # Data directories (copyrighted game/wiki content, derived data, local DB)
 data/raw/
 data/processed/
+data/staging/
+data/sources/
 data/db/
 
 # Python / Environment / IDE

@@ -42,6 +42,13 @@ class Config:
         """Returns Path object for DATABASE_PATH."""
         return Path(self.database_path_str)
 
+    @property
+    def sources_path(self) -> Path:
+        """Returns Path object for data/sources directory, creating it if missing."""
+        path = Path("data/sources")
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
     def validate_m1_config(self) -> None:
         """Validates configuration required for Milestone M1 (Structured Extraction)."""
         if not self.x4_install_path_raw:

@@ -96,13 +96,81 @@ DDL_STATEMENTS = [
     """,
     "CREATE INDEX IF NOT EXISTS idx_recipes_ware ON production_recipes(ware_id, method);",
     "CREATE INDEX IF NOT EXISTS idx_recipes_input ON production_recipes(input_ware_id);",
+    """
+    CREATE TABLE IF NOT EXISTS source_registry (
+        source_id TEXT PRIMARY KEY,
+        url TEXT NOT NULL,
+        title TEXT NOT NULL,
+        proposed_by TEXT NOT NULL,
+        category TEXT NOT NULL,
+        topic_tags TEXT,
+        proposed_date TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'proposed',
+        trust_rationale TEXT,
+        reviewed_by TEXT,
+        reviewed_date TEXT,
+        notes TEXT,
+        content_date TEXT,
+        last_checked TEXT,
+        superseded_by TEXT REFERENCES source_registry(source_id)
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_source_registry_status ON source_registry(status);",
+    """
+    CREATE TABLE IF NOT EXISTS source_manifest (
+        manifest_id TEXT PRIMARY KEY,
+        source_id TEXT NOT NULL REFERENCES source_registry(source_id),
+        title TEXT NOT NULL,
+        file_path TEXT NOT NULL,
+        curation_status TEXT NOT NULL DEFAULT 'draft',
+        raw_hash TEXT NOT NULL,
+        claims_hash TEXT,
+        fidelity_discrepancies INTEGER DEFAULT 0,
+        db_discrepancies INTEGER DEFAULT 0,
+        approved_at TEXT,
+        approved_by TEXT
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_source_manifest_status ON source_manifest(curation_status);",
+    """
+    CREATE TABLE IF NOT EXISTS knowledge_chunks (
+        id TEXT PRIMARY KEY,
+        manifest_id TEXT NOT NULL REFERENCES source_manifest(manifest_id) ON DELETE CASCADE,
+        heading_hierarchy TEXT NOT NULL,
+        chunk_index INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        token_count INTEGER NOT NULL,
+        source_attribution TEXT NOT NULL,
+        topic TEXT,
+        related_entity_ids TEXT,
+        game_version_scope TEXT NOT NULL DEFAULT 'base_game',
+        created_at TEXT NOT NULL
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_manifest ON knowledge_chunks(manifest_id);",
+    "CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_topic ON knowledge_chunks(topic);",
+    """
+    CREATE VIRTUAL TABLE IF NOT EXISTS knowledge_chunks_vec USING vec0(
+        chunk_id TEXT PRIMARY KEY,
+        embedding float[1024]
+    );
+    """,
 ]
 
 
 def init_db_schema(conn: sqlite3.Connection) -> None:
     """Executes all table creation DDL statements on the given SQLite connection."""
+    import sqlite_vec
+
     conn.execute("PRAGMA foreign_keys = ON;")
+    try:
+        conn.enable_load_extension(True)
+        sqlite_vec.load(conn)
+    except Exception:
+        pass  # In case extension is already loaded or environment handles it
+
     cursor = conn.cursor()
     for statement in DDL_STATEMENTS:
         cursor.execute(statement)
     conn.commit()
+

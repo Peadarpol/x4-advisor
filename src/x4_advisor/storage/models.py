@@ -88,3 +88,59 @@ class SectorResourceRecord:
     sector_id: str
     resource_id: str  # e.g., 'ore', 'silicon', 'ice', 'hydrogen', 'helium', 'methane'
     resource_yield: float  # Python field name (maps to SQLite column 'yield')
+
+
+@dataclass
+class SourceRegistryRecord:
+    """Pre-pipeline candidate source discovery and vetting record."""
+
+    source_id: str
+    url: str
+    title: str
+    proposed_by: str  # 'peter_manual', 'claude_search', 'chatgpt_brief'
+    category: str  # 'wiki', 'forum_guide', 'steam_guide', 'other'
+    proposed_date: str
+    status: str = "proposed"  # 'proposed', 'trusted', 'rejected', 'superseded'
+    topic_tags: Optional[str] = None
+    trust_rationale: Optional[str] = None
+    reviewed_by: Optional[str] = None
+    reviewed_date: Optional[str] = None
+    notes: Optional[str] = None
+    content_date: Optional[str] = None
+    last_checked: Optional[str] = None
+    superseded_by: Optional[str] = None
+
+
+@dataclass
+class SourceManifestRecord:
+    """Vetted source manifest tracking curation lifecycle and discrepancy counts."""
+
+    manifest_id: str
+    source_id: str
+    title: str
+    file_path: str
+    raw_hash: str
+    curation_status: str = "draft"  # 'draft', 'claims_extracted', 'flagged_review', 'approved'
+    claims_hash: Optional[str] = None
+    fidelity_discrepancies: int = 0
+    db_discrepancies: int = 0
+    approved_at: Optional[str] = None
+    approved_by: Optional[str] = None
+
+
+@dataclass
+class KnowledgeChunkRecord:
+    """Heading-aware text chunk and metadata record."""
+
+    id: str
+    manifest_id: str
+    heading_hierarchy: str
+    chunk_index: int
+    content: str
+    token_count: int
+    source_attribution: str
+    created_at: str
+    topic: Optional[str] = None
+    related_entity_ids: Optional[str] = None
+    game_version_scope: str = "base_game"
+
