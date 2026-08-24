@@ -16,20 +16,20 @@ The system has two distinct stages that run at different times, not one continuo
 ### Stage 1 — Offline ingestion (builds the data store; see §3 for full detail)
 
 ```
-Game files (.cat/.dat)              Curated wiki/community sources
-         │                                      │
-         ▼                                      ▼
-   x4cat extraction                    source_registry (trusted)
-         │                                      │
-         ▼                                      ▼
-   normalized structured               raw capture → claim extraction
-   records                             → paraphrase → claim verification
-         │                                      │
-         ▼                                      ▼
-   structured tables ─────────────────► shared SQLite file ◄──── knowledge_chunks
-   (ships, wares,                       (§4 Data Model)          (sqlite-vec, embedded)
-    production, factions,
-    sectors)
+Game files (.cat/.dat)                                      Curated wiki/community sources
+        |                                                               |
+        v                                                               v
+  x4cat extraction                                           source_registry (trusted)
+        |                                                               |
+        v                                                               v
+  normalized structured                                     raw capture -> claim extraction
+  records                                                   -> paraphrase -> claim verification
+        |                                                               |
+        v                                                               v
+  structured tables  ------------->  shared SQLite file  <-------  knowledge_chunks
+  (ships, wares,                     (see Section 4:                (sqlite-vec,
+   production, factions,              Data Model)                    embedded)
+   sectors)
 ```
 
 This stage is run by whoever is populating the knowledge base (the owner, or — per the charter's revised priority ordering — anyone else willing to run it themselves against their own game install and their own sourced content). It is not part of what a user interacts with; it produces the populated database that Stage 2 then queries.
@@ -37,38 +37,40 @@ This stage is run by whoever is populating the knowledge base (the owner, or —
 ### Stage 2 — Runtime query (this is what the rest of §1 describes)
 
 ```
-User Question
-      │
-      ▼
-┌─────────────────┐
-│  Router (LLM,    │  Native tool-calling: selects
-│  tool-calling)   │  query_structured_data / search_knowledge_base / both
-└────────┬─────────┘
-         │
-    ┌────┴─────────────────────┐
-    │                          │
-    ▼                          ▼
-┌──────────────┐        ┌────────────────┐
-│ SQL Query     │        │ Vector Search   │
-│ (SQLite)      │        │ (sqlite-vec)    │
-└───────┬───────┘        └────────┬────────┘
-        │                         │
-        └───────────┬─────────────┘
-                     ▼
-          ┌─────────────────────┐
+                User Question
+                      │
+                      v
+            +-------------------+
+            |  Router (LLM,     |  Native tool-calling: classifies the question and
+            |  tool-calling)    |  decides which evidence source(s) it actually needs
+            +-------------------+
+                      |
+     +----------------+----------------+
+     |                |                |
+     v                v                v
++------------+  +----------------+  +--------------+
+| SQL Query  |  | BOTH (hybrid)  |  | Vector Search|
+| (SQLite)   |  | facts+tactics  |  | (sqlite-vec) |
+| facts only |  | SQL+vector     |  | strategy only|
++------------+  +----------------+  +--------------+
+       |              |                  |
+       +--------------+------------------+
+                      |                 
+                      v
+          ┌──────────────────────┐
           │  LLM Synthesizer     │
-          │  (grounded answer     │
-          │   generation)         │
-          └──────────┬──────────┘
+          │  (grounded answer    │
+          │   generation)        │
+          └──────────┬───────────┘
                      │
-                     ▼
-          ┌─────────────────────┐
+                     v
+          ┌──────────────────────┐
           │  Grounding Check     │
-          │  (claim-level         │
-          │   entailment verify)  │
-          └──────────┬──────────┘
+          │  (claim-level        │
+          │   entailment verify) │
+          └──────────┬───────────┘
                      │
-                     ▼
+                     v
               Answer to User
 ```
 
