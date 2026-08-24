@@ -186,6 +186,12 @@ class DomainValidator:
                     f"Negative shields, cargo, or speed (shields={sh.shields}, cargo={sh.cargo_capacity}, speed={sh.speed})",
                 )
                 continue
+            if sh.ship_class != "station" and sh.speed == 0:
+                report.log_skip(
+                    f"Ship({sh.id})",
+                    f"Speed must be > 0 for non-station ships (class={sh.ship_class}, speed={sh.speed})",
+                )
+                continue
             if sh.ship_class not in PROVISIONAL_SHIP_CLASSES:
                 report.log_warning(
                     f"Ship({sh.id}) has unverified class '{sh.ship_class}'. Record will be inserted for enum refinement."
