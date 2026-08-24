@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<factions>
+  <faction id="argon" name="Argon Federation" shortname="Argon" description="Argon faction">
+    <color ref="faction_argon" />
+  </faction>
+  <faction id="teladi" name="Teladi Company" shortname="Teladi" description="Teladi faction">
+    <color ref="faction_teladi" />
+  </faction>
+</factions>

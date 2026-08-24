@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaults>
+  <dataset macro="Cluster_01_Sector001_macro" name="Argon Prime" owner="argon" sunlight="1.2">
+    <resources>
+      <resource ware="ore" yield="1.5" />
+      <resource ware="silicon" yield="0.8" />
+    </resources>
+  </dataset>
+</defaults>

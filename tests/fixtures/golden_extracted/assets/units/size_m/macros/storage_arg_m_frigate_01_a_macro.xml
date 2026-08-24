@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<macros>
+  <macro name="storage_arg_m_frigate_01_a_macro" class="storage">
+    <component ref="generic_storage" />
+    <properties>
+      <cargo max="1760" tags="container" />
+    </properties>
+  </macro>
+</macros>

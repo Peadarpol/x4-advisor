@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<macros>
+  <macro name="ship_arg_m_frigate_01_a_macro" class="ship_m">
+    <component ref="ship_arg_m_frigate_01" />
+    <properties>
+      <identification name="{20101,10602}" makerrace="argon" />
+      <hull max="19000" />
+      <jerk>
+        <forward ratio="3" />
+      </jerk>
+    </properties>
+    <connections>
+      <connection ref="con_storage01">
+        <macro ref="storage_arg_m_frigate_01_a_macro" />
+      </connection>
+      <connection ref="con_primary_01" />
+      <connection ref="con_primary_02" />
+      <connection ref="con_turret_01" />
+      <connection ref="con_turret_02" />
+      <connection ref="con_shield_01" />
+      <connection ref="con_shield_02" />
+    </connections>
+  </macro>
+</macros>
