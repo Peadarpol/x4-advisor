@@ -49,6 +49,23 @@ class Config:
         path.mkdir(parents=True, exist_ok=True)
         return path
 
+    @property
+    def vector_relevance_threshold(self) -> float:
+        """Minimum cosine similarity for vector retrieval results.
+
+        Placeholder default 0.40 — will be empirically calibrated against the
+        benchmark evaluation corpus during Milestone M6 per SPEC-001 §9.
+
+        Note for M5 wiring: VectorQueryEngine accepts default_threshold via
+        constructor injection. Whoever instantiates the engine must pass
+        config.vector_relevance_threshold explicitly so the placeholder 0.40
+        doesn't silently become the production value.
+        """
+        raw = os.getenv("VECTOR_RELEVANCE_THRESHOLD")
+        if raw:
+            return float(raw)
+        return 0.40
+
     def validate_m1_config(self) -> None:
         """Validates configuration required for Milestone M1 (Structured Extraction)."""
         if not self.x4_install_path_raw:

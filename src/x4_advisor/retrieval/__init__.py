@@ -1,4 +1,4 @@
-"""Retrieval package exposing EntityResolver, StructuredQueryEngine, and query result models."""
+"""Retrieval package exposing EntityResolver, StructuredQueryEngine, VectorQueryEngine, and query result models."""
 
 from x4_advisor.retrieval.entity_resolver import EntityResolver
 from x4_advisor.retrieval.models import (
@@ -10,13 +10,17 @@ from x4_advisor.retrieval.models import (
     RankingItem,
     RankingResult,
     ResolvedEntity,
+    RetrievedChunk,
     SingleEntityResult,
+    VectorSearchResult,
 )
 from x4_advisor.retrieval.structured_query import StructuredQueryEngine
+from x4_advisor.retrieval.vector_query import VectorQueryEngine
 
 __all__ = [
     "EntityResolver",
     "StructuredQueryEngine",
+    "VectorQueryEngine",
     "ResolvedEntity",
     "AmbiguousEntityResult",
     "EntityNotFoundResult",
@@ -26,4 +30,6 @@ __all__ = [
     "ProductionNode",
     "ProductionChainResult",
     "CategoryListResult",
+    "RetrievedChunk",
+    "VectorSearchResult",
 ]

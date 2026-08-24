@@ -152,7 +152,7 @@ DDL_STATEMENTS = [
     """
     CREATE VIRTUAL TABLE IF NOT EXISTS knowledge_chunks_vec USING vec0(
         chunk_id TEXT PRIMARY KEY,
-        embedding float[1024]
+        embedding float[1024] distance_metric=cosine
     );
     """,
 ]
