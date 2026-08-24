@@ -74,19 +74,20 @@ def test_foreign_key_dependency_insertion_order(tmp_path):
     resources = [SectorResourceRecord("arg_prime", "ore", 1.5)]
     ships = [
         ShipRecord(
-            "ship_arg_m_frigate_01_a_macro",
-            "Cerberus Vanguard",
-            "ship_m",
-            19000.0,
-            1000.0,
-            1760.0,
-            "container",
-            300.0,
-            2,
-            2,
-            2,
-            "argon",
-            "energycells",
+            id="ship_arg_m_frigate_01_a_macro",
+            name="Cerberus Vanguard",
+            ship_class="ship_m",
+            hull=19000.0,
+            shields=1000.0,
+            cargo_capacity=1760.0,
+            cargo_type="container",
+            speed=300.0,
+            weapon_slots=2,
+            turret_slots=2,
+            shield_slots=2,
+            purpose="fight",
+            faction_id="argon",
+            ware_id="energycells",
         )
     ]
     recipes = [

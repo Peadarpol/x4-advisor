@@ -5,6 +5,7 @@
     <properties>
       <identification name="{20101,10602}" makerrace="argon" />
       <hull max="19000" />
+      <purpose primary="fight" />
       <jerk>
         <forward ratio="3" />
       </jerk>

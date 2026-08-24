@@ -12,7 +12,7 @@ class DatasetMetadata:
     build: str
     extraction_timestamp: str
     is_base_game_only: bool
-    schema_version: str = "1.0.0"
+    schema_version: str = "1.1.0"
 
 
 @dataclass
@@ -30,6 +30,7 @@ class ShipRecord:
     weapon_slots: int = 0
     turret_slots: int = 0
     shield_slots: int = 0
+    purpose: Optional[str] = None  # e.g., 'mine', 'trade', 'fight', 'build'
     faction_id: Optional[str] = None  # Primary maker/owner faction ID if unambiguous
     ware_id: Optional[str] = None  # Corresponding ware ID in wares table
     raw_macro: Optional[str] = None

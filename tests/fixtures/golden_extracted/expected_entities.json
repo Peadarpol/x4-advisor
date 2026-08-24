@@ -18,6 +18,7 @@
     "turret_slots": 2,
     "shield_slots": 2,
     "faction_id": "argon",
-    "ware_id": "ship_arg_m_frigate_01_a"
+    "ware_id": "ship_arg_m_frigate_01_a",
+    "purpose": "fight"
   }
 }
