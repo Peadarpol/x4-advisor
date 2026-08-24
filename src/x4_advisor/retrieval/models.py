@@ -99,3 +99,55 @@ class CategoryListResult:
 
 # Type alias for entity resolution outcomes
 EntityResolutionOutcome = Union[ResolvedEntity, AmbiguousEntityResult, EntityNotFoundResult]
+
+
+# ---------------------------------------------------------------------------
+# M4 Vector Retrieval Result Models
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class RetrievedChunk:
+    """Single chunk retrieved from vector similarity search.
+
+    Attributes:
+        similarity_score: Primary metric for downstream consumers (M5 router,
+            M6 grounding). Cosine similarity = 1.0 - cosine_distance,
+            bounded [0.0, 1.0].
+        distance: Raw cosine distance from sqlite-vec. Retained for
+            diagnostic/logging purposes only — not for threshold comparison.
+    """
+
+    chunk_id: str
+    manifest_id: str
+    heading_hierarchy: str
+    content: str
+    similarity_score: float
+    distance: float
+    source_attribution: str
+    topic: Optional[str] = None
+    game_version_scope: str = "base_game"
+
+
+@dataclass
+class VectorSearchResult:
+    """Complete result from a VectorQueryEngine.search() call.
+
+    Attributes:
+        status: One of 'success', 'no_relevant_chunks', 'embedding_failed',
+            'database_not_ready'.
+        total_candidates: Number of KNN candidates returned by the vector
+            index *before* similarity threshold filtering. Distinct from
+            len(chunks), which is the post-threshold count. Gives M5 both
+            signals (e.g., "retrieved 5 candidates, 2 above threshold").
+        message: Human-readable detail for non-success statuses (e.g.,
+            embedding error description, missing-table explanation).
+    """
+
+    query_text: str
+    chunks: List[RetrievedChunk]
+    status: str  # 'success' | 'no_relevant_chunks' | 'embedding_failed' | 'database_not_ready'
+    total_candidates: int
+    threshold_used: float
+    message: str = ""
+
