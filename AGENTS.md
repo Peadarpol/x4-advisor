@@ -34,4 +34,4 @@ This file is the working reference for any agent operating in this repository. K
 See CONTRIBUTING.md for the short version. In brief: architectural changes need an ADR before implementation; behavioral changes need a spec/test update; nothing outside stated scope without discussion first.
 
 ## Current Status
-SPEC-001 (Phase 1) is approved. Milestone M1 (structured game extraction) is DELIVERED (PR #4). Currently on branch `feat/spec-001-m2-structured-query`, starting Milestone M2 (structured query engine for the 4 query templates). The retrieval-grounding evaluation harness (part of M6) does not exist yet -- nothing should be treated as fully gated on grounding until it does.
+SPEC-001 (Phase 1) is approved. Milestone M1 (structured game extraction) is DELIVERED (PR #4). Milestone M2 (structured query engine for 4 query templates) is DELIVERED (PR #5). Currently on branch `feat/spec-001-m3-unstructured-ingestion`, starting Milestone M3 (unstructured ingestion pipeline). The retrieval-grounding evaluation harness (part of M6) does not exist yet -- nothing should be treated as fully gated on grounding until it does.
