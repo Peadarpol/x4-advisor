@@ -12,7 +12,7 @@ python = "^3.12"
 sqlite-vec = "^0.1.9"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
+pytest = "^9.0.3"
 pre-commit = "^3.6.0"
 
 [build-system]

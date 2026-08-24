@@ -82,10 +82,10 @@ The router and synthesizer are the same underlying LLM, called twice with differ
 
 Mapped to the folders already scaffolded in the repository:
 
-- **`ingestion/`** — see §3 for the full pipeline design; briefly, `game_data_extractor.py` handles structured game-file extraction and `wiki_content.py` handles the manually-curated, LLM-assisted-paraphrase content pipeline
-  - `chunker.py`: heading-aware *and* size-bounded semantic chunking (splits oversized sections rather than treating "semantic" and "bounded" as mutually exclusive), with a fallback to paragraph-level splitting with overlap for source material that lacks clear structural markers — structured data never passes through this
-- **`embeddings/`** — wraps the embedding model (Qwen3-Embedding-0.6B via Ollama) for the unstructured ingestion path and for embedding user queries at retrieval time
-- **`storage/`** — owns the SQLite schema: relational tables for ships/wares/factions/production-chains, and the sqlite-vec virtual table for embedded chunks, in the same database file
+- **`ingestion/`** — automated game-data extraction pipeline (M1); handles root `.cat`/`.dat` game archive parsing and structured database population
+- **`curation/`** — interactive community-content curation pipeline (M3); handles source registry logging, dual-loop claim verification (`claim_verifier.py`, `epistemic_markers.py`), human approval gating, heading-aware Markdown chunking (`chunker.py`), and CLI orchestration (`cli.py`)
+- **`embeddings/`** — wraps the embedding model (`OllamaEmbedder` using `qwen3-embedding:0.6b` via Ollama) for M3 unstructured ingestion embedding and M4 query-time retrieval embedding
+- **`storage/`** — owns the SQLite schema: relational tables for ships/wares/factions/production-chains, source registry/manifest metadata tables, and the sqlite-vec virtual table for embedded chunks (`knowledge_chunks_vec`), in the same database file
 - **`retrieval/`**
   - `router.py`: the tool-calling router — defines the available "tools" (structured query, vector search) and interprets the LLM's tool-call decision
   - `structured_query.py`: translates a routed structured request into a parameterized SQL query against the relational tables — not raw text-to-SQL generation by the LLM, to avoid injection risk and unpredictable query shapes; the LLM selects *which* structured lookup to run from a small, fixed set of query templates, it does not write arbitrary SQL
