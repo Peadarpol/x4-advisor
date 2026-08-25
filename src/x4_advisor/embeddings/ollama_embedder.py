@@ -23,10 +23,12 @@ class OllamaEmbedder:
         endpoint: str = "http://localhost:11434",
         model_name: str = "qwen3-embedding:0.6b",
         timeout_seconds: float = 30.0,
+        keep_alive: str = "10m",
     ) -> None:
         self.endpoint = endpoint.rstrip("/")
         self.model_name = model_name
         self.timeout_seconds = timeout_seconds
+        self.keep_alive = keep_alive
 
     def embed_text(self, text: str) -> List[float]:
         """Generates a dense vector embedding for a single text string."""
@@ -44,6 +46,7 @@ class OllamaEmbedder:
         payload = {
             "model": self.model_name,
             "input": texts,
+            "keep_alive": self.keep_alive,
         }
         data_bytes = json.dumps(payload).encode("utf-8")
 
@@ -86,6 +89,7 @@ class OllamaEmbedder:
         payload = {
             "model": self.model_name,
             "prompt": text,
+            "keep_alive": self.keep_alive,
         }
         data_bytes = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(

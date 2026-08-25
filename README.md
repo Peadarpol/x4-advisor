@@ -19,9 +19,16 @@ x4-advisor is an AI-powered assistant and decision support tool designed to anal
 *X4: Foundations itself, owned separately by the user — this project reads from an existing installation, it doesn't provide the game.)*
 
 ### Model dependencies
-*(TODO — documents required models, tags, approximate disk footprint, runtime VRAM expectations, and how to obtain them via Ollama:*
-*Embeddings: `qwen3-embedding:0.6b` (~640 MB disk, ~0.6 GB VRAM) — see ADR-0001.*
-*LLM: candidate model winning the Phase 1 empirical bake-off (e.g. `gemma4:12b`, `granite4.1:8b`, `qwen3:14b`) — see ADR-0005.)*
+
+The system requires two models running via local [Ollama](https://ollama.com):
+- **Embedding model**: `qwen3-embedding:0.6b` (~640 MB disk, ~0.6 GB VRAM) — see [ADR-0001](docs/adr/adr-0001-embedding-model.md)
+  ```powershell
+  ollama pull qwen3-embedding:0.6b
+  ```
+- **Language model**: `gemma4:12b` (~7.6 GB disk, ~8.0 GB VRAM at Q4_K_M) — ADR-0005 provisional baseline (final model selection subject to M6 evaluation bake-off)
+  ```powershell
+  ollama pull gemma4:12b
+  ```
 
 ## Installation
 *(TODO — after M1–M7 exist to actually describe)*
@@ -40,7 +47,7 @@ poetry run python -m x4_advisor.curation.cli register --source-id "src_001" --ur
 ```
 
 ### Step 2: Interactive 3-Pass Claim Extraction
-Follow the instructions in [`docs/curation/claim-extraction-prompt.md`](file:///c:/projects/x4-advisor/docs/curation/claim-extraction-prompt.md):
+Follow the instructions in [`docs/curation/claim-extraction-prompt.md`](docs/curation/claim-extraction-prompt.md):
 1. Run the 3-pass prompt against your raw guide text in an LLM interface (Claude 3.5 Sonnet, ChatGPT 4o, Gemini 1.5 Pro).
 2. Save output Pass 1 claims to `data/sources/<source_id>_c1.json`.
 3. Save output Pass 2 paraphrased article to `data/sources/<source_id>_p.md`.
@@ -65,10 +72,21 @@ poetry run python -m x4_advisor.curation.cli ingest --manifest-id "src_man_001" 
 ```
 
 ## Running the advisor
-*(TODO)*
+
+Run single-turn queries or interactive chat via the CLI:
+
+### Single-Turn Query (`ask`)
+```powershell
+poetry run python -m x4_advisor.cli ask "What is the cargo capacity of the Cerberus Vanguard?"
+```
+
+### Interactive Terminal Session (`interactive`)
+```powershell
+poetry run python -m x4_advisor.cli interactive
+```
 
 ## Running the evaluation suite
-*(TODO)*
+*(TODO — M6 offline grounding harness & model bake-off)*
 
 ## Licenses
 *(TODO — code is MIT; note that no third-party game data or community content is distributed with this repository)*

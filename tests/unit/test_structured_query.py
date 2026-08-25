@@ -214,3 +214,31 @@ def test_pragma_query_only_blocks_writes(memory_conn):
     with StructuredQueryEngine(conn=memory_conn) as engine:
         with pytest.raises(sqlite3.OperationalError, match="attempt to write a readonly database"):
             engine.conn.execute("CREATE TABLE test_table (id INT)")
+
+
+def test_structured_query_raises_unknown_filter_value_ship_class(memory_conn):
+    """Verifies UnknownFilterValue is raised with field, attempted_value, and valid_values on invalid ship_class."""
+    from x4_advisor.retrieval.models import UnknownFilterValue
+
+    with StructuredQueryEngine(conn=memory_conn) as engine:
+        with pytest.raises(UnknownFilterValue) as exc_info:
+            engine.query_t4_category_listing("ship_class", "ship_invalid_xx")
+
+        err = exc_info.value
+        assert err.field == "ship_class"
+        assert err.attempted_value == "ship_invalid_xx"
+        assert "ship_m" in err.valid_values or "ship_l" in err.valid_values
+
+
+def test_structured_query_raises_unknown_filter_value_category(memory_conn):
+    """Verifies UnknownFilterValue is raised with field, attempted_value, and valid_values on invalid ware category."""
+    from x4_advisor.retrieval.models import UnknownFilterValue
+
+    with StructuredQueryEngine(conn=memory_conn) as engine:
+        with pytest.raises(UnknownFilterValue) as exc_info:
+            engine.query_t4_category_listing("category", "nonexistent_ware_category")
+
+        err = exc_info.value
+        assert err.field == "category"
+        assert err.attempted_value == "nonexistent_ware_category"
+        assert "tech" in err.valid_values or "energy" in err.valid_values or "minerals" in err.valid_values

@@ -74,20 +74,27 @@ class EntityResolver:
             target_types = list(valid_types)
 
         # Stage 1: Exact Match (Case-insensitive)
-        exact_matches = self._search_exact(clean_query, target_types)
+        exact_matches = self._dedup_ship_wares(self._search_exact(clean_query, target_types))
         if len(exact_matches) == 1:
             return exact_matches[0]
         elif len(exact_matches) > 1:
             return AmbiguousEntityResult(query_name=clean_query, candidates=exact_matches)
 
         # Stage 2: Substring Match (Case-insensitive with ESCAPE '\')
-        partial_matches = self._search_partial(clean_query, target_types)
+        partial_matches = self._dedup_ship_wares(self._search_partial(clean_query, target_types))
         if len(partial_matches) == 1:
             return partial_matches[0]
         elif len(partial_matches) > 1:
             return AmbiguousEntityResult(query_name=clean_query, candidates=partial_matches)
 
         return EntityNotFoundResult(query_name=clean_query)
+
+    def _dedup_ship_wares(self, matches: List[ResolvedEntity]) -> List[ResolvedEntity]:
+        """If both a ship and its corresponding ware match the same name, keep the ship entity."""
+        ship_names = {m.name.lower() for m in matches if m.entity_type == "ship"}
+        if not ship_names:
+            return matches
+        return [m for m in matches if not (m.entity_type == "ware" and m.name.lower() in ship_names)]
 
     def _search_exact(self, query: str, target_types: List[str]) -> List[ResolvedEntity]:
         """Performs case-insensitive exact matches against selected domain tables."""
