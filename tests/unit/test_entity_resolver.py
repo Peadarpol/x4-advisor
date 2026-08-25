@@ -142,3 +142,34 @@ def test_resolve_invalid_entity_types_raises(memory_conn):
     resolver = EntityResolver(conn=memory_conn)
     with pytest.raises(ValueError, match="Invalid entity_types filter"):
         resolver.resolve_entity("Argon", entity_types=["invalid_type"])
+
+
+def test_resolve_entity_dedups_ship_wares(memory_conn):
+    """Regression test: verifies that when an entity matches both a ship and its corresponding shipyard ware,
+
+    EntityResolver deduplicates in favor of the ship entity and returns ResolvedEntity(entity_type='ship')
+    rather than an AmbiguousEntityResult listing both.
+    """
+    cursor = memory_conn.cursor()
+    # Insert a ware for a ship
+    cursor.execute(
+        "INSERT INTO wares (id, name, category, min_price, avg_price, max_price, volume) "
+        "VALUES ('ship_arg_s_fighter_01_a_ware', 'Nova Vanguard', 'ships', 200000, 250000, 300000, 100)"
+    )
+    # Insert the corresponding ship record linking to the ware_id
+    cursor.execute(
+        "INSERT INTO ships (id, name, class, hull, shields, cargo_capacity, cargo_type, speed, "
+        "weapon_slots, turret_slots, shield_slots, purpose, faction_id, ware_id) "
+        "VALUES ('ship_arg_s_fighter_01_a_macro', 'Nova Vanguard', 'ship_s', 3200.0, 400.0, 180.0, 'container', 320.0, "
+        "2, 0, 1, 'fight', 'argon', 'ship_arg_s_fighter_01_a_ware')"
+    )
+    memory_conn.commit()
+
+    resolver = EntityResolver(conn=memory_conn)
+    result = resolver.resolve_entity("Nova Vanguard")
+
+    # Must resolve directly to the ship, NOT an AmbiguousEntityResult
+    assert isinstance(result, ResolvedEntity), f"Expected ResolvedEntity, got {type(result)}: {result}"
+    assert result.entity_type == "ship"
+    assert result.id == "ship_arg_s_fighter_01_a_macro"
+    assert result.name == "Nova Vanguard"

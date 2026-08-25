@@ -149,3 +149,24 @@ This is a floor to clear M6/Phase 1, not a target corpus size to stop at — it 
 ## 13. Exit criteria
 
 Per `scope-boundary.md` §1.9, restated here as the acceptance gate for this spec specifically: all four query templates return correct, grounded answers against the evaluation corpus; the 30-question floor passes the offline grounding gate; the full loop runs via Streamlit, single-turn, within the latency targets; a third party could clone and run both pipelines against their own inputs (secondary, not gating, per the charter's revised priority ordering).
+
+---
+
+## 14. Milestone M5 Implementation Addendum
+
+This addendum records implementation and governance resolutions finalized during Milestone M5 build:
+
+- **Provisional Model & Quantization Baseline**: M5 runs on `gemma4:12b` (confirmed via `ollama show` as `Q4_K_M`, 7.6GB) as ADR-0005's provisional baseline. Full model and quantization comparison (e.g. `Q6_K`, `granite4.1:8b`, `qwen3:14b`) is conducted in M6's evaluation harness.
+- **`has_evidence` Semantics vs Grounding Taxonomy**: The `SynthesisResult.has_evidence: bool` field signals non-abstained synthesis from evidence. The full 5-class claim taxonomy (`FACT`, `SUPPORTED_INFERENCE`, `ADVICE`, `UNSUPPORTED`, `CONTRADICTED`) and Layer 1–3 verification layers belong strictly to Milestone M6.
+- **Uncalibrated Threshold Notation**: `VECTOR_RELEVANCE_THRESHOLD` defaults to `0.40` and is flagged as an uncalibrated placeholder at engine initialization pending M6 empirical calibration.
+- **Dynamic Nonce Prompt Isolation**: Retrieved evidence in synthesizer prompts is isolated using per-request random nonces (`<evidence_{secrets.token_hex(3)}>`), with all chunk fields sanitized to prevent delimiter injection attacks.
+- **Context Windows & Pre-Flight Guard**: Configures `num_ctx: 8192` for router and `num_ctx: 16384` for synthesizer (with `num_predict: 1024`), backed by a pre-flight prompt guard that prunes lowest-similarity chunks if prompt size exceeds 14,000 tokens, guaranteeing the system prompt is never truncated.
+- **Dual-Model Startup Warmup**: `OllamaClient.warmup()` pre-loads both `gemma4:12b` and `qwen3-embedding:0.6b` with `keep_alive="10m"` to prevent cold-start timeouts.
+- **Deterministic Router Sampling**: Router classification uses `temperature: 0.0, seed: 42` for stable, deterministic classification.
+- **Ambiguity Continuation Token Boundary**: `pending_route` is a single-use internal continuation token used solely for re-executing query templates upon user entity selection, and is never passed into LLM prompt contexts.
+- **Core Table Readiness Invariant**: Phase 1 requires all six core database tables (`ships`, `wares`, `sectors`, `sector_resources`, `factions`, `production_recipes`) to be populated on `AdvisorEngine` startup.
+- **Ship-Ware Deduplication Discovery (`_dedup_ship_wares`)**: Ingested game data indexes ships in both `ships` (macros with combat/flight stats) and `wares` (shipyard trade items). To prevent every ship name lookup from triggering false `AmbiguousEntityResult` collisions between a ship and its own ware record, `EntityResolver._dedup_ship_wares` deduplicates matching pairs directly to the `ship` entity.
+- **Hang-Protection vs. SLA Enforcement Decoupling**: Socket timeouts (`timeout_router = 15.0s`, `timeout_synthesizer = 25.0s / 30.0s`) operate strictly as hang-protection circuit breakers, not SLA enforcement mechanisms (see INC-0001). The single-path SLA (<20.0s) and hybrid SLA (<30.0s) are asserted in integration tests.
+- **Case 5 Vector Latency Baseline**: On `gemma4:12b` (Q4_K_M), heavy generative vector-only strategy synthesis took 28.71s (exceeding the <20.0s target). This finding is documented, tracked as `xfail` in `tests/integration/test_m5_live_ollama.py`, and forms the primary latency baseline for comparison against `granite4.1:8b` during the M6 model bake-off.
+- **Forward Threading Note for M7**: SQLite connections default to `check_same_thread=True`. Streamlit multi-threading in M7 should manage connection isolation appropriately.
+- **Dataset Staleness Check Deferral**: Version validation via `dataset_metadata` is deferred to Milestone M7.

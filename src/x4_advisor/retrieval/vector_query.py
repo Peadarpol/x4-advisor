@@ -165,10 +165,20 @@ class VectorQueryEngine:
         query_bytes = struct.pack(f"{len(query_vector)}f", *query_vector)
 
         # Execute CTE vector search
-        rows = self.conn.execute(
-            _VECTOR_SEARCH_SQL,
-            (query_bytes, top_k, game_version_scope),
-        ).fetchall()
+        try:
+            rows = self.conn.execute(
+                _VECTOR_SEARCH_SQL,
+                (query_bytes, top_k, game_version_scope),
+            ).fetchall()
+        except sqlite3.OperationalError as e:
+            return VectorSearchResult(
+                query_text=query_text,
+                chunks=[],
+                status="database_not_ready",
+                total_candidates=0,
+                threshold_used=threshold,
+                message=f"Vector search failed: {e}",
+            )
 
         total_candidates = len(rows)
 

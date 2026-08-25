@@ -13,6 +13,7 @@ from x4_advisor.retrieval.models import (
     RankingItem,
     RankingResult,
     SingleEntityResult,
+    UnknownFilterValue,
 )
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,47 @@ class StructuredQueryEngine:
             raise ValueError("Either db_path or conn must be provided to StructuredQueryEngine.")
 
         self.conn.execute("PRAGMA query_only = ON;")
+        self._init_filter_caches()
+
+    def _init_filter_caches(self) -> None:
+        """Caches distinct valid filter values for runtime validation."""
+        self._valid_ship_classes: Set[str] = set()
+        self._valid_purposes: Set[str] = set()
+        self._valid_ware_categories: Set[str] = set()
+        self._valid_factions: Set[str] = set()
+        self._valid_resources: Set[str] = set()
+
+        try:
+            cursor = self.conn.cursor()
+            # Check if tables exist before querying
+            tables = {r[0] for r in cursor.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
+
+            if "ships" in tables:
+                classes = cursor.execute("SELECT DISTINCT class FROM ships WHERE class IS NOT NULL").fetchall()
+                self._valid_ship_classes = {r[0].strip().lower() for r in classes if r[0]}
+
+                purposes = cursor.execute("SELECT DISTINCT purpose FROM ships WHERE purpose IS NOT NULL").fetchall()
+                self._valid_purposes = {r[0].strip().lower() for r in purposes if r[0]}
+
+            if "wares" in tables:
+                categories = cursor.execute("SELECT DISTINCT category FROM wares WHERE category IS NOT NULL").fetchall()
+                self._valid_ware_categories = {r[0].strip().lower() for r in categories if r[0]}
+
+            if "factions" in tables:
+                f_rows = cursor.execute("SELECT id, name, short_name FROM factions").fetchall()
+                for fid, fname, fshort in f_rows:
+                    if fid:
+                        self._valid_factions.add(fid.strip().lower())
+                    if fname:
+                        self._valid_factions.add(fname.strip().lower())
+                    if fshort:
+                        self._valid_factions.add(fshort.strip().lower())
+
+            if "sector_resources" in tables:
+                res_rows = cursor.execute("SELECT DISTINCT resource_id FROM sector_resources WHERE resource_id IS NOT NULL").fetchall()
+                self._valid_resources = {r[0].strip().lower() for r in res_rows if r[0]}
+        except Exception as e:
+            logger.debug("Filter cache initialization skipped or incomplete: %s", e)
 
     def close(self) -> None:
         """Closes database connection if owned by this engine instance."""
@@ -343,6 +385,14 @@ class StructuredQueryEngine:
     ) -> RankingResult:
         """Ranks sectors by yield for a specific resource (e.g. 'ore', 'silicon', 'hydrogen')."""
         clean_res = resource_id.strip().lower()
+
+        if self._valid_resources and clean_res not in self._valid_resources:
+            raise UnknownFilterValue(
+                field="resource_id",
+                attempted_value=clean_res,
+                valid_values=sorted(list(self._valid_resources)),
+            )
+
         sql = """
             SELECT s.id, s.name, sr.yield
             FROM sector_resources sr
@@ -554,8 +604,26 @@ class StructuredQueryEngine:
         cursor = self.conn.cursor()
 
         items: List[Dict[str, Any]] = []
+        total_available = 0
+        redirected_from: Optional[str] = None
+        category_value_out = clean_val
 
         if clean_type == "faction":
+            if self._valid_factions and clean_val not in self._valid_factions:
+                raise UnknownFilterValue(
+                    field="faction",
+                    attempted_value=clean_val,
+                    valid_values=sorted(list(self._valid_factions)),
+                )
+
+            count_sql = """
+                SELECT COUNT(*)
+                FROM ships s
+                JOIN factions f ON s.faction_id = f.id
+                WHERE LOWER(f.id) = ? OR LOWER(f.name) = ? OR LOWER(f.short_name) = ?
+            """
+            total_available = cursor.execute(count_sql, (clean_val, clean_val, clean_val)).fetchone()[0]
+
             sql = """
                 SELECT s.id, s.name, s.class, s.purpose, f.name AS faction_name
                 FROM ships s
@@ -577,6 +645,18 @@ class StructuredQueryEngine:
             ]
 
         elif clean_type == "ship_class":
+            if self._valid_ship_classes and clean_val not in self._valid_ship_classes:
+                raise UnknownFilterValue(
+                    field="ship_class",
+                    attempted_value=clean_val,
+                    valid_values=sorted(list(self._valid_ship_classes)),
+                )
+
+            total_available = cursor.execute(
+                "SELECT COUNT(*) FROM ships WHERE LOWER(class) = ?",
+                (clean_val,),
+            ).fetchone()[0]
+
             sql = """
                 SELECT id, name, purpose, hull, shields, cargo_capacity, speed
                 FROM ships
@@ -599,6 +679,18 @@ class StructuredQueryEngine:
             ]
 
         elif clean_type == "purpose":
+            if self._valid_purposes and clean_val not in self._valid_purposes:
+                raise UnknownFilterValue(
+                    field="purpose",
+                    attempted_value=clean_val,
+                    valid_values=sorted(list(self._valid_purposes)),
+                )
+
+            total_available = cursor.execute(
+                "SELECT COUNT(*) FROM ships WHERE LOWER(purpose) = ?",
+                (clean_val,),
+            ).fetchone()[0]
+
             sql = """
                 SELECT id, name, class, hull, cargo_capacity, speed
                 FROM ships
@@ -620,6 +712,31 @@ class StructuredQueryEngine:
             ]
 
         elif clean_type in ("ware_group", "ware_category", "category"):
+            target_category = clean_val
+
+            # Category-vs-ware precedence rule
+            if self._valid_ware_categories and clean_val not in self._valid_ware_categories:
+                # Check if clean_val matches a ware name or ID
+                cat_rows = cursor.execute(
+                    "SELECT DISTINCT category FROM wares WHERE LOWER(id) = ? OR LOWER(name) = ?",
+                    (clean_val, clean_val),
+                ).fetchall()
+                if len(cat_rows) == 1 and cat_rows[0][0]:
+                    target_category = cat_rows[0][0].strip().lower()
+                    redirected_from = clean_val
+                    category_value_out = target_category
+                else:
+                    raise UnknownFilterValue(
+                        field="category",
+                        attempted_value=clean_val,
+                        valid_values=sorted(list(self._valid_ware_categories)),
+                    )
+
+            total_available = cursor.execute(
+                "SELECT COUNT(*) FROM wares WHERE LOWER(category) = ?",
+                (target_category,),
+            ).fetchone()[0]
+
             sql = """
                 SELECT id, name, category, min_price, avg_price, max_price, volume
                 FROM wares
@@ -627,7 +744,7 @@ class StructuredQueryEngine:
                 ORDER BY name
                 LIMIT ?
             """
-            rows = cursor.execute(sql, (clean_val, limit)).fetchall()
+            rows = cursor.execute(sql, (target_category, limit)).fetchall()
             items = [
                 {
                     "id": r[0],
@@ -648,6 +765,8 @@ class StructuredQueryEngine:
 
         return CategoryListResult(
             category_type=clean_type,
-            category_value=clean_val,
+            category_value=category_value_out,
             items=items,
+            total_available=total_available,
+            redirected_from=redirected_from,
         )
