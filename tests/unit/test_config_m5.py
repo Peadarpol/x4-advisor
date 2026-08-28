@@ -39,12 +39,12 @@ def test_vector_relevance_threshold_default_flag(monkeypatch: pytest.MonkeyPatch
     """Tests vector_relevance_threshold_is_default property behavior."""
     monkeypatch.delenv("VECTOR_RELEVANCE_THRESHOLD", raising=False)
     config = Config(validate=False)
-    assert config.vector_relevance_threshold == 0.40
+    assert config.vector_relevance_threshold == 0.50
     assert config.vector_relevance_threshold_is_default is True
 
-    monkeypatch.setenv("VECTOR_RELEVANCE_THRESHOLD", "0.65")
+    monkeypatch.setenv("VECTOR_RELEVANCE_THRESHOLD", "0.80")
     config2 = Config(validate=False)
-    assert config2.vector_relevance_threshold == 0.65
+    assert config2.vector_relevance_threshold == 0.80
     assert config2.vector_relevance_threshold_is_default is False
 
 

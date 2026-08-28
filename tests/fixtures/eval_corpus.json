@@ -1,0 +1,1429 @@
+[
+  {
+    "case_id": "eval_t1_001",
+    "category": "T1_FACT_LOOKUP",
+    "question": "What is the cargo capacity and speed of the Cerberus Vanguard?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Cerberus Vanguard"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_m_frigate_01_a_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "cargo_capacity",
+        "expected_value": 1760.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      },
+      {
+        "field": "speed",
+        "expected_value": 300.0,
+        "unit": "m/s",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": [
+      "Has the highest cargo in the M class"
+    ]
+  },
+  {
+    "case_id": "eval_t1_002",
+    "category": "T1_FACT_LOOKUP",
+    "question": "What are the minimum, average, and maximum prices of Claytronics?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Claytronics"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "claytronics"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "min_price",
+        "expected_value": 1734.0,
+        "unit": "Cr",
+        "tolerance": 0.0
+      },
+      {
+        "field": "avg_price",
+        "expected_value": 2040.0,
+        "unit": "Cr",
+        "tolerance": 0.0
+      },
+      {
+        "field": "max_price",
+        "expected_value": 2346.0,
+        "unit": "Cr",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": [
+      "Cheapest station building material"
+    ]
+  },
+  {
+    "case_id": "eval_t1_003",
+    "category": "T1_FACT_LOOKUP",
+    "question": "What is the sunlight rating of the Grand Exchange I sector?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Grand Exchange I"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "Cluster_01_Sector001_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "sunlight",
+        "expected_value": 1.23,
+        "unit": "x",
+        "tolerance": 0.01
+      }
+    ],
+    "allowed_inferences": [
+      "Solar panels operate at 123% efficiency"
+    ],
+    "prohibited_unsupported_claims": [
+      "Has the highest sunlight in the universe"
+    ]
+  },
+  {
+    "case_id": "eval_t1_004",
+    "category": "T1_FACT_LOOKUP",
+    "question": "What ware category and volume does Hull Parts have?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Hull Parts"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "hullparts"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "category",
+        "expected_value": "hightech",
+        "unit": "",
+        "tolerance": 0.0
+      },
+      {
+        "field": "volume",
+        "expected_value": 12.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t2_001",
+    "category": "T2_COMPARISON",
+    "question": "Compare the cargo capacity of the Magnetar (Mineral) Vanguard and Magnetar (Mineral) Sentinel.",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "comparison",
+          "entity_names": [
+            "Magnetar (Mineral) Vanguard",
+            "Magnetar (Mineral) Sentinel"
+          ]
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_l_miner_solid_01_a_macro",
+      "ship_arg_l_miner_solid_01_b_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "cargo_capacity_vanguard",
+        "expected_value": 50800.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      },
+      {
+        "field": "cargo_capacity_sentinel",
+        "expected_value": 57200.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "The Sentinel variant has 6,400 m\u00b3 more cargo capacity than the Vanguard"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t2_002",
+    "category": "T2_COMPARISON",
+    "question": "What are the fastest S-class scout ships?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "ranking",
+          "category": "ship",
+          "sort_field": "speed",
+          "order": "desc"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_s_scout_01_a_macro",
+      "ship_par_s_scout_01_a_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t2_003",
+    "category": "T2_COMPARISON",
+    "question": "Which M-class combat ships have the highest hull points?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "ranking",
+          "category": "ship",
+          "sort_field": "hull",
+          "order": "desc"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_m_frigate_01_b_macro",
+      "ship_par_m_frigate_01_a_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t2_004",
+    "category": "T2_COMPARISON",
+    "question": "Compare the average prices of Ore and Silicon.",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "comparison",
+          "entity_names": [
+            "Ore",
+            "Silicon"
+          ]
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ore",
+      "silicon"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "ore_avg_price",
+        "expected_value": 50.0,
+        "unit": "Cr",
+        "tolerance": 0.0
+      },
+      {
+        "field": "silicon_avg_price",
+        "expected_value": 130.0,
+        "unit": "Cr",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Silicon is on average more expensive per unit than Ore"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t3_001",
+    "category": "T3_PRODUCTION_CHAIN",
+    "question": "What inputs and quantities are needed to produce Claytronics with the default production method?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Claytronics",
+          "method": "default"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "claytronics",
+      "antimattercells",
+      "energycells",
+      "microchips",
+      "quantumtubes"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "antimattercells_input",
+        "expected_value": 100.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "energycells_input",
+        "expected_value": 140.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "microchips_input",
+        "expected_value": 160.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "quantumtubes_input",
+        "expected_value": 100.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_energycells",
+        "expected_value": 9.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_hydrogen",
+        "expected_value": 3.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_silicon",
+        "expected_value": 9.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_methane",
+        "expected_value": 4.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_helium",
+        "expected_value": 1.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "output_amount",
+        "expected_value": 108.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_sec",
+        "expected_value": 900.0,
+        "unit": "s",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_min",
+        "expected_value": 15.0,
+        "unit": "min",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t3_002",
+    "category": "T3_PRODUCTION_CHAIN",
+    "question": "What are the required inputs and production time for Hull Parts under the default method?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Hull Parts",
+          "method": "default"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "hullparts",
+      "energycells",
+      "graphene",
+      "refinedmetals"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "energycells_input",
+        "expected_value": 80.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "graphene_input",
+        "expected_value": 40.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "refinedmetals_input",
+        "expected_value": 280.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_energycells",
+        "expected_value": 3.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_methane",
+        "expected_value": 1.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_ore",
+        "expected_value": 3.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "output_amount",
+        "expected_value": 294.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_sec",
+        "expected_value": 900.0,
+        "unit": "s",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_min",
+        "expected_value": 15.0,
+        "unit": "min",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "A batch takes 15 minutes to produce"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t3_003",
+    "category": "T3_PRODUCTION_CHAIN",
+    "question": "What are the primary ingredients for Advanced Electronics?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Advanced Electronics",
+          "method": "default"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "advancedelectronics",
+      "energycells",
+      "microchips",
+      "quantumtubes"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "energycells_input",
+        "expected_value": 60.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "microchips_input",
+        "expected_value": 200.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "quantumtubes_input",
+        "expected_value": 100.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_energycells",
+        "expected_value": 7.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_silicon",
+        "expected_value": 5.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_methane",
+        "expected_value": 2.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_helium",
+        "expected_value": 1.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "output_amount",
+        "expected_value": 54.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_sec",
+        "expected_value": 720.0,
+        "unit": "s",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_min",
+        "expected_value": 12.0,
+        "unit": "min",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t3_004",
+    "category": "T3_PRODUCTION_CHAIN",
+    "question": "What inputs are required to produce Smart Chips?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Smart Chips",
+          "method": "default"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "smartchips",
+      "energycells",
+      "siliconwafers"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "energycells_input",
+        "expected_value": 50.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "siliconwafers_input",
+        "expected_value": 20.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_energycells",
+        "expected_value": 2.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_silicon",
+        "expected_value": 1.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "output_amount",
+        "expected_value": 143.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_sec",
+        "expected_value": 600.0,
+        "unit": "s",
+        "tolerance": 0.0
+      },
+      {
+        "field": "production_time_min",
+        "expected_value": 10.0,
+        "unit": "min",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t4_001",
+    "category": "T4_CATEGORY_LISTING",
+    "question": "List all ships belonging to the Argon faction.",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "category_listing",
+          "category": "ship",
+          "filter_field": "faction_id",
+          "filter_value": "argon"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_m_frigate_01_a_macro",
+      "ship_arg_l_destroyer_01_a_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t4_002",
+    "category": "T4_CATEGORY_LISTING",
+    "question": "List ships in the Medium (ship_m) class.",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "category_listing",
+          "category": "ship",
+          "filter_field": "ship_class",
+          "filter_value": "ship_m"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_m_frigate_01_a_macro",
+      "ship_par_m_corvette_01_a_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t4_003",
+    "category": "T4_CATEGORY_LISTING",
+    "question": "List all wares in the refined category.",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "category_listing",
+          "category": "ware",
+          "filter_field": "category",
+          "filter_value": "refined"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "antimattercells",
+      "graphene"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_t4_004",
+    "category": "T4_CATEGORY_LISTING",
+    "question": "List all combat ships with fight purpose.",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "category_listing",
+          "category": "ship",
+          "filter_field": "purpose",
+          "filter_value": "fight"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_m_frigate_01_a_macro",
+      "ship_arg_l_destroyer_01_a_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Results capped at top 50 entries"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_vec_001",
+    "category": "VECTOR_STRATEGY",
+    "question": "How do fleet commands and assignments work in X4, specifically regarding escort and patrol behavior?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "fleet commands assignments escort patrol behavior"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [
+      "chunk_src_man_egosoft_orders_001_002",
+      "chunk_src_man_egosoft_orders_001_003",
+      "chunk_src_man_egosoft_orders_001_004"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Patrol ships react to radar threats while escort ships protect assigned vessels"
+    ],
+    "prohibited_unsupported_claims": [
+      "Patrol ships will jump across gates automatically to hunt enemies"
+    ]
+  },
+  {
+    "case_id": "eval_vec_002",
+    "category": "VECTOR_STRATEGY",
+    "question": "What is the recommended strategy for early-game trading and setting up basic pilot automation?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "early game trading pilot automation seminar"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [
+      "chunk_src_man_economy_primer_001_004",
+      "chunk_src_man_economy_primer_001_005",
+      "chunk_src_man_ruggedgamer_trading_001_003"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Basic seminars train pilots to 1 star for auto-trade initiation"
+    ],
+    "prohibited_unsupported_claims": [
+      "Pilots need 5 stars for local auto trade"
+    ]
+  },
+  {
+    "case_id": "eval_vec_003",
+    "category": "VECTOR_STRATEGY",
+    "question": "How does the scrap recycling loop work between scrap processors and scrap recyclers?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "scrap recycling loop processor recycler energy cells"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [
+      "chunk_src_man_scrappy_guide_001_002",
+      "chunk_src_man_scrappy_guide_001_005",
+      "chunk_src_man_scrappy_guide_001_006"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Scrap processors convert raw scrap into scrap metal, which recyclers convert into building wares"
+    ],
+    "prohibited_unsupported_claims": [
+      "Scrap recycling produces Nividium"
+    ]
+  },
+  {
+    "case_id": "eval_vec_004",
+    "category": "VECTOR_STRATEGY",
+    "question": "How should a player manage station budget allocation and revenue transfers?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "station budget allocation revenue account transfer"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [
+      "chunk_src_man_jkninja_station_001_007",
+      "chunk_src_man_jkninja_station_001_010"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Proceeds accumulate in station account before manual or automated transfer"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_vec_005",
+    "category": "VECTOR_STRATEGY",
+    "question": "How do you set up repeat orders for a trading ship?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "set up repeat orders default behaviour trade"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [
+      "chunk_src_man_jkninja_station_001_009"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Set Default Behaviour to Repeat Orders and queue buy/sell tasks manually"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_vec_006",
+    "category": "VECTOR_STRATEGY",
+    "question": "What is the difference between Local Auto Trade and advanced sector auto trade?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "difference local auto trade advanced auto trade pilot skill"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [
+      "chunk_src_man_ruggedgamer_trading_001_003",
+      "chunk_src_man_ruggedgamer_trading_001_004"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Local trade is restricted to single sector; advanced trading requires higher pilot stars"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_both_001",
+    "category": "HYBRID_BOTH",
+    "question": "What are the required input materials for Hull Parts, and why are Hull Parts strategically vital for the economy?",
+    "expected_route": "BOTH",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Hull Parts",
+          "method": "default"
+        }
+      },
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "Hull Parts strategic importance shipbuilding bottleneck"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "hullparts",
+      "energycells",
+      "graphene",
+      "refinedmetals"
+    ],
+    "expected_chunk_ids": [
+      "chunk_src_man_economy_primer_001_003",
+      "chunk_src_man_economy_primer_001_006",
+      "chunk_src_man_ruggedgamer_trading_001_007"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "refinedmetals_input",
+        "expected_value": 280.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "graphene_input",
+        "expected_value": 40.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "energycells_input",
+        "expected_value": 80.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_energycells",
+        "expected_value": 3.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_methane",
+        "expected_value": 1.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_ore",
+        "expected_value": 3.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "output_amount",
+        "expected_value": 294.0,
+        "unit": "units",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Hull Parts are the foundational resource for all station and ship construction"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_both_002",
+    "category": "HYBRID_BOTH",
+    "question": "What are the energy cell requirements for recycling Hull Parts, and how does scrap processing scale in the late game?",
+    "expected_route": "BOTH",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Hull Parts",
+          "method": "recycling"
+        }
+      },
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "scrap processing energy cells late game economy"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "hullparts",
+      "energycells",
+      "scrapmetal"
+    ],
+    "expected_chunk_ids": [
+      "chunk_src_man_scrappy_guide_001_006",
+      "chunk_src_man_scrappy_guide_001_007"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "energycells_input",
+        "expected_value": 3500.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "energycells_single",
+        "expected_value": 22.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "scrapmetal_input",
+        "expected_value": 75.0,
+        "unit": "units",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Recycling is extremely energy-intensive, requiring high sunlight or multiple solar panels"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_both_003",
+    "category": "HYBRID_BOTH",
+    "question": "What are the production inputs for Smart Chips, and how should stations assign miners and traders for them?",
+    "expected_route": "BOTH",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Smart Chips",
+          "method": "default"
+        }
+      },
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "station assign miners traders silicon"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "smartchips",
+      "energycells",
+      "siliconwafers"
+    ],
+    "expected_chunk_ids": [
+      "chunk_src_man_jkninja_station_001_005",
+      "chunk_src_man_jkninja_station_001_007"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "energycells_input",
+        "expected_value": 50.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "siliconwafers_input",
+        "expected_value": 20.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_energycells",
+        "expected_value": 2.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "base_silicon",
+        "expected_value": 1.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "output_amount",
+        "expected_value": 143.0,
+        "unit": "units",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Assigning dedicated silicon miners to the station eliminates input purchase costs"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_both_004",
+    "category": "HYBRID_BOTH",
+    "question": "Compare the cargo capacity of the Discoverer Vanguard and Pegasus Vanguard, and explain how to use them as fleet scouts.",
+    "expected_route": "BOTH",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Discoverer Vanguard"
+        }
+      },
+      {
+        "name": "search_knowledge_base",
+        "arguments": {
+          "query_text": "fleet scouts reconnaissance behavior"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_s_scout_01_a_macro",
+      "ship_par_s_scout_01_a_macro"
+    ],
+    "expected_chunk_ids": [
+      "chunk_src_man_egosoft_orders_001_004",
+      "chunk_src_man_fleet2_001_002"
+    ],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "discoverer_cargo",
+        "expected_value": 540.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      },
+      {
+        "field": "pegasus_cargo",
+        "expected_value": 440.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Discoverer carries 100 m\u00b3 more cargo than Pegasus"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_ambig_001",
+    "category": "AMBIGUOUS_ENTITY",
+    "question": "What is the speed of the Cerberus?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Cerberus"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_m_frigate_01_a_macro",
+      "ship_arg_m_frigate_01_b_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Prompt asks user to clarify between Cerberus Vanguard and Cerberus Sentinel"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_ambig_002",
+    "category": "AMBIGUOUS_ENTITY",
+    "question": "What is the cargo capacity of the Magnetar?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Magnetar"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_l_miner_liquid_01_a_macro",
+      "ship_arg_l_miner_liquid_01_b_macro",
+      "ship_arg_l_miner_solid_01_a_macro",
+      "ship_arg_l_miner_solid_01_b_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [],
+    "allowed_inferences": [
+      "Prompt asks user to clarify between Magnetar Gas and Mineral variants"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_noev_001",
+    "category": "NO_EVIDENCE",
+    "question": "What is the breeding cycle time of Spaceflies in player aquariums?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [],
+    "expected_abstention": "NO_EVIDENCE",
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_noev_002",
+    "category": "NO_EVIDENCE",
+    "question": "What are the casino minigame rules on pirate stations in the base game?",
+    "expected_route": "VECTOR",
+    "expected_tool_calls": [],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [],
+    "expected_abstention": "NO_EVIDENCE",
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_dlc_001",
+    "category": "OUT_OF_SCOPE_DLC",
+    "question": "What are the main weapon slots and speed of the Terran Syn destroyer from Cradle of Humanity?",
+    "expected_route": "ABSTAIN",
+    "expected_tool_calls": [
+      {
+        "name": "abstain",
+        "arguments": {
+          "reason": "out_of_scope_dlc"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [],
+    "expected_abstention": "OUT_OF_SCOPE_DLC",
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_dlc_002",
+    "category": "OUT_OF_SCOPE_DLC",
+    "question": "How do Boron Kingdom End water supply mechanics work for the Queendom?",
+    "expected_route": "ABSTAIN",
+    "expected_tool_calls": [
+      {
+        "name": "abstain",
+        "arguments": {
+          "reason": "out_of_scope_dlc"
+        }
+      }
+    ],
+    "expected_entity_ids": [],
+    "expected_chunk_ids": [],
+    "expected_abstention": "OUT_OF_SCOPE_DLC",
+    "expected_structured_facts": [],
+    "allowed_inferences": [],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_auth_001",
+    "category": "STRUCTURED_VS_COMMUNITY_CONFLICT",
+    "question": "A community guide claims that Claytronics average market price is 1,500 Credits. What is the actual official database price?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Claytronics"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "claytronics"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "avg_price",
+        "expected_value": 2040.0,
+        "unit": "Cr",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Official game database price of 2,040 Cr takes precedence over the community claim"
+    ],
+    "prohibited_unsupported_claims": [
+      "1500 Cr is the correct average price"
+    ]
+  },
+  {
+    "case_id": "eval_auth_002",
+    "category": "STRUCTURED_VS_COMMUNITY_CONFLICT",
+    "question": "An outdated forum post states Hull Parts default recipe outputs 400 parts per cycle. What does the authoritative game recipe actually produce?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Hull Parts",
+          "method": "default"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "hullparts"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "output_amount",
+        "expected_value": 294.0,
+        "unit": "units",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Authoritative base-game recipe produces 294 parts, superseding the 400-part claim"
+    ],
+    "prohibited_unsupported_claims": [
+      "Outputs 400 parts"
+    ]
+  },
+  {
+    "case_id": "eval_inf_001",
+    "category": "SUPPORTED_INFERENCE",
+    "question": "If a player builds a fleet with 3 Cerberus Vanguard frigates, what is their combined total cargo capacity?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "fact_lookup",
+          "entity_name": "Cerberus Vanguard"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "ship_arg_m_frigate_01_a_macro"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "cargo_capacity",
+        "expected_value": 1760.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      },
+      {
+        "field": "combined_cargo_capacity",
+        "expected_value": 5280.0,
+        "unit": "m\u00b3",
+        "tolerance": 0.0
+      },
+      {
+        "field": "multiplier",
+        "expected_value": 3.0,
+        "unit": "ships",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "Combined cargo capacity for 3 ships is 5,280 m\u00b3 (3 * 1,760 m\u00b3)"
+    ],
+    "prohibited_unsupported_claims": []
+  },
+  {
+    "case_id": "eval_inf_002",
+    "category": "SUPPORTED_INFERENCE",
+    "question": "How many units of Refined Metals are required to run 2 standard Hull Parts production cycles simultaneously?",
+    "expected_route": "STRUCTURED",
+    "expected_tool_calls": [
+      {
+        "name": "query_structured_data",
+        "arguments": {
+          "query_type": "production_chain",
+          "ware_name": "Hull Parts",
+          "method": "default"
+        }
+      }
+    ],
+    "expected_entity_ids": [
+      "hullparts",
+      "refinedmetals"
+    ],
+    "expected_chunk_ids": [],
+    "expected_abstention": null,
+    "expected_structured_facts": [
+      {
+        "field": "refinedmetals_input",
+        "expected_value": 280.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "total_refinedmetals_input",
+        "expected_value": 560.0,
+        "unit": "units",
+        "tolerance": 0.0
+      },
+      {
+        "field": "cycle_count",
+        "expected_value": 2.0,
+        "unit": "cycles",
+        "tolerance": 0.0
+      }
+    ],
+    "allowed_inferences": [
+      "2 cycles require 560 units of Refined Metals (2 * 280 units)"
+    ],
+    "prohibited_unsupported_claims": []
+  }
+]

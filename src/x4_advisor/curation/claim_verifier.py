@@ -190,8 +190,16 @@ class ClaimVerifier:
             target_conn = sqlite3.connect(str(db_path))
             should_close = True
 
-        results: List[DBVerificationResult] = []
+        prev_query_only = 0
+        if target_conn and not should_close:
+            try:
+                row = target_conn.execute("PRAGMA query_only;").fetchone()
+                if row:
+                    prev_query_only = row[0]
+            except sqlite3.OperationalError:
+                pass
 
+        results: List[DBVerificationResult] = []
         try:
             # Security invariant: read-only access on database connection
             target_conn.execute("PRAGMA query_only = ON;")
@@ -238,8 +246,8 @@ class ClaimVerifier:
             if should_close and target_conn:
                 target_conn.close()
             elif target_conn:
-                # Reset pragma state so caller's connection isn't left read-only
-                target_conn.execute("PRAGMA query_only = OFF;")
+                # Restore previous pragma state so caller's connection isn't modified
+                target_conn.execute(f"PRAGMA query_only = {'ON' if prev_query_only else 'OFF'};")
 
         return results
 

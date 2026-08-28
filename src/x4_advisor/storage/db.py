@@ -20,11 +20,19 @@ from x4_advisor.storage.schema import init_db_schema
 logger = logging.getLogger(__name__)
 
 
-def get_connection(db_path: Path) -> sqlite3.Connection:
+def get_connection(db_path: Path, load_vec: bool = True) -> sqlite3.Connection:
     """Connects to SQLite database, ensuring parent directories exist and foreign keys are enabled."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(db_path))
     conn.execute("PRAGMA foreign_keys = ON;")
+    if load_vec:
+        try:
+            conn.enable_load_extension(True)
+            import sqlite_vec
+
+            sqlite_vec.load(conn)
+        except Exception as e:
+            logger.debug(f"sqlite-vec extension not loaded for '{db_path}': {e}")
     return conn
 
 
@@ -192,7 +200,11 @@ def atomic_ingest_to_db(
     target_db_path: Path,
     populate_fn: Callable[[sqlite3.Connection], Tuple[int, int]],
 ) -> Tuple[int, int]:
-    """Executes database population in a process-isolated temporary file and atomically swaps it over target_db_path on success using os.replace."""
+    """Executes database population in a process-isolated temporary file and atomically swaps it over target_db_path on success using os.replace.
+
+    Preserves existing curation tables (source_registry, source_manifest, knowledge_chunks, knowledge_chunks_vec)
+    across the swap if target_db_path already contains them.
+    """
     target_db_path.parent.mkdir(parents=True, exist_ok=True)
     temp_db_path = target_db_path.parent / f"{target_db_path.name}.tmp.{os.getpid()}"
 
@@ -202,10 +214,47 @@ def atomic_ingest_to_db(
         except OSError:
             pass
 
+    # Snapshot existing curation counts if target DB exists
+    curation_tables = ["source_registry", "source_manifest", "knowledge_chunks", "knowledge_chunks_vec"]
+    snapshot_counts = {}
+    if target_db_path.exists():
+        src_conn = get_connection(target_db_path)
+        try:
+            for t in curation_tables:
+                try:
+                    count = src_conn.execute(f"SELECT count(*) FROM {t}").fetchone()[0]
+                    snapshot_counts[t] = count
+                except sqlite3.OperationalError:
+                    pass
+        finally:
+            src_conn.close()
+
     conn = get_connection(temp_db_path)
     try:
         init_db_schema(conn)
         inserted, skipped = populate_fn(conn)
+        conn.commit()
+
+        # Preserve curation tables from target database in strict FK order
+        if target_db_path.exists() and snapshot_counts:
+            src_conn = get_connection(target_db_path)
+            try:
+                for t in ["source_registry", "source_manifest", "knowledge_chunks"]:
+                    if snapshot_counts.get(t, 0) > 0:
+                        columns = [col[1] for col in src_conn.execute(f"PRAGMA table_info({t})").fetchall()]
+                        col_names = ", ".join(columns)
+                        placeholders = ", ".join(["?"] * len(columns))
+                        rows = src_conn.execute(f"SELECT {col_names} FROM {t}").fetchall()
+                        conn.executemany(f"INSERT OR REPLACE INTO {t} ({col_names}) VALUES ({placeholders})", rows)
+
+                # 4. knowledge_chunks_vec (Virtual table)
+                if snapshot_counts.get("knowledge_chunks_vec", 0) > 0:
+                    rows = src_conn.execute("SELECT chunk_id, embedding FROM knowledge_chunks_vec").fetchall()
+                    conn.executemany("INSERT OR REPLACE INTO knowledge_chunks_vec (chunk_id, embedding) VALUES (?, ?)", rows)
+
+                conn.commit()
+            finally:
+                src_conn.close()
 
         # Post-commit verification
         fk_violations = conn.execute("PRAGMA foreign_key_check;").fetchall()
@@ -213,13 +262,36 @@ def atomic_ingest_to_db(
             raise RuntimeError(f"Foreign key violations detected in temp DB: {fk_violations}")
 
         conn.close()
+        del conn
+
+        # Ensure all connection handles are fully garbage collected before os.replace on Windows
+        import gc
+        gc.collect()
 
         # Cross-platform atomic overwrite
         os.replace(temp_db_path, target_db_path)
         logger.info(f"Atomically updated database at '{target_db_path}'")
+
+        # Post-swap verification against pre-swap snapshot counts
+        if snapshot_counts:
+            verify_conn = get_connection(target_db_path)
+            try:
+                for t, expected_count in snapshot_counts.items():
+                    actual_count = verify_conn.execute(f"SELECT count(*) FROM {t}").fetchone()[0]
+                    if actual_count != expected_count:
+                        raise RuntimeError(
+                            f"Curation table '{t}' count mismatch after atomic swap: expected {expected_count}, got {actual_count}"
+                        )
+            finally:
+                verify_conn.close()
+
         return inserted, skipped
     except Exception as e:
-        conn.close()
+        try:
+            if "conn" in locals() and conn:
+                conn.close()
+        except Exception:
+            pass
         if temp_db_path.exists():
             try:
                 temp_db_path.unlink()

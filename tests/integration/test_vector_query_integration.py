@@ -58,7 +58,7 @@ class TestVectorQueryIntegration:
             default_threshold=self.config.vector_relevance_threshold,
         ) as engine:
             result = engine.search(
-                "How do I use DeadTater for transport ships?",
+                "How do I set up trading and station automation?",
                 top_k=3,
             )
 

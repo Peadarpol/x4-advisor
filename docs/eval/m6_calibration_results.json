@@ -1,0 +1,352 @@
+{
+  "calibrated_threshold": 0.6791,
+  "stability_band": [
+    0.604,
+    0.6981
+  ],
+  "layer3_marginal_delta": 0.092,
+  "full_negative_fps": 1,
+  "full_positive_recall": 0.5,
+  "full_f1": 0.6522,
+  "fold_taus": [
+    0.6978,
+    0.6978,
+    0.604,
+    0.6981,
+    0.6978
+  ],
+  "positive_scores": [
+    {
+      "query": "How do escort ship commands work in fleets?",
+      "sim": 0.6913104951381683,
+      "bin": "short",
+      "manifest": "src_man_egosoft_orders_001"
+    },
+    {
+      "query": "What is the radar range behavior of patrol ships?",
+      "sim": 0.5267879068851471,
+      "bin": "short",
+      "manifest": "src_man_egosoft_orders_001"
+    },
+    {
+      "query": "How to train pilots with basic seminars?",
+      "sim": 0.6286938488483429,
+      "bin": "short",
+      "manifest": "src_man_economy_primer_001"
+    },
+    {
+      "query": "What is the primary shipbuilding resource bottleneck?",
+      "sim": 0.6409375965595245,
+      "bin": "short",
+      "manifest": "src_man_economy_primer_001"
+    },
+    {
+      "query": "What is the role of fleet commander supply ships?",
+      "sim": 0.8455552607774734,
+      "bin": "short",
+      "manifest": "src_man_fleet2_001"
+    },
+    {
+      "query": "What modules are required for a basic silicon station?",
+      "sim": 0.7249477803707123,
+      "bin": "short",
+      "manifest": "src_man_jkninja_station_001"
+    },
+    {
+      "query": "How does base station plot cost scale with distance from jump gates?",
+      "sim": 0.780166819691658,
+      "bin": "short",
+      "manifest": "src_man_jkninja_station_001"
+    },
+    {
+      "query": "How do station revenue accounts accumulate profits?",
+      "sim": 0.574305921792984,
+      "bin": "short",
+      "manifest": "src_man_jkninja_station_001"
+    },
+    {
+      "query": "What are the three map levels of trade information?",
+      "sim": 0.769502654671669,
+      "bin": "short",
+      "manifest": "src_man_ruggedgamer_trading_001"
+    },
+    {
+      "query": "Why do Energy Cells and Hull Parts drive universal trade?",
+      "sim": 0.7562521994113922,
+      "bin": "short",
+      "manifest": "src_man_ruggedgamer_trading_001"
+    },
+    {
+      "query": "Explain the difference between orders, default behaviors, and fleet assignments in X4.",
+      "sim": 0.7533923387527466,
+      "bin": "medium",
+      "manifest": "src_man_egosoft_orders_001"
+    },
+    {
+      "query": "How does station scanning to thirty percent allow players to trade and make money effectively?",
+      "sim": 0.5981291234493256,
+      "bin": "medium",
+      "manifest": "src_man_economy_primer_001"
+    },
+    {
+      "query": "When should a player construct a new factory rather than trading existing AI supply?",
+      "sim": 0.6356590092182159,
+      "bin": "medium",
+      "manifest": "src_man_economy_primer_001"
+    },
+    {
+      "query": "What are the key differences between fleet assignment roles like attack, defend, and intercept?",
+      "sim": 0.6980902850627899,
+      "bin": "medium",
+      "manifest": "src_man_fleet2_001"
+    },
+    {
+      "query": "How do you set up repeat orders behavior to continuously buy and sell wares between two stations?",
+      "sim": 0.8078393638134003,
+      "bin": "medium",
+      "manifest": "src_man_jkninja_station_001"
+    },
+    {
+      "query": "How do assigned mining ships supply a station without charging the manager money?",
+      "sim": 0.6866460740566254,
+      "bin": "medium",
+      "manifest": "src_man_jkninja_station_001"
+    },
+    {
+      "query": "What pilot skill level is required to unlock advanced auto trade versus local auto trade?",
+      "sim": 0.7036600410938263,
+      "bin": "medium",
+      "manifest": "src_man_ruggedgamer_trading_001"
+    },
+    {
+      "query": "How do scrap processors convert raw scrap cubes and ship wrecks into scrap metal?",
+      "sim": 0.6760225594043732,
+      "bin": "medium",
+      "manifest": "src_man_scrappy_guide_001"
+    },
+    {
+      "query": "Why do scrap recyclers consume thousands of energy cells per production cycle?",
+      "sim": 0.6228862106800079,
+      "bin": "medium",
+      "manifest": "src_man_scrappy_guide_001"
+    },
+    {
+      "query": "What are the two confirmed base-game sectors with high concentrations of natural raw scrap?",
+      "sim": 0.8178752362728119,
+      "bin": "medium",
+      "manifest": "src_man_scrappy_guide_001"
+    },
+    {
+      "query": "Detail the full progression from early-game transport trading to building self-sufficient manufacturing loops.",
+      "sim": 0.6026681661605835,
+      "bin": "long",
+      "manifest": "src_man_reddit_001"
+    },
+    {
+      "query": "How do global orders, trade rules, and blacklists protect automated commercial fleets from hostile factions?",
+      "sim": 0.6402182281017303,
+      "bin": "long",
+      "manifest": "src_man_reddit_001"
+    },
+    {
+      "query": "What are the common troubleshooting steps when an automated tug ship fails to deposit scrap at a processor?",
+      "sim": 0.6423086225986481,
+      "bin": "long",
+      "manifest": "src_man_scrappy_guide_001"
+    },
+    {
+      "query": "How do trade ships assigned to a station calculate their trading range based on manager stars?",
+      "sim": 0.7181456983089447,
+      "bin": "long",
+      "manifest": "src_man_ruggedgamer_trading_001"
+    },
+    {
+      "query": "What is the optimal layout and module sequencing when planning a massive self-contained shipyard complex?",
+      "sim": 0.6353290975093842,
+      "bin": "long",
+      "manifest": "src_man_jkninja_station_001"
+    },
+    {
+      "query": "How do reactive fleet assignments respond when a protected commander takes fire versus when enemies enter radar?",
+      "sim": 0.6492634117603302,
+      "bin": "long",
+      "manifest": "src_man_egosoft_orders_001"
+    },
+    {
+      "query": "Explain how the closed-loop scrap recycling economy provides Hull Parts and Claytronics independently of traditional mineral extraction.",
+      "sim": 0.7501831650733948,
+      "bin": "long",
+      "manifest": "src_man_scrappy_guide_001"
+    },
+    {
+      "query": "What are the primary economic bottlenecks that cause universal shipyard stalls in the mid-game?",
+      "sim": 0.6156369745731354,
+      "bin": "long",
+      "manifest": "src_man_economy_primer_001"
+    },
+    {
+      "query": "How do you configure automatic trade fleets to distribute excess refined materials across multiple owned stations?",
+      "sim": 0.7061151266098022,
+      "bin": "long",
+      "manifest": "src_man_jkninja_station_001"
+    },
+    {
+      "query": "Explain the step by step workflow to establish an autonomous scrapping operation in high sunlight systems.",
+      "sim": 0.5125359892845154,
+      "bin": "long",
+      "manifest": "src_man_scrappy_guide_001"
+    }
+  ],
+  "negative_scores": [
+    {
+      "query": "What are the best weapon loadouts for the Terran Syn destroyer in Cradle of Humanity?",
+      "sim": 0.6037880778312683,
+      "type": "dlc"
+    },
+    {
+      "query": "How do you build Computronic Substrate and Silicon Carbide in Sol system?",
+      "sim": 0.5794695913791656,
+      "type": "dlc"
+    },
+    {
+      "query": "What is the optimal trading loop for Segaris Pioneer terraforming projects?",
+      "sim": 0.6964669227600098,
+      "type": "dlc"
+    },
+    {
+      "query": "Where can I buy Split Dragon corvette blueprints in Split Vendetta space?",
+      "sim": 0.49421924352645874,
+      "type": "dlc"
+    },
+    {
+      "query": "How do Boron water distribution networks function in Kingdom End sectors?",
+      "sim": 0.4794797897338867,
+      "type": "dlc"
+    },
+    {
+      "query": "What are the stats and weapon slots of the Boron Ray destroyer?",
+      "sim": 0.5987497866153717,
+      "type": "dlc"
+    },
+    {
+      "query": "How do you capture the Erlking battleship in Tides of Avarice?",
+      "sim": 0.5118180513381958,
+      "type": "dlc"
+    },
+    {
+      "query": "What are the protect sector commands for the Riptide Rakers syndicate in Windfall?",
+      "sim": 0.5466921031475067,
+      "type": "dlc"
+    },
+    {
+      "query": "How do you complete the Timelines mission course for the Xenon H battle?",
+      "sim": 0.484266996383667,
+      "type": "dlc"
+    },
+    {
+      "query": "What are the production materials for Protein Paste and Terran MREs?",
+      "sim": 0.4588891267776489,
+      "type": "dlc"
+    },
+    {
+      "query": "Where is the jump gate connection to Sanctuary of Darkness located?",
+      "sim": 0.5117266476154327,
+      "type": "dlc"
+    },
+    {
+      "query": "How does the Tide mechanic affect solar panel generation in Avarice sectors?",
+      "sim": 0.5993638038635254,
+      "type": "dlc"
+    },
+    {
+      "query": "What is the top travel speed of the Terran Katana corvette?",
+      "sim": 0.5793314278125763,
+      "type": "dlc"
+    },
+    {
+      "query": "Where are the shipyard modules for the Queendom of Boron sold?",
+      "sim": 0.5261295735836029,
+      "type": "dlc"
+    },
+    {
+      "query": "How do you manage Astrid luxury yacht speed boosters?",
+      "sim": 0.4913330674171448,
+      "type": "dlc"
+    },
+    {
+      "query": "What are the exact casino roulette minigame odds on pirate stations?",
+      "sim": 0.49470531940460205,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "How many eggs does an adult Spacefly lay inside a station aquarium module?",
+      "sim": 0.45647358894348145,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "What is the exact formula for crafting security decryption keys from craft benches?",
+      "sim": 0.43274104595184326,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "How do you trigger the hidden developer Easter egg inside the Asteroid Belt anomaly?",
+      "sim": 0.5510154962539673,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "What is the audio frequency waveform of the Khaak hive hive-mind transmission?",
+      "sim": 0.4490705728530884,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "How many credits does a passenger pay for luxury taxi transport missions?",
+      "sim": 0.41033434867858887,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "What is the maximum paint modification inventory capacity in player storage?",
+      "sim": 0.5258973240852356,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "What are the unlock conditions for the hidden spacesuit blaster modifications?",
+      "sim": 0.5073835253715515,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "How do you change the interior ambient lighting color of player ship bridges?",
+      "sim": 0.5020069479942322,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "What is the mathematical drop rate percentage of ancient relic relics from lockboxes?",
+      "sim": 0.4747748374938965,
+      "type": "out_of_corpus"
+    },
+    {
+      "query": "How do I install graphics mods in Skyrim Special Edition?",
+      "sim": 0.5018094480037689,
+      "type": "distractor"
+    },
+    {
+      "query": "What is the best build for a Barbarian in Diablo 4 season 3?",
+      "sim": 0.4538682699203491,
+      "type": "distractor"
+    },
+    {
+      "query": "How to make authentic sourdough bread with a wild yeast starter?",
+      "sim": 0.421204149723053,
+      "type": "distractor"
+    },
+    {
+      "query": "What are the system requirements for running Cyberpunk 2077 with ray tracing?",
+      "sim": 0.48892420530319214,
+      "type": "distractor"
+    },
+    {
+      "query": "Explain the fundamental difference between quantum mechanics and general relativity.",
+      "sim": 0.3083098530769348,
+      "type": "distractor"
+    }
+  ]
+}
