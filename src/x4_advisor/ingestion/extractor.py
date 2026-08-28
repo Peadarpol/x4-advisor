@@ -148,7 +148,7 @@ def process_extracted_directory(
 
     # 2. Parse Wares & Recipes
     wares_path = extracted_dir / "libraries" / "wares.xml"
-    wares, recipes, macro_to_ware_id = adapter.parse_wares_and_recipes(wares_path)
+    wares, recipes, macro_to_ware_id, macro_to_ware_name = adapter.parse_wares_and_recipes(wares_path)
 
     # 3. Parse Factions
     factions_path = extracted_dir / "libraries" / "factions.xml"
@@ -170,7 +170,7 @@ def process_extracted_directory(
     # Gather ship macros
     ships: List[ShipRecord] = []
     for ship_file in extracted_dir.glob("assets/units/**/macros/ship_*.xml"):
-        ship_rec = adapter.parse_ship_macro(ship_file, storage_macros, macro_to_ware_id)
+        ship_rec = adapter.parse_ship_macro(ship_file, storage_macros, macro_to_ware_id, macro_to_ware_name)
         if ship_rec:
             ships.append(ship_rec)
 

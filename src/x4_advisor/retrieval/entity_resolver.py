@@ -104,7 +104,7 @@ class EntityResolver:
         # Ships
         if "ship" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM ships WHERE LOWER(name) = ? OR LOWER(id) = ?",
+                "SELECT id, name FROM ships WHERE LOWER(name) = ? OR LOWER(id) = ? ORDER BY id ASC",
                 (lower_q, lower_q),
             ).fetchall()
             for r_id, r_name in rows:
@@ -113,7 +113,7 @@ class EntityResolver:
         # Wares
         if "ware" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM wares WHERE LOWER(name) = ? OR LOWER(id) = ?",
+                "SELECT id, name FROM wares WHERE LOWER(name) = ? OR LOWER(id) = ? ORDER BY id ASC",
                 (lower_q, lower_q),
             ).fetchall()
             for r_id, r_name in rows:
@@ -122,7 +122,7 @@ class EntityResolver:
         # Sectors
         if "sector" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM sectors WHERE LOWER(name) = ? OR LOWER(id) = ?",
+                "SELECT id, name FROM sectors WHERE LOWER(name) = ? OR LOWER(id) = ? ORDER BY id ASC",
                 (lower_q, lower_q),
             ).fetchall()
             for r_id, r_name in rows:
@@ -131,7 +131,7 @@ class EntityResolver:
         # Factions
         if "faction" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM factions WHERE LOWER(name) = ? OR LOWER(id) = ? OR LOWER(short_name) = ?",
+                "SELECT id, name FROM factions WHERE LOWER(name) = ? OR LOWER(id) = ? OR LOWER(short_name) = ? ORDER BY id ASC",
                 (lower_q, lower_q, lower_q),
             ).fetchall()
             for r_id, r_name in rows:
@@ -148,7 +148,7 @@ class EntityResolver:
         # Ships
         if "ship" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM ships WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\'",
+                "SELECT id, name FROM ships WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\' ORDER BY id ASC",
                 (pattern, pattern),
             ).fetchall()
             for r_id, r_name in rows:
@@ -157,7 +157,7 @@ class EntityResolver:
         # Wares
         if "ware" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM wares WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\'",
+                "SELECT id, name FROM wares WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\' ORDER BY id ASC",
                 (pattern, pattern),
             ).fetchall()
             for r_id, r_name in rows:
@@ -166,7 +166,7 @@ class EntityResolver:
         # Sectors
         if "sector" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM sectors WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\'",
+                "SELECT id, name FROM sectors WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\' ORDER BY id ASC",
                 (pattern, pattern),
             ).fetchall()
             for r_id, r_name in rows:
@@ -175,7 +175,7 @@ class EntityResolver:
         # Factions
         if "faction" in target_types:
             rows = self.conn.execute(
-                "SELECT id, name FROM factions WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\' OR LOWER(short_name) LIKE ? ESCAPE '\\'",
+                "SELECT id, name FROM factions WHERE LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(id) LIKE ? ESCAPE '\\' OR LOWER(short_name) LIKE ? ESCAPE '\\' ORDER BY id ASC",
                 (pattern, pattern, pattern),
             ).fetchall()
             for r_id, r_name in rows:

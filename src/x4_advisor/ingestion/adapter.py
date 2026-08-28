@@ -26,15 +26,16 @@ class NormalizationAdapter:
 
     def parse_wares_and_recipes(
         self, wares_xml_path: Path
-    ) -> Tuple[List[WareRecord], List[ProductionRecipeRecord], Dict[str, str]]:
-        """Parses wares.xml into WareRecords, ProductionRecipeRecords, and a macro_to_ware_id mapping."""
+    ) -> Tuple[List[WareRecord], List[ProductionRecipeRecord], Dict[str, str], Dict[str, str]]:
+        """Parses wares.xml into WareRecords, ProductionRecipeRecords, macro_to_ware_id mapping, and macro_to_ware_name mapping."""
         wares: List[WareRecord] = []
         recipes: List[ProductionRecipeRecord] = []
         macro_to_ware_id: Dict[str, str] = {}
+        macro_to_ware_name: Dict[str, str] = {}
 
         if not wares_xml_path.exists():
             logger.warning(f"Wares XML path '{wares_xml_path}' does not exist.")
-            return wares, recipes, macro_to_ware_id
+            return wares, recipes, macro_to_ware_id, macro_to_ware_name
 
         try:
             tree = ET.parse(str(wares_xml_path))
@@ -83,6 +84,7 @@ class NormalizationAdapter:
                     macro_ref = component_elem.attrib.get("ref")
                     if macro_ref:
                         macro_to_ware_id[macro_ref] = ware_id
+                        macro_to_ware_name[macro_ref] = name
 
                 # Production recipes
                 for prod_elem in ware_elem.findall("production"):
@@ -119,7 +121,7 @@ class NormalizationAdapter:
         except Exception as e:
             logger.error(f"Failed parsing wares XML '{wares_xml_path}': {e}")
 
-        return wares, recipes, macro_to_ware_id
+        return wares, recipes, macro_to_ware_id, macro_to_ware_name
 
     def parse_factions(self, factions_xml_path: Path) -> List[FactionRecord]:
         """Parses factions.xml into FactionRecords."""
@@ -187,6 +189,9 @@ class NormalizationAdapter:
             for dataset_elem in root.findall(".//dataset"):
                 macro_name = dataset_elem.attrib.get("macro")
                 if not macro_name or "sector" not in macro_name.lower():
+                    continue
+
+                if macro_name.startswith("demo_") or "demo" in macro_name.lower():
                     continue
 
                 sector_id = macro_name
@@ -278,6 +283,7 @@ class NormalizationAdapter:
         macro_path: Path,
         storage_macros: Dict[str, float],
         macro_to_ware_id: Dict[str, str],
+        macro_to_ware_name: Optional[Dict[str, str]] = None,
     ) -> Optional[ShipRecord]:
         """Parses a ship macro XML file into a ShipRecord."""
         if not macro_path.exists():
@@ -301,13 +307,15 @@ class NormalizationAdapter:
                 return None
 
             id_elem = props_elem.find("identification")
-            if id_elem is not None:
+            if macro_to_ware_name and macro_id in macro_to_ware_name:
+                name = macro_to_ware_name[macro_id]
+            elif id_elem is not None:
                 raw_name = id_elem.attrib.get("name", macro_id)
                 name = self.text_resolver.resolve(raw_name, default=macro_id)
-                faction_id = id_elem.attrib.get("makerrace")
             else:
                 name = macro_id
-                faction_id = None
+
+            faction_id = id_elem.attrib.get("makerrace") if id_elem is not None else None
 
             # Hull
             hull_elem = props_elem.find("hull")

@@ -30,7 +30,7 @@ def test_adapter_parse_wares_and_recipes(tmp_path: Path):
     resolver = TextResolver()
     adapter = NormalizationAdapter(resolver)
 
-    wares, recipes, macro_map = adapter.parse_wares_and_recipes(wares_file)
+    wares, recipes, macro_map, macro_name_map = adapter.parse_wares_and_recipes(wares_file)
 
     assert len(wares) == 2
     assert wares[0].id == "energycells"

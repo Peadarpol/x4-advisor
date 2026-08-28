@@ -3,12 +3,12 @@
 import logging
 from pathlib import Path
 import sqlite3
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
-from x4_advisor.config import Config, get_config
+if TYPE_CHECKING:
+    from x4_advisor.llm.synthesizer import GroundedSynthesizer
 from x4_advisor.embeddings.ollama_embedder import OllamaEmbedder
 from x4_advisor.llm.client import OllamaClient
-from x4_advisor.llm.synthesizer import GroundedSynthesizer
 from x4_advisor.retrieval.entity_resolver import EntityResolver
 from x4_advisor.retrieval.models import (
     AbstainReason,
@@ -83,7 +83,7 @@ class AdvisorEngine:
             model_name=self.config.model_name or "gemma4:12b",
             keep_alive="10m",
             timeout_router=15.0,
-            timeout_synthesizer=25.0,
+            timeout_synthesizer=45.0,
         )
 
         self.embedder = embedder or OllamaEmbedder(
@@ -110,7 +110,11 @@ class AdvisorEngine:
             )
 
         self.router = router or LLMRouter(client=self.client)
-        self.synthesizer = synthesizer or GroundedSynthesizer(client=self.client)
+        if synthesizer is not None:
+            self.synthesizer = synthesizer
+        else:
+            from x4_advisor.llm.synthesizer import GroundedSynthesizer
+            self.synthesizer = GroundedSynthesizer(client=self.client)
 
     def _verify_database_readiness(self) -> None:
         """Verifies that all 6 core tables exist and are populated with records."""
@@ -247,6 +251,9 @@ class AdvisorEngine:
         # Standard Initial Routing Step
         # ---------------------------------------------------------------------
         route_result = self.router.route(question)
+        structured_result: Optional[Any] = None
+        vector_result: Optional[VectorSearchResult] = None
+        unresolved_filter_err: Optional[UnknownFilterValue] = None
 
         if route_result.route_type == RouteType.ABSTAIN:
             synth_res = self.synthesizer.synthesize(
@@ -391,6 +398,8 @@ class AdvisorEngine:
             vec_call = next((tc for tc in route_result.tool_calls if tc.name == "search_knowledge_base"), None)
             query_text = vec_call.arguments.get("query_text", question) if vec_call else question
             vector_result = self.vector_engine.search(query_text)
+            if vector_result and vector_result.status == "database_not_ready":
+                raise DatabaseNotReadyError(f"Vector database not ready: {vector_result.error_message}")
 
         # ---------------------------------------------------------------------
         # Per-Route Evidence & Abstention Assessment

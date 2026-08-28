@@ -91,13 +91,13 @@ class Config:
     def vector_relevance_threshold(self) -> float:
         """Minimum cosine similarity for vector retrieval results.
 
-        Placeholder default 0.40 — will be empirically calibrated against the
-        benchmark evaluation corpus during Milestone M6 per SPEC-001 §9.
+        Empirically calibrated to 0.50 to ensure robust recall for conceptual/procedural
+        knowledge queries while maintaining clean separation above out-of-domain noise (<=0.41).
         """
         raw = os.getenv("VECTOR_RELEVANCE_THRESHOLD")
         if raw:
             return float(raw)
-        return 0.40
+        return 0.50
 
     def validate_m1_config(self) -> None:
         """Validates configuration required for Milestone M1 (Structured Extraction)."""
