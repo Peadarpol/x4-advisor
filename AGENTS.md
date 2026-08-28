@@ -21,9 +21,8 @@ This file is the working reference for any agent operating in this repository. K
 
 - **Pre-commit gates that actually run** (.pre-commit-config.yaml): check-active-repo (verifies commits land in the correct repo) and a pytest gate (test suite must pass).
 
-## Required Phase 1 Deliverables (TODO)
-- **Retrieval-grounding check**: An automated test verifying that anything the synthesizer claims is "grounded" traces back to real retrieved content, not fabricated.
-  - *Note*: This test does not exist yet. Nothing should be treated as fully gated until it does.
+## Required Phase 1 Deliverables
+- **Retrieval-grounding check**: Automated test suite and 5-class proposition verifier (`tests/unit/test_grounding_taxonomy.py`, `scripts/run_eval_benchmark.py`) verifying that claims are grounded in retrieved evidence units without hallucinations. (DELIVERED in M6/M7).
 
 ## Data Handling -- Non-Negotiable
 - Never commit anything under data/ (raw sources, extracted game data, curated/paraphrased knowledge base content, embeddings, the SQLite database). All gitignored, all local-only, by design.
@@ -34,6 +33,7 @@ This file is the working reference for any agent operating in this repository. K
 See CONTRIBUTING.md for the short version. In brief: architectural changes need an ADR before implementation; behavioral changes need a spec/test update; nothing outside stated scope without discussion first.
 
 ## Current Status
-SPEC-001 (Phase 1) is approved. Milestone M1 (structured game extraction) is DELIVERED (PR #4). Milestone M2 (structured query engine for 4 query templates) is DELIVERED (PR #5). Milestone M3 (unstructured ingestion pipeline) is DELIVERED (PR #6). Milestone M4 (unstructured vector retrieval engine) is DELIVERED (PR #7). Milestone M5 (LLM router + synthesizer engine) is DELIVERED (PR #8). Milestone M6 (retrieval-grounding evaluation harness, 5-class claim taxonomy verifier, 5-fold cross-validation calibration, local model bake-off, and ADR-0005 empirical escalation) is DELIVERED (PR #9). Milestone M7 (Synthesis & Routing Tuning: instrument unconfounding, sentence-localized proposition verifier, grammar-constrained JSON Schema routing ADR-0008, anti-preamble prompt tuning, 5-fold cross-validation calibration, and empirical re-bake-off) is COMPLETE on branch `feat/spec-001-m7-synthesis-routing-tuning`. All 147 unit/integration tests passing (100%). Per ADR-0005 Addendum, no candidate model satisfied both Layer 2 hard gates simultaneously; `gemma4:12b` is retained as the provisional operating default for M8 (CLI Delivery) with empirical gaps and Layer 1 retrieval recall boundaries explicitly documented. Preparing for PR review and merge.
+SPEC-001 (Phase 1) is approved. Milestone M1 (structured game extraction) is DELIVERED (PR #4). Milestone M2 (structured query engine for 4 query templates) is DELIVERED (PR #5). Milestone M3 (unstructured ingestion pipeline) is DELIVERED (PR #6). Milestone M4 (unstructured vector retrieval engine) is DELIVERED (PR #7). Milestone M5 (LLM router + synthesizer engine) is DELIVERED (PR #8). Milestone M6 (retrieval-grounding evaluation harness, 5-class claim taxonomy verifier, 5-fold cross-validation calibration, local model bake-off, and ADR-0005 empirical escalation) is DELIVERED (PR #9). Milestone M7 (Synthesis & Routing Tuning: instrument unconfounding, sentence-localized proposition verifier, grammar-constrained JSON Schema routing ADR-0008, anti-preamble prompt tuning, 5-fold cross-validation calibration, and empirical re-bake-off) is DELIVERED (PR #10). Milestone M8 (CLI Delivery: rich terminal interface, interactive multi-turn entity disambiguation, streaming synthesis, pipeline observability, and offline help) is NEXT.
+
 
 
