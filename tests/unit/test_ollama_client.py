@@ -1,12 +1,15 @@
-"""Unit tests for OllamaClient payload construction, options, timeouts, and error handling."""
+"""Unit tests for OllamaClient payload construction, options, timeouts, error handling, and cancellation."""
 
+import http.client
 import json
+import socket
+import threading
 from unittest.mock import MagicMock, patch
-import urllib.error
 
 import pytest
 
 from x4_advisor.llm.client import (
+    OllamaCancelledError,
     OllamaClient,
     OllamaConnectionError,
     OllamaModelNotFoundError,
@@ -24,19 +27,23 @@ def test_ollama_client_chat_payload() -> None:
         timeout_synthesizer=25.0,
     )
 
-    captured_payloads = []
+    captured_requests = []
 
-    def mock_urlopen(req, timeout):
-        captured_payloads.append((json.loads(req.data.decode("utf-8")), timeout))
-        resp = MagicMock()
-        resp.status = 200
-        resp.read.return_value = json.dumps(
-            {"message": {"role": "assistant", "content": "hello"}}
-        ).encode("utf-8")
-        resp.__enter__.return_value = resp
-        return resp
+    mock_resp = MagicMock()
+    mock_resp.status = 200
+    mock_resp.read.return_value = json.dumps(
+        {"message": {"role": "assistant", "content": "hello"}}
+    ).encode("utf-8")
 
-    with patch("urllib.request.urlopen", side_effect=mock_urlopen):
+    mock_conn = MagicMock()
+    mock_conn.getresponse.return_value = mock_resp
+
+    def mock_request(method, path, body, headers):
+        captured_requests.append((method, path, json.loads(body.decode("utf-8")), headers))
+
+    mock_conn.request.side_effect = mock_request
+
+    with patch("http.client.HTTPConnection", return_value=mock_conn):
         messages = [{"role": "user", "content": "What is Cerberus?"}]
         tools = [{"type": "function", "function": {"name": "test_tool"}}]
         options = {"num_ctx": 8192, "temperature": 0.0, "seed": 42}
@@ -44,10 +51,11 @@ def test_ollama_client_chat_payload() -> None:
         resp = client.chat(messages=messages, tools=tools, options=options, timeout=5.0)
 
     assert resp["message"]["content"] == "hello"
-    assert len(captured_payloads) == 1
-    payload, timeout_used = captured_payloads[0]
+    assert len(captured_requests) == 1
+    method, path, payload, headers = captured_requests[0]
 
-    # Verify top-level parameters
+    assert method == "POST"
+    assert path == "/api/chat"
     assert payload["model"] == "gemma4:12b"
     assert payload["stream"] is False
     assert payload["think"] is False
@@ -55,28 +63,32 @@ def test_ollama_client_chat_payload() -> None:
     assert payload["messages"] == messages
     assert payload["tools"] == tools
     assert payload["options"] == {"num_ctx": 8192, "temperature": 0.0, "seed": 42}
-    assert timeout_used == 5.0
 
 
 def test_ollama_client_generate_payload() -> None:
     """Tests /api/generate payload structure."""
     client = OllamaClient(model_name="gemma4:12b")
 
-    captured_payloads = []
+    captured_requests = []
 
-    def mock_urlopen(req, timeout):
-        captured_payloads.append(json.loads(req.data.decode("utf-8")))
-        resp = MagicMock()
-        resp.status = 200
-        resp.read.return_value = json.dumps({"response": "generated text"}).encode("utf-8")
-        resp.__enter__.return_value = resp
-        return resp
+    mock_resp = MagicMock()
+    mock_resp.status = 200
+    mock_resp.read.return_value = json.dumps({"response": "generated text"}).encode("utf-8")
 
-    with patch("urllib.request.urlopen", side_effect=mock_urlopen):
+    mock_conn = MagicMock()
+    mock_conn.getresponse.return_value = mock_resp
+
+    def mock_request(method, path, body, headers):
+        captured_requests.append((method, path, json.loads(body.decode("utf-8")), headers))
+
+    mock_conn.request.side_effect = mock_request
+
+    with patch("http.client.HTTPConnection", return_value=mock_conn):
         client.generate(prompt="Test prompt", options={"num_predict": 100})
 
-    assert len(captured_payloads) == 1
-    payload = captured_payloads[0]
+    assert len(captured_requests) == 1
+    method, path, payload, headers = captured_requests[0]
+    assert path == "/api/generate"
     assert payload["model"] == "gemma4:12b"
     assert payload["prompt"] == "Test prompt"
     assert payload["stream"] is False
@@ -88,15 +100,14 @@ def test_ollama_client_model_not_found() -> None:
     """Tests that HTTP 404 maps to OllamaModelNotFoundError."""
     client = OllamaClient(model_name="missing_model:latest")
 
-    http_err = urllib.error.HTTPError(
-        url="http://localhost:11434/api/chat",
-        code=404,
-        msg="Not Found",
-        hdrs={},
-        fp=None,
-    )
+    mock_resp = MagicMock()
+    mock_resp.status = 404
+    mock_resp.read.return_value = b'{"error":"model not found"}'
 
-    with patch("urllib.request.urlopen", side_effect=http_err):
+    mock_conn = MagicMock()
+    mock_conn.getresponse.return_value = mock_resp
+
+    with patch("http.client.HTTPConnection", return_value=mock_conn):
         with pytest.raises(OllamaModelNotFoundError, match="was not found by Ollama runtime"):
             client.chat(messages=[{"role": "user", "content": "hi"}])
 
@@ -105,19 +116,50 @@ def test_ollama_client_connection_error() -> None:
     """Tests that network error maps to OllamaConnectionError."""
     client = OllamaClient()
 
-    with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("Connection refused")):
+    mock_conn = MagicMock()
+    mock_conn.request.side_effect = ConnectionRefusedError("Connection refused")
+
+    with patch("http.client.HTTPConnection", return_value=mock_conn):
         with pytest.raises(OllamaConnectionError, match="Failed to connect to Ollama endpoint"):
             client.chat(messages=[{"role": "user", "content": "hi"}])
 
 
 def test_ollama_client_timeout_error() -> None:
     """Tests that socket timeout maps to OllamaTimeoutError."""
-    import socket
     client = OllamaClient(timeout_router=2.0)
 
-    with patch("urllib.request.urlopen", side_effect=socket.timeout("Socket timed out")):
+    mock_conn = MagicMock()
+    mock_conn.request.side_effect = socket.timeout("Socket timed out")
+
+    with patch("http.client.HTTPConnection", return_value=mock_conn):
         with pytest.raises(OllamaTimeoutError, match="timed out"):
             client.chat(messages=[{"role": "user", "content": "hi"}], timeout=2.0)
+
+
+def test_ollama_client_cancellation_seam() -> None:
+    """Tests that triggering cancel_event raises OllamaCancelledError and shuts down socket."""
+    client = OllamaClient()
+
+    cancel_ev = threading.Event()
+    cancel_ev.set()
+
+    mock_sock = MagicMock()
+    mock_conn = MagicMock()
+    mock_conn.sock = mock_sock
+
+    # Make request block slightly to allow cancel loop to fire
+    def slow_request(*args, **kwargs):
+        import time
+        time.sleep(0.1)
+
+    mock_conn.request.side_effect = slow_request
+
+    with patch("http.client.HTTPConnection", return_value=mock_conn):
+        with pytest.raises(OllamaCancelledError, match="Request cancelled by caller"):
+            client.chat(messages=[{"role": "user", "content": "hi"}], cancel_event=cancel_ev)
+
+    mock_sock.shutdown.assert_called_once()
+    mock_conn.close.assert_called()
 
 
 def test_ollama_client_warmup() -> None:

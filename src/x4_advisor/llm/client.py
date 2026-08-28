@@ -1,12 +1,13 @@
 """Ollama HTTP client for router classification and grounded synthesis."""
 
+import http.client
 import json
 import logging
 import socket
+import threading
 import time
 from typing import Any, Dict, List, Optional
-import urllib.error
-import urllib.request
+import urllib.parse
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,32 @@ class OllamaTimeoutError(RuntimeError):
     """Raised when an Ollama API call exceeds its wall-clock timeout budget."""
 
     pass
+
+
+class OllamaCancelledError(RuntimeError):
+    """Raised when an in-flight Ollama generation request is cancelled by caller."""
+
+    pass
+
+
+def _cancel_socket(conn: Optional[http.client.HTTPConnection]) -> None:
+    """Closes socket and connection safely on cancellation."""
+    if conn is None:
+        return
+    try:
+        sock = getattr(conn, "sock", None)
+        if sock is not None:
+            try:
+                sock.shutdown(socket.SHUT_RDWR)
+            except (OSError, AttributeError):
+                pass
+            try:
+                conn.sock = None
+            except (OSError, AttributeError):
+                pass
+        conn.close()
+    except (OSError, AttributeError):
+        pass
 
 
 class OllamaClient:
@@ -66,6 +93,7 @@ class OllamaClient:
         format: Optional[Dict[str, Any] | str] = None,
         options: Optional[Dict[str, Any]] = None,
         timeout: Optional[float] = None,
+        cancel_event: Optional[threading.Event] = None,
     ) -> Dict[str, Any]:
         """Executes a chat completion call with optional tool definitions or structured format."""
         url = f"{self.endpoint}/api/chat"
@@ -87,7 +115,7 @@ class OllamaClient:
             payload["options"] = options
 
         timeout_sec = timeout if timeout is not None else self.timeout_synthesizer
-        res = self._post_json(url, payload, timeout_sec)
+        res = self._post_json(url, payload, timeout_sec, cancel_event=cancel_event)
         self._record_telemetry("chat", res)
         return res
 
@@ -97,6 +125,7 @@ class OllamaClient:
         format: Optional[Dict[str, Any] | str] = None,
         options: Optional[Dict[str, Any]] = None,
         timeout: Optional[float] = None,
+        cancel_event: Optional[threading.Event] = None,
     ) -> Dict[str, Any]:
         """Executes a text generation call via /api/generate."""
         url = f"{self.endpoint}/api/generate"
@@ -115,7 +144,7 @@ class OllamaClient:
             payload["options"] = options
 
         timeout_sec = timeout if timeout is not None else self.timeout_synthesizer
-        res = self._post_json(url, payload, timeout_sec)
+        res = self._post_json(url, payload, timeout_sec, cancel_event=cancel_event)
         self._record_telemetry("generate", res)
         return res
 
@@ -144,6 +173,8 @@ class OllamaClient:
                 timeout=60.0,
             )
             logger.info("LLM model '%s' successfully warmed up.", self.model_name)
+        except OllamaCancelledError:
+            raise
         except Exception as e:
             logger.warning("LLM warmup call encountered an error: %s", e)
 
@@ -152,6 +183,8 @@ class OllamaClient:
             try:
                 embedder.embed_text("warmup")
                 logger.info("Embedding model successfully warmed up.")
+            except OllamaCancelledError:
+                raise
             except Exception as e:
                 logger.warning("Embedding warmup call encountered an error: %s", e)
 
@@ -160,61 +193,85 @@ class OllamaClient:
         url: str,
         payload: Dict[str, Any],
         timeout_sec: float,
+        cancel_event: Optional[threading.Event] = None,
     ) -> Dict[str, Any]:
-        """Sends POST request to Ollama and parses JSON response with strict wall-clock timeout."""
-        data_bytes = json.dumps(payload).encode("utf-8")
-        req = urllib.request.Request(
-            url=url,
-            data=data_bytes,
-            headers={"Content-Type": "application/json", "User-Agent": "x4-advisor"},
-            method="POST",
-        )
+        """Sends POST request to Ollama using http.client on worker thread with cancel & timeout protection."""
+        parsed = urllib.parse.urlparse(url)
+        host = parsed.hostname or "localhost"
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        path = parsed.path
+        if parsed.query:
+            path = f"{path}?{parsed.query}"
 
-        start_time = time.time()
-        try:
-            with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
-                elapsed = time.time() - start_time
-                if elapsed > timeout_sec:
-                    raise OllamaTimeoutError(
-                        f"Ollama call to '{url}' exceeded wall-clock timeout of {timeout_sec:.1f}s (took {elapsed:.2f}s)."
+        if parsed.scheme == "https":
+            conn = http.client.HTTPSConnection(host, port, timeout=timeout_sec)
+        else:
+            conn = http.client.HTTPConnection(host, port, timeout=timeout_sec)
+
+        done_event = threading.Event()
+        result_box: List[Dict[str, Any]] = []
+        error_box: List[BaseException] = []
+
+        def worker() -> None:
+            try:
+                data_bytes = json.dumps(payload).encode("utf-8")
+                conn.request(
+                    "POST",
+                    path,
+                    body=data_bytes,
+                    headers={"Content-Type": "application/json", "User-Agent": "x4-advisor"},
+                )
+                resp = conn.getresponse()
+                status = resp.status
+                body = resp.read().decode("utf-8", errors="replace")
+                if status == 404:
+                    raise OllamaModelNotFoundError(
+                        f"Model '{self.model_name}' was not found by Ollama runtime: {body}"
                     )
-
-                if resp.status != 200:
-                    body = resp.read().decode("utf-8", errors="replace")
+                if status != 200:
                     raise OllamaConnectionError(
-                        f"Ollama API returned HTTP {resp.status}: {body}"
+                        f"Ollama API returned HTTP {status}: {body}"
                     )
+                try:
+                    parsed_json = json.loads(body)
+                    result_box.append(parsed_json)
+                except json.JSONDecodeError as jde:
+                    raise OllamaConnectionError(
+                        f"Malformed JSON payload returned from Ollama '{url}': {jde}"
+                    ) from jde
+            except BaseException as exc:
+                error_box.append(exc)
+            finally:
+                done_event.set()
 
-                res_body = json.loads(resp.read().decode("utf-8"))
-                return res_body
+        t = threading.Thread(target=worker, daemon=True)
+        t.start()
 
-        except urllib.error.HTTPError as e:
-            body = e.read().decode("utf-8", errors="replace") if hasattr(e, "read") else str(e)
-            if e.code == 404:
-                raise OllamaModelNotFoundError(
-                    f"Model '{self.model_name}' was not found by Ollama runtime: {body}"
-                ) from e
-            raise OllamaConnectionError(
-                f"HTTP {e.code} error from Ollama endpoint: {body}"
-            ) from e
+        start_time = time.monotonic()
+        try:
+            while not done_event.wait(0.05):
+                if cancel_event and cancel_event.is_set():
+                    raise OllamaCancelledError("Request cancelled by caller")
+                if time.monotonic() - start_time > timeout_sec:
+                    raise OllamaTimeoutError(
+                        f"Ollama call to '{url}' exceeded wall-clock timeout of {timeout_sec:.1f}s."
+                    )
+        except BaseException:
+            _cancel_socket(conn)
+            raise
 
-        except (socket.timeout, TimeoutError) as e:
-            elapsed = time.time() - start_time
-            raise OllamaTimeoutError(
-                f"Ollama call to '{url}' timed out after {elapsed:.2f}s (budget: {timeout_sec:.1f}s): {e}"
-            ) from e
-
-        except urllib.error.URLError as e:
-            if isinstance(e.reason, (socket.timeout, TimeoutError)):
-                elapsed = time.time() - start_time
+        if error_box:
+            err = error_box[0]
+            if isinstance(err, (OllamaModelNotFoundError, OllamaTimeoutError, OllamaCancelledError, OllamaConnectionError)):
+                raise err
+            if isinstance(err, (socket.timeout, TimeoutError)):
                 raise OllamaTimeoutError(
-                    f"Ollama call to '{url}' timed out after {elapsed:.2f}s (budget: {timeout_sec:.1f}s): {e}"
-                ) from e
-            raise OllamaConnectionError(
-                f"Failed to connect to Ollama endpoint at '{self.endpoint}': {e}"
-            ) from e
+                    f"Ollama call to '{url}' timed out after {time.monotonic() - start_time:.2f}s (budget: {timeout_sec:.1f}s): {err}"
+                ) from err
+            if isinstance(err, (ConnectionRefusedError, http.client.RemoteDisconnected, OSError)):
+                raise OllamaConnectionError(
+                    f"Failed to connect to Ollama endpoint at '{self.endpoint}': {err}"
+                ) from err
+            raise OllamaConnectionError(f"Unexpected error communicating with Ollama: {err}") from err
 
-        except json.JSONDecodeError as e:
-            raise OllamaConnectionError(
-                f"Malformed JSON payload returned from Ollama '{url}': {e}"
-            ) from e
+        return result_box[0]

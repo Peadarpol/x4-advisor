@@ -4,7 +4,7 @@ import logging
 import secrets
 from typing import Any, Dict, List, Optional
 
-from x4_advisor.llm.client import OllamaClient
+from x4_advisor.llm.client import OllamaCancelledError, OllamaClient
 from x4_advisor.retrieval.models import (
     AbstainReason,
     CategoryListResult,
@@ -160,6 +160,8 @@ class GroundedSynthesizer:
                 notes=active_notes,
                 raw_response=resp,
             )
+        except OllamaCancelledError:
+            raise
         except Exception as e:
             logger.error("Synthesis generation failed: %s", e)
             return SynthesisResult(

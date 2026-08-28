@@ -2,6 +2,8 @@
 
 import sqlite3
 
+EXPECTED_SCHEMA_VERSION: str = "1.1.0"
+
 DDL_STATEMENTS = [
     """
     CREATE TABLE IF NOT EXISTS dataset_metadata (

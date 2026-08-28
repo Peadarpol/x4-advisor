@@ -218,3 +218,16 @@ def test_router_malformed_tool_call_retry_fallback() -> None:
 
     assert res.route_type == RouteType.ABSTAIN
     assert res.abstain_reason == AbstainReason.MALFORMED_TOOL_CALL
+
+
+def test_router_cancellation_propagates() -> None:
+    """Tests that OllamaCancelledError during routing propagates immediately rather than falling back to ABSTAIN."""
+    from x4_advisor.llm.client import OllamaCancelledError
+
+    mock_client = MagicMock()
+    mock_client.chat.side_effect = OllamaCancelledError("Request cancelled by caller")
+
+    router = LLMRouter(client=mock_client)
+    with pytest.raises(OllamaCancelledError, match="Request cancelled by caller"):
+        router.route("Any question")
+
