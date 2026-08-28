@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 import logging
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -104,6 +105,10 @@ def detect_game_version(
         candidate_paths.append(install_path / "version.dat")
     if extracted_dir:
         candidate_paths.append(extracted_dir / "version.dat")
+
+    env_install = os.getenv("X4_INSTALL_PATH")
+    if env_install:
+        candidate_paths.append(Path(env_install) / "version.dat")
 
     for v_path in candidate_paths:
         if v_path.exists():

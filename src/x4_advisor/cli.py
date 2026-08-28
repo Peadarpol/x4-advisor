@@ -94,7 +94,10 @@ def format_advisor_output(
 
                     source = chunk.source_attribution or "Community Guide"
                     score_str = f"(similarity: {chunk.similarity_score:.3f})" if chunk.similarity_score else ""
-                    output.append(f"  * {bold}{title}{reset} — {source} {score_str}")
+                    if source and source.strip().lower() not in title.lower():
+                        output.append(f"  * {bold}{title}{reset} — {source} {score_str}")
+                    else:
+                        output.append(f"  * {bold}{title}{reset} {score_str}")
                 else:
                     output.append(f"  * Chunk ID: {cid}")
 
