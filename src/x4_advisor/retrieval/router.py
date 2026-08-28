@@ -1,5 +1,6 @@
-"""LLM-based tool-calling router classifying queries into structured, vector, hybrid, or abstain routes."""
+"""LLM-based grammar-constrained JSON schema router classifying queries into structured, vector, hybrid, or abstain routes."""
 
+import json
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -14,190 +15,60 @@ from x4_advisor.retrieval.structured_query import (
     ALLOWED_SHIP_METRICS,
     ALLOWED_WARE_METRICS,
 )
+from x4_advisor.retrieval.vocabularies import (
+    DynamicVocabularies,
+    build_router_json_schema,
+)
 
 logger = logging.getLogger(__name__)
 
-# Valid production methods in base game (strictly base-game; no DLC methods)
-VALID_PRODUCTION_METHODS = {"default", "teladi", "recycling", "xenon", "processing", "paranid"}
+ROUTER_SYSTEM_PROMPT = """You are the query routing assistant for X4 Advisor, an expert assistant for base-game X4: Foundations.
+Analyze the user's question and select the exact route type and retrieval parameters.
 
-# Valid resource identifiers
-VALID_RESOURCES = {"ore", "silicon", "ice", "hydrogen", "helium", "methane", "nividium"}
+Routing Guidelines:
+1. STRUCTURED: Exact stats, ship specs, ware prices, sector yields, multi-tier production chains, or category listings.
+   - For single entity lookup (e.g. "What is the cargo capacity of Cerberus Vanguard?"): operation='lookup_entity', query_name='Cerberus Vanguard'.
+   - For sector stats (e.g. "sunlight rating of Grand Exchange I"): operation='lookup_entity', query_name='Grand Exchange I'.
+   - For comparisons/rankings (e.g. "fastest S-class scouts", "top cargo"): operation='compare_entities', metric='speed', ship_class='ship_s', sort_desc=true.
+   - For production recipes/materials (e.g. "inputs for Claytronics"): operation='production_chain', query_name='Claytronics', production_method='default'.
+   - For category listings (e.g. "all Argon ships", "Medium ships", "refined wares"): operation='list_category'. DO NOT put filter keywords into query_name! Instead use the dedicated fields:
+     * When filtering by faction (e.g. Argon, Teladi): faction='argon' (query_name='none').
+     * When filtering by ship size (e.g. Medium, S, L, XL): ship_class='ship_m' (query_name='none').
+     * When filtering by role/purpose (e.g. combat, trade, mine): purpose='fight' (query_name='none').
+     * When filtering by ware category (e.g. refined, hightech): category='refined' (query_name='none').
+   - For sector resource yields: operation='sector_yield', resource_id='ore'.
+2. VECTOR: Strategic guidance, gameplay mechanics, tactical advice, pilot automation, or explanatory 'why' questions.
+   - Set vector.query_text to a concise semantic search query.
+3. BOTH (Hybrid): Questions combining exact database specs/recipes WITH strategic advice or economic context.
+4. ABSTAIN: Non-X4 questions (NO_EVIDENCE / OUT_OF_SCOPE_OTHER) or questions concerning DLC expansions (Terran, Split, Boron, Avarice, Timelines -> OUT_OF_SCOPE_DLC).
 
-# Valid ship classes and purposes
-VALID_SHIP_CLASSES = {"s", "m", "l", "xl", "ship_s", "ship_m", "ship_l", "ship_xl", "spacesuit"}
-VALID_PURPOSES = {"fight", "trade", "mine", "build", "auxiliary", "salvage"}
-
-# Router tool definitions in Ollama function calling format
-ROUTER_TOOLS: List[Dict[str, Any]] = [
-    {
-        "type": "function",
-        "function": {
-            "name": "query_structured_data",
-            "description": (
-                "Query the structured SQLite game database for exact factual statistics, "
-                "ship specifications, ware prices, sector resource yields, multi-tier production chains, "
-                "or category listings in base-game X4: Foundations."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query_type": {
-                        "type": "string",
-                        "enum": [
-                            "fact_lookup",
-                            "ranking",
-                            "sector_yield",
-                            "production_chain",
-                            "category_listing",
-                        ],
-                        "description": (
-                            "Template type: 'fact_lookup' (T1 single entity stats), 'ranking' (T2 ship/ware comparison), "
-                            "'sector_yield' (T2 resource yields by sector), 'production_chain' (T3 recipe tree & materials), "
-                            "or 'category_listing' (T4 filter ships by faction/class/purpose or wares by category)."
-                        ),
-                    },
-                    "entity_name": {
-                        "type": "string",
-                        "description": "Natural language name of ship, ware, sector, or faction (for fact_lookup or production_chain target).",
-                    },
-                    "metric": {
-                        "type": "string",
-                        "enum": [
-                            "cargo_capacity",
-                            "speed",
-                            "hull",
-                            "shields",
-                            "weapon_slots",
-                            "turret_slots",
-                            "shield_slots",
-                            "min_price",
-                            "avg_price",
-                            "max_price",
-                            "volume",
-                        ],
-                        "description": "Statistical metric to rank by (e.g. 'cargo_capacity', 'speed', 'min_price').",
-                    },
-                    "ship_class": {
-                        "type": "string",
-                        "enum": ["s", "m", "l", "xl", "ship_s", "ship_m", "ship_l", "ship_xl", "spacesuit"],
-                        "description": "Ship size class filter (e.g. 'l', 'm', 's', 'xl').",
-                    },
-                    "purpose": {
-                        "type": "string",
-                        "enum": ["fight", "trade", "mine", "build", "auxiliary", "salvage"],
-                        "description": "Ship role/purpose filter.",
-                    },
-                    "category": {
-                        "type": "string",
-                        "description": "Ware category filter (e.g. 'minerals', 'energy', 'food', 'weapons', 'hightech').",
-                    },
-                    "resource_id": {
-                        "type": "string",
-                        "enum": ["ore", "silicon", "ice", "hydrogen", "helium", "methane", "nividium"],
-                        "description": "Resource type for sector yield ranking.",
-                    },
-                    "production_method": {
-                        "type": "string",
-                        "enum": ["default", "teladi", "recycling", "xenon", "processing", "paranid"],
-                        "description": "Production recipe method for T3 production chain calculation.",
-                    },
-                    "sort_desc": {
-                        "type": "boolean",
-                        "description": "True for descending (highest/fastest/largest), False for ascending (lowest/slowest/smallest). Default is True.",
-                    },
-                    "limit": {
-                        "type": "integer",
-                        "description": "Maximum number of rows to return (default 5 for rankings, 50 for listings).",
-                    },
-                    "faction": {
-                        "type": "string",
-                        "description": "Faction name or ID for category listing filter (e.g. 'argon', 'teladi', 'paranid', 'antigone').",
-                    },
-                },
-                "required": ["query_type"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "search_knowledge_base",
-            "description": (
-                "Search the curated unstructured knowledge base for tactical advice, heuristics, "
-                "gameplay mechanics, strategy explanations, loadout advice, or 'why' context."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query_text": {
-                        "type": "string",
-                        "description": "Semantic search query for vector retrieval.",
-                    }
-                },
-                "required": ["query_text"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "abstain",
-            "description": (
-                "Explicitly decline to answer if the question concerns out-of-scope DLC expansions "
-                "(e.g. Cradle of Humanity / Terran, Split Vendetta, Tides of Avarice, Kingdom End, Timelines) "
-                "or non-X4 content."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "reason": {
-                        "type": "string",
-                        "enum": ["out_of_scope_dlc", "out_of_scope_other"],
-                        "description": "Reason for abstaining.",
-                    },
-                    "explanation": {
-                        "type": "string",
-                        "description": "Optional brief explanation of why the question is out of scope.",
-                    },
-                },
-                "required": ["reason"],
-            },
-        },
-    },
-]
-
-ROUTER_SYSTEM_PROMPT = """You are the query routing assistant for X4 Advisor, an expert assistant for the base game of X4: Foundations.
-Your task is to classify the user's question and select the appropriate tool(s) to retrieve evidence.
-
-Tool Selection Rules:
-1. Use 'query_structured_data' for exact statistics, ship specs, comparisons, production recipes, raw materials, sector resources, or category lists.
-2. Use 'search_knowledge_base' for strategic advice, gameplay heuristics, tactics, or explanatory 'why' questions.
-3. Call BOTH 'query_structured_data' and 'search_knowledge_base' for hybrid questions requiring both exact data and strategic explanations (e.g. "What does Hull Parts production require, and why is it strategically important?").
-4. Call 'abstain' with reason 'out_of_scope_dlc' if the question asks about DLC factions (Terran, Segaris, Split, Boron, Riptide) or DLC-exclusive ships/content.
-5. If you cannot determine any matching tool, do not guess parameters.
+Set unused fields to 'none' or '' as specified by the schema.
 """
 
 
 class LLMRouter:
-    """Classifies user questions into structured, vector, hybrid, or abstain routes using Ollama tool-calling."""
+    """Classifies user questions into structured, vector, hybrid, or abstain routes using grammar-constrained JSON schema decoding."""
 
     def __init__(
         self,
         client: OllamaClient,
+        vocab: Optional[DynamicVocabularies] = None,
     ) -> None:
         self.client = client
+        self.vocab = vocab or DynamicVocabularies()
+        self.schema = build_router_json_schema(self.vocab)
 
     def route(self, question: str) -> RouterResult:
-        """Determines the routing decision for a given user question."""
+        """Determines the routing decision for a given user question using grammar-constrained decoding."""
         messages: List[Dict[str, Any]] = [
             {"role": "system", "content": ROUTER_SYSTEM_PROMPT},
             {"role": "user", "content": question},
         ]
 
-        # Call Ollama with deterministic settings and 8192 context window
+        # Call Ollama with deterministic settings, 8192 context window, and strict JSON format schema
         raw_resp = self.client.chat(
             messages=messages,
-            tools=ROUTER_TOOLS,
+            format=self.schema,
             options={"num_ctx": 8192, "temperature": 0.0, "seed": 42},
             timeout=self.client.timeout_router,
         )
@@ -207,20 +78,20 @@ class LLMRouter:
             return result
 
         # Retry once with error feedback
-        logger.info("Router tool call validation failed: '%s'. Retrying once...", error_msg)
+        logger.info("Router schema validation failed: '%s'. Retrying once...", error_msg)
         retry_messages = list(messages)
-        retry_messages.append({"role": "assistant", "content": str(raw_resp.get("message", {}))})
+        retry_messages.append({"role": "assistant", "content": str(raw_resp.get("message", {}).get("content", ""))})
         retry_messages.append(
             {
                 "role": "user",
-                "content": f"The previous tool call was invalid: {error_msg}. Please correct the tool call or call 'abstain'.",
+                "content": f"The previous classification was invalid: {error_msg}. Please correct the JSON output.",
             }
         )
 
         try:
             retry_resp = self.client.chat(
                 messages=retry_messages,
-                tools=ROUTER_TOOLS,
+                format=self.schema,
                 options={"num_ctx": 8192, "temperature": 0.0, "seed": 42},
                 timeout=self.client.timeout_router,
             )
@@ -244,19 +115,19 @@ class LLMRouter:
         previous_raw_response: Optional[Dict[str, Any]],
         error_msg: str,
     ) -> RouterResult:
-        """Retries routing by feeding execution error (e.g. UnknownFilterValue) back to LLM."""
+        """Retries routing by feeding execution error back to LLM."""
         messages: List[Dict[str, Any]] = [
             {"role": "system", "content": ROUTER_SYSTEM_PROMPT},
             {"role": "user", "content": question},
         ]
         if previous_raw_response:
-            messages.append({"role": "assistant", "content": str(previous_raw_response.get("message", {}))})
+            messages.append({"role": "assistant", "content": str(previous_raw_response.get("message", {}).get("content", ""))})
         messages.append(
             {
                 "role": "user",
                 "content": (
-                    f"The previous structured query failed with an unknown filter value: {error_msg}. "
-                    f"Please correct the tool call parameters using only the valid values or call 'abstain'."
+                    f"The previous structured query failed: {error_msg}. "
+                    f"Please correct the JSON parameters using valid values or set route_type='ABSTAIN'."
                 ),
             }
         )
@@ -264,7 +135,7 @@ class LLMRouter:
         try:
             retry_resp = self.client.chat(
                 messages=messages,
-                tools=ROUTER_TOOLS,
+                format=self.schema,
                 options={"num_ctx": 8192, "temperature": 0.0, "seed": 42},
                 timeout=self.client.timeout_router,
             )
@@ -283,23 +154,11 @@ class LLMRouter:
         )
 
     def _parse_and_validate(self, response: Dict[str, Any]) -> Tuple[RouterResult, bool, str]:
-        """Parses tool calls from Ollama response and validates parameters."""
+        """Parses decoded JSON object from Ollama content and constructs normalized RouterResult."""
         message = response.get("message", {})
-        tool_calls_raw = message.get("tool_calls", [])
+        content = message.get("content", "")
 
-        if not tool_calls_raw:
-            # Check if model responded in content indicating refusal or inability
-            content = message.get("content", "").strip()
-            if "dlc" in content.lower() or "terran" in content.lower() or "split" in content.lower():
-                return (
-                    RouterResult(
-                        route_type=RouteType.ABSTAIN,
-                        abstain_reason=AbstainReason.OUT_OF_SCOPE_DLC,
-                        raw_response=response,
-                    ),
-                    True,
-                    "",
-                )
+        if not content or not content.strip():
             return (
                 RouterResult(
                     route_type=RouteType.ABSTAIN,
@@ -307,101 +166,92 @@ class LLMRouter:
                     raw_response=response,
                 ),
                 False,
-                "No tool calls emitted by the model.",
+                "Empty content received from model.",
             )
 
+        try:
+            payload = json.loads(content)
+        except Exception as e:
+            return (
+                RouterResult(
+                    route_type=RouteType.ABSTAIN,
+                    abstain_reason=AbstainReason.MALFORMED_TOOL_CALL,
+                    raw_response=response,
+                ),
+                False,
+                f"Malformed JSON content: {e}",
+            )
+
+        route_type_str = payload.get("route_type", "ABSTAIN")
+        struct_block = payload.get("structured", {})
+        vector_block = payload.get("vector", {})
+        abstain_reason_str = payload.get("abstain_reason", "NONE")
+
         parsed_calls: List[ToolCall] = []
-        has_structured = False
-        has_vector = False
-        has_abstain = False
-        abstain_reason: Optional[AbstainReason] = None
 
-        for tc in tool_calls_raw:
-            func = tc.get("function", {})
-            name = func.get("name", "")
-            args = func.get("arguments", {})
-
-            if isinstance(args, str):
-                import json
-                try:
-                    args = json.loads(args)
-                except Exception:
-                    return (
-                        RouterResult(route_type=RouteType.ABSTAIN, raw_response=response),
-                        False,
-                        f"Malformed JSON arguments in tool call '{name}'.",
-                    )
-
-            if not isinstance(args, dict):
-                return (
-                    RouterResult(route_type=RouteType.ABSTAIN, raw_response=response),
-                    False,
-                    f"Arguments for tool '{name}' must be an object dictionary.",
-                )
-
-            # Validate tool by name
-            if name == "query_structured_data":
-                val_err = self._validate_structured_args(args)
-                if val_err:
-                    return (
-                        RouterResult(route_type=RouteType.ABSTAIN, raw_response=response),
-                        False,
-                        val_err,
-                    )
-                has_structured = True
-                parsed_calls.append(ToolCall(name=name, arguments=args))
-
-            elif name == "search_knowledge_base":
-                query_text = args.get("query_text", "")
-                if not query_text or not str(query_text).strip():
-                    return (
-                        RouterResult(route_type=RouteType.ABSTAIN, raw_response=response),
-                        False,
-                        "search_knowledge_base requires non-empty 'query_text'.",
-                    )
-                has_vector = True
-                parsed_calls.append(ToolCall(name=name, arguments=args))
-
-            elif name == "abstain":
-                reason_str = args.get("reason", "out_of_scope_other")
-                if reason_str == "out_of_scope_dlc":
-                    abstain_reason = AbstainReason.OUT_OF_SCOPE_DLC
-                else:
-                    abstain_reason = AbstainReason.OUT_OF_SCOPE_OTHER
-                has_abstain = True
-                parsed_calls.append(ToolCall(name=name, arguments=args))
-
+        if route_type_str == "ABSTAIN":
+            if abstain_reason_str == "OUT_OF_SCOPE_DLC":
+                reason = AbstainReason.OUT_OF_SCOPE_DLC
+            elif abstain_reason_str == "NO_EVIDENCE":
+                reason = AbstainReason.NO_EVIDENCE
             else:
-                return (
-                    RouterResult(route_type=RouteType.ABSTAIN, raw_response=response),
-                    False,
-                    f"Unknown tool call name '{name}'.",
-                )
+                reason = AbstainReason.OUT_OF_SCOPE_OTHER
 
-        if has_abstain:
+            parsed_calls.append(
+                ToolCall(
+                    name="abstain",
+                    arguments={"reason": reason.value.lower()},
+                )
+            )
             return (
                 RouterResult(
                     route_type=RouteType.ABSTAIN,
                     tool_calls=parsed_calls,
-                    abstain_reason=abstain_reason or AbstainReason.OUT_OF_SCOPE_OTHER,
+                    abstain_reason=reason,
                     raw_response=response,
                 ),
                 True,
                 "",
             )
 
-        if has_structured and has_vector:
-            route_type = RouteType.BOTH
-        elif has_structured:
-            route_type = RouteType.STRUCTURED
-        elif has_vector:
-            route_type = RouteType.VECTOR
+        if route_type_str in ("STRUCTURED", "BOTH"):
+            struct_call, val_err = self._translate_structured_block(struct_block)
+            if val_err:
+                return (
+                    RouterResult(route_type=RouteType.ABSTAIN, raw_response=response),
+                    False,
+                    val_err,
+                )
+            if struct_call:
+                parsed_calls.append(struct_call)
+
+        if route_type_str in ("VECTOR", "BOTH"):
+            qtext = vector_block.get("query_text", "")
+            if not qtext or not qtext.strip():
+                return (
+                    RouterResult(route_type=RouteType.ABSTAIN, raw_response=response),
+                    False,
+                    "VECTOR route requires non-empty vector.query_text.",
+                )
+            parsed_calls.append(
+                ToolCall(
+                    name="search_knowledge_base",
+                    arguments={"query_text": qtext.strip()},
+                )
+            )
+
+        if route_type_str == "BOTH":
+            rt = RouteType.BOTH
+        elif route_type_str == "STRUCTURED":
+            rt = RouteType.STRUCTURED
+        elif route_type_str == "VECTOR":
+            rt = RouteType.VECTOR
         else:
-            route_type = RouteType.ABSTAIN
+            rt = RouteType.ABSTAIN
 
         return (
             RouterResult(
-                route_type=route_type,
+                route_type=rt,
                 tool_calls=parsed_calls,
                 abstain_reason=None,
                 raw_response=response,
@@ -410,42 +260,89 @@ class LLMRouter:
             "",
         )
 
-    def _validate_structured_args(self, args: Dict[str, Any]) -> Optional[str]:
-        """Validates parameters and cross-parameter coherence for query_structured_data."""
-        qtype = args.get("query_type")
-        if not qtype:
-            return "query_structured_data missing required 'query_type'."
+    def _translate_structured_block(self, block: Dict[str, Any]) -> Tuple[Optional[ToolCall], Optional[str]]:
+        """Translates grammar schema structured block into canonical query_structured_data ToolCall."""
+        op = block.get("operation", "none")
+        if op == "none":
+            return None, "Structured operation cannot be 'none' for structured route."
 
-        valid_qtypes = {"fact_lookup", "ranking", "sector_yield", "production_chain", "category_listing"}
-        if qtype not in valid_qtypes:
-            return f"Invalid query_type '{qtype}'. Allowed: {valid_qtypes}."
+        op_map = {
+            "lookup_entity": "fact_lookup",
+            "compare_entities": "ranking",
+            "production_chain": "production_chain",
+            "list_category": "category_listing",
+            "sector_yield": "sector_yield",
+        }
+        query_type = op_map.get(op)
+        if not query_type:
+            return None, f"Unknown structured operation '{op}'."
 
+        args: Dict[str, Any] = {"query_type": query_type}
+
+        # Map entity name
+        qname = block.get("query_name", "")
+        if qname and qname != "none":
+            args["entity_name"] = qname
+
+        # Map metric
+        metric = block.get("metric", "none")
+        if metric and metric != "none":
+            args["metric"] = metric
+
+        # Map ship class
+        sclass = block.get("ship_class", "none")
+        if sclass and sclass != "none":
+            args["ship_class"] = sclass
+
+        # Map purpose
+        purp = block.get("purpose", "none")
+        if purp and purp != "none":
+            args["purpose"] = purp
+
+        # Map category
+        cat = block.get("category", "none")
+        if cat and cat != "none":
+            args["category"] = cat
+
+        # Map faction
+        fac = block.get("faction", "")
+        if fac and fac != "none":
+            args["faction"] = fac
+
+        # Map resource
+        res = block.get("resource_id", "none")
+        if res and res != "none":
+            args["resource_id"] = res
+
+        # Map production method
+        pm = block.get("production_method", "none")
+        if pm and pm != "none":
+            args["production_method"] = pm
+
+        if "sort_desc" in block:
+            args["sort_desc"] = block["sort_desc"]
+
+        if "limit" in block and block["limit"] is not None:
+            args["limit"] = block["limit"]
+
+        # Validate coherence
+        coherence_err = self._validate_coherence(args)
+        if coherence_err:
+            return None, coherence_err
+
+        return ToolCall(name="query_structured_data", arguments=args), None
+
+    def _validate_coherence(self, args: Dict[str, Any]) -> Optional[str]:
+        """Validates cross-parameter coherence."""
         metric = args.get("metric")
         if metric:
-            lower_m = str(metric).strip().lower()
-            if lower_m not in ALLOWED_SHIP_METRICS and lower_m not in ALLOWED_WARE_METRICS:
-                return f"Invalid metric '{metric}'. Allowed ship metrics: {list(ALLOWED_SHIP_METRICS.keys())}, ware metrics: {list(ALLOWED_WARE_METRICS.keys())}."
-
-            # Cross-parameter coherence validation
-            if lower_m in ALLOWED_SHIP_METRICS and args.get("category"):
+            if metric in ALLOWED_SHIP_METRICS and args.get("category"):
                 return f"Incoherent parameters: ship metric '{metric}' cannot be combined with ware category '{args.get('category')}'."
-            if lower_m in ALLOWED_WARE_METRICS and (args.get("ship_class") or args.get("purpose")):
+            if metric in ALLOWED_WARE_METRICS and (args.get("ship_class") or args.get("purpose")):
                 return f"Incoherent parameters: ware metric '{metric}' cannot be combined with ship_class or purpose."
-
-        ship_class = args.get("ship_class")
-        if ship_class and str(ship_class).strip().lower() not in VALID_SHIP_CLASSES:
-            return f"Invalid ship_class '{ship_class}'. Allowed: {VALID_SHIP_CLASSES}."
-
-        purpose = args.get("purpose")
-        if purpose and str(purpose).strip().lower() not in VALID_PURPOSES:
-            return f"Invalid purpose '{purpose}'. Allowed: {VALID_PURPOSES}."
-
-        resource_id = args.get("resource_id")
-        if resource_id and str(resource_id).strip().lower() not in VALID_RESOURCES:
-            return f"Invalid resource_id '{resource_id}'. Allowed: {VALID_RESOURCES}."
-
-        prod_method = args.get("production_method")
-        if prod_method and str(prod_method).strip().lower() not in VALID_PRODUCTION_METHODS:
-            return f"Invalid production_method '{prod_method}'. Base-game allowed: {VALID_PRODUCTION_METHODS}."
-
         return None
+
+    def _validate_structured_args(self, args: Dict[str, Any]) -> Optional[str]:
+        """Validates structured tool arguments for integrity checking."""
+        return self._validate_coherence(args)
+

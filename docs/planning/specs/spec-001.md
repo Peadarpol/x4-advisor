@@ -16,8 +16,9 @@ Matches the charter's stated build order, broken into checkable increments rathe
 - **M3 — Unstructured ingestion pipeline:** source registry → claim extraction → paraphrase-from-claims → claim verification → chunk → embed, populating `knowledge_chunks`.
 - **M4 — Vector retrieval:** query embedding + sqlite-vec similarity search against the M3 corpus.
 - **M5 — Router + synthesis:** LLM tool-calling router selects structured/vector/both/abstain; synthesizer generates answers from retrieved evidence.
-- **M6 — Grounding (Layers 1–3):** deterministic runtime checks, offline evaluation gate, selective runtime verification (`solution-design.md` §7).
-- **M7 — Chat interface:** Streamlit, single-turn, ties M1–M6 together into what a user actually interacts with.
+- **M6 — Grounding (Layers 1–3) & Model Bake-Off:** deterministic runtime checks, offline evaluation gate, empirical bake-off, and Layer 2 qualification.
+- **M7 — Synthesis & Routing Tuning:** targeted schema-constrained routing, pre-router 3-state entity scoping, and bounded-claims synthesis tuning to determine if candidate models clear Layer 2 gates prior to CLI delivery.
+- **M8 — Chat interface & CLI delivery:** single-turn interface tying M1–M7 together into what a user actually interacts with (renumbered from M7).
 
 Each milestone should be independently testable before the next starts — this is the practical meaning of the charter's "each layer working end-to-end before the next is added."
 
@@ -50,9 +51,9 @@ The four templates from `scope-boundary.md` §1.2 (T1 fact lookup, T2 comparison
 
 **Entity name resolution** (`structured_query.py`): the router extracts natural-language entity names from questions, but records are keyed by internal ID (§2), not display name. Resolution order: case-insensitive exact match against `display_name`, then partial/substring match if no exact match exists. An ambiguous partial match (more than one candidate) is a distinct, explicit outcome — not a silent pick of the first or best-scoring result (§8).
 
-## 5. Router and tool boundary (M5 requirement)
+## 5. Router and tool boundary (M5 requirement, updated in M7 per ADR-0008)
 
-- Router uses native tool-calling (Ollama), not free-text classification, per `solution-design.md` §5
+- Router uses grammar-constrained structured JSON Schema decoding via Ollama's `format` parameter (per ADR-0008, updated from M5 native tool-calling) to enforce strict schema adherence and eliminate parameter incoherence.
 - **Ollama API calls must explicitly set `"think": false`** for both router and synthesizer calls. Gemma 4 (and other hybrid-thinking models) default to producing a visible chain-of-thought reasoning trace via Ollama, which adds unnecessary latency for this task's straightforward classification/synthesis workload. Confirmed via direct testing against `gemma4:12b` on the target hardware: omitting `think: false` produces a multi-step reasoning trace before the answer; setting it explicitly returns a clean, fast response (~0.4s total duration in testing) with no thinking trace. This must be set explicitly in every API call — do not rely on a default, and do not rely on `ollama run`'s interactive CLI behavior, which is for human use only and does not reflect what the application code should do.
 - Four outcomes: structured query, vector search, both, abstain
 - **Retrieved content is data, never instructions** — a source containing something resembling an instruction to the model must not be able to alter routing, tool permissions, or output policy. This is a structural separation in how retrieved content is placed in the prompt, not a hope that curation alone prevents it.
@@ -92,6 +93,7 @@ Three distinct reasons, surfaced differently to the user, not collapsed into one
 | Entity name matches more than one record ambiguously | Ask the user which one they meant, and accept their answer — settle it, don't guess, per explicit preference over silently picking a candidate to keep the interaction brief. This is the one deliberate, narrow exception to single-turn (`scope-boundary.md` §1.4) — scoped to resolving this one parameter, not general conversation memory. |
 | Vector search returns only low-similarity results | Treated as no-evidence abstention (§7), not passed to the synthesizer as if relevant |
 | Router emits a malformed/invalid tool call | Rejected, retried once, then abstain — never silently ignored |
+| Synthesizer output truncated or malformed (`MALFORMED_OUTPUT`) | Case fails, classified as `MALFORMED_OUTPUT` with zero free grounding pass — rejected and logged, never presented to the user |
 | A save-related or DLC entity appears (Phase 2 territory, noted for consistency) | Never silently omitted from a count — "9 of 10 supported, 1 unrecognized," not a quietly wrong total |
 
 ## 9. Configuration and startup contract
@@ -168,5 +170,37 @@ This addendum records implementation and governance resolutions finalized during
 - **Ship-Ware Deduplication Discovery (`_dedup_ship_wares`)**: Ingested game data indexes ships in both `ships` (macros with combat/flight stats) and `wares` (shipyard trade items). To prevent every ship name lookup from triggering false `AmbiguousEntityResult` collisions between a ship and its own ware record, `EntityResolver._dedup_ship_wares` deduplicates matching pairs directly to the `ship` entity.
 - **Hang-Protection vs. SLA Enforcement Decoupling**: Socket timeouts (`timeout_router = 15.0s`, `timeout_synthesizer = 25.0s / 30.0s`) operate strictly as hang-protection circuit breakers, not SLA enforcement mechanisms (see INC-0001). The single-path SLA (<20.0s) and hybrid SLA (<30.0s) are asserted in integration tests.
 - **Case 5 Vector Latency Baseline**: On `gemma4:12b` (Q4_K_M), heavy generative vector-only strategy synthesis took 28.71s (exceeding the <20.0s target). This finding is documented, tracked as `xfail` in `tests/integration/test_m5_live_ollama.py`, and forms the primary latency baseline for comparison against `granite4.1:8b` during the M6 model bake-off.
-- **Forward Threading Note for M7**: SQLite connections default to `check_same_thread=True`. Streamlit multi-threading in M7 should manage connection isolation appropriately.
-- **Dataset Staleness Check Deferral**: Version validation via `dataset_metadata` is deferred to Milestone M7.
+- **Forward Threading Note for M8**: SQLite connections default to `check_same_thread=True`. Threading in M8 CLI/interface should manage connection isolation appropriately.
+- **Dataset Staleness Check Deferral**: Version validation via `dataset_metadata` is deferred to Milestone M8.
+
+---
+
+## 15. Milestone M7 Implementation Addendum (Synthesis & Routing Tuning)
+
+This addendum formalizes the insertion of **Milestone M7 (Synthesis & Routing Tuning)** between M6 and CLI delivery (renumbered to M8):
+
+- **Rationale for Insertion & Renumbering**:
+  - The Milestone M6 empirical bake-off established that none of the three candidate models (`gemma4:12b`, `granite4.1:8b`, `qwen3:14b`) satisfied both mandatory Layer 2 Grounding Gates simultaneously ($\text{UCR} \le 3.0\%$, Contradictions $= 0$).
+  - Per ADR-0005, `gemma4:12b` was adopted as a provisional operating choice, but model choice may change as a result of targeted tuning.
+  - Delivering the user-facing CLI (M8) must occur on a settled, gate-qualified model foundation rather than a provisional default carrying known empirical gaps.
+
+- **Tightly Bounded M7 Tuning Scope**:
+  1. **JSON-Schema-Constrained Router Output**: Enforces strict JSON schema via Ollama's `format` parameter (`additionalProperties: false`, enum routes, validated tool parameter shapes) to eliminate Granite's 77.8% routing accuracy and syntax errors.
+  2. **Pre-Router Three-State Entity/Scope Resolution (`BASE` / `DLC` / `UNKNOWN`)**: Resolves entity ontology against the structured database prior to router classification, preventing Qwen's 50% over-abstention caused by hallucinating base-game entities (*Grand Exchange I*) as DLC content.
+  3. **Bounded-Claims Structured Synthesis Output**: Replaces open-ended conversational prose with a JSON-schema-constrained claims array (max $N$ claims, explicit citation IDs, hard token budget, temperature 0) for `gemma4:12b`, directly targeting its 7.9% UCR (framing/connective statements) and ~28.6s multi-chunk generation latency.
+
+- **Explicitly Deferred Items**:
+  - LLMLingua-2 context compression, MiniCheck neural verification, and speculative decoding are deferred. While they optimize latency and verification depth, they do not determine which model clears Layer 2 gates. They may be revisited in Phase 2 if real M8 usage demonstrates a need.
+
+- **M7 Exit Criteria & Formal Layer 2 Qualification Gates**:
+  - Re-qualify the grounding verifier against structured JSON claims ($\ge 48/50$ accuracy, $10/10$ CONTRADICTED recall).
+  - Instrument prompt tokens, generation tokens, and prompt-eval vs generation time.
+  - Re-run the full 3-model bake-off against the formalized **Layer 2 Qualification Gate Contract**:
+    1. **Unsupported Claim Rate (UCR) $\le 3.0\%$** (*Mandatory Hard Gate* — zero tolerance for ungrounded framing/speculation).
+    2. **Zero Contradictions Invariant $= 0$** (*Mandatory Hard Gate* — zero contradicted claims across all 36 evaluation cases).
+    3. **Abstention Accuracy $= 100.0\%$** (*Mandatory Hard Gate* — zero false-positive refusals on base-game entities like *Grand Exchange I* and 100% true-positive abstention on out-of-scope DLC queries).
+    4. **Structured Precision $\ge 90.0\%$** (*Quality Gate* — valid parameterized SQL arguments).
+    5. **Routing Accuracy $\ge 90.0\%$** (*Quality Gate* — correct route type classification).
+    6. **Overall Ground Truth Pass Rate $\ge 85.0\%$** (*Quality Gate* — end-to-end case success).
+    7. **Latency SLA**: Single-path $< 20.0\text{s}$, Hybrid $< 30.0\text{s}$.
+  - If a model clears all mandatory hard gates and quality gates, ADR-0005 will be formally marked **Accepted (Gate Satisfied)** for M8 CLI delivery. If no model clears all gates, the empirical gap will be recorded with full transparency.

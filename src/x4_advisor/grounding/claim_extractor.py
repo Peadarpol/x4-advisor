@@ -35,7 +35,12 @@ SYSTEM_TEMPLATE_PATTERNS = [
 STRUCTURAL_LEADIN_PATTERNS = [
     r"^the following (?:ships|wares|sectors|items|prices|inputs|recipes) (?:are|belong to|have|listed)",
     r"^here is the (?:complete )?list of",
-    r"^based on the provided (?:data|evidence|structured data), (?:the following|there are)",
+    r"^based on the provided (?:data|evidence|structured data),? (?:the following|there are|the ships|the wares|the inputs)",
+    r"^to produce .*?,? (?:the following|the required|the primary|these|inputs)",
+    r"^these \d+ entries represent",
+    r"^each of these entries is listed",
+    r"^the wares in the .*? category are as follows",
+    r"^an internal error occurred",
     r"^\*\*(?:large|medium|small|extra large) ships.*?\*\*$",
     r"^\*\*orders:?\*\*$",
     r"^\*\*default behaviours:?\*\*$",

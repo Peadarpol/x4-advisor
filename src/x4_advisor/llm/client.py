@@ -53,15 +53,21 @@ class OllamaClient:
         self.keep_alive = keep_alive
         self.timeout_router = timeout_router
         self.timeout_synthesizer = timeout_synthesizer
+        self.call_history: List[Dict[str, Any]] = []
+
+    def clear_history(self) -> None:
+        """Clears accumulated call telemetry history."""
+        self.call_history.clear()
 
     def chat(
         self,
         messages: List[Dict[str, Any]],
         tools: Optional[List[Dict[str, Any]]] = None,
+        format: Optional[Dict[str, Any] | str] = None,
         options: Optional[Dict[str, Any]] = None,
         timeout: Optional[float] = None,
     ) -> Dict[str, Any]:
-        """Executes a chat completion call with optional tool definitions."""
+        """Executes a chat completion call with optional tool definitions or structured format."""
         url = f"{self.endpoint}/api/chat"
         payload: Dict[str, Any] = {
             "model": self.model_name,
@@ -74,15 +80,21 @@ class OllamaClient:
         if tools:
             payload["tools"] = tools
 
+        if format:
+            payload["format"] = format
+
         if options:
             payload["options"] = options
 
         timeout_sec = timeout if timeout is not None else self.timeout_synthesizer
-        return self._post_json(url, payload, timeout_sec)
+        res = self._post_json(url, payload, timeout_sec)
+        self._record_telemetry("chat", res)
+        return res
 
     def generate(
         self,
         prompt: str,
+        format: Optional[Dict[str, Any] | str] = None,
         options: Optional[Dict[str, Any]] = None,
         timeout: Optional[float] = None,
     ) -> Dict[str, Any]:
@@ -96,11 +108,31 @@ class OllamaClient:
             "keep_alive": self.keep_alive,
         }
 
+        if format:
+            payload["format"] = format
+
         if options:
             payload["options"] = options
 
         timeout_sec = timeout if timeout is not None else self.timeout_synthesizer
-        return self._post_json(url, payload, timeout_sec)
+        res = self._post_json(url, payload, timeout_sec)
+        self._record_telemetry("generate", res)
+        return res
+
+    def _record_telemetry(self, call_type: str, response: Dict[str, Any]) -> None:
+        """Records token counts and execution durations from Ollama response."""
+        telemetry = {
+            "call_type": call_type,
+            "model": response.get("model", self.model_name),
+            "prompt_eval_count": response.get("prompt_eval_count", 0),
+            "eval_count": response.get("eval_count", 0),
+            "prompt_eval_duration_ms": round(response.get("prompt_eval_duration", 0) / 1_000_000, 2),
+            "eval_duration_ms": round(response.get("eval_duration", 0) / 1_000_000, 2),
+            "total_duration_ms": round(response.get("total_duration", 0) / 1_000_000, 2),
+            "load_duration_ms": round(response.get("load_duration", 0) / 1_000_000, 2),
+            "done_reason": response.get("done_reason", "stop"),
+        }
+        self.call_history.append(telemetry)
 
     def warmup(self, embedder: Optional[Any] = None) -> None:
         """Pre-loads weights for both the LLM and Embedding models into VRAM."""
