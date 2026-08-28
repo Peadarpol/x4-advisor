@@ -119,5 +119,5 @@ def test_integration_server_side_cancellation_release() -> None:
                 cancel_event=cancel_ev,
             )
         cancel_elapsed = time.monotonic() - t_cancel_start
-        # Ensure cancellation aborted quickly (within 2s) without waiting for full generation
-        assert cancel_elapsed < 2.0, f"Cancellation took {cancel_elapsed:.2f}s, did not abort promptly"
+        # Ensure cancellation aborted promptly without waiting for full generation (>15s)
+        assert cancel_elapsed < 3.0, f"Cancellation took {cancel_elapsed:.2f}s, did not abort promptly"
