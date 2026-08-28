@@ -1,0 +1,197 @@
+{
+  "gemma4:12b": {
+    "n_folds": 5,
+    "total_cases": 36,
+    "pass_rate_mean": 0.775,
+    "pass_rate_std": 0.131,
+    "pass_rate_ci_95": [
+      0.6124,
+      0.9376
+    ],
+    "ucr_mean": 0.1242,
+    "ucr_std": 0.1075,
+    "ucr_ci_95": [
+      -0.0093,
+      0.2577
+    ],
+    "route_accuracy_mean": 0.9429,
+    "route_accuracy_std": 0.1278,
+    "route_accuracy_ci_95": [
+      0.7842,
+      1.1015
+    ],
+    "total_contradictions": 5,
+    "fold_details": [
+      {
+        "fold": 1,
+        "n_cases": 8,
+        "pass_rate": 0.875,
+        "ucr": 0.129,
+        "route_accuracy": 1.0,
+        "contradictions": 2
+      },
+      {
+        "fold": 2,
+        "n_cases": 7,
+        "pass_rate": 0.8571,
+        "ucr": 0.2812,
+        "route_accuracy": 1.0,
+        "contradictions": 1
+      },
+      {
+        "fold": 3,
+        "n_cases": 7,
+        "pass_rate": 0.8571,
+        "ucr": 0.1622,
+        "route_accuracy": 1.0,
+        "contradictions": 0
+      },
+      {
+        "fold": 4,
+        "n_cases": 7,
+        "pass_rate": 0.5714,
+        "ucr": 0.0161,
+        "route_accuracy": 0.7143,
+        "contradictions": 0
+      },
+      {
+        "fold": 5,
+        "n_cases": 7,
+        "pass_rate": 0.7143,
+        "ucr": 0.0323,
+        "route_accuracy": 1.0,
+        "contradictions": 2
+      }
+    ]
+  },
+  "granite4.1:8b": {
+    "n_folds": 5,
+    "total_cases": 36,
+    "pass_rate_mean": 0.5643,
+    "pass_rate_std": 0.2374,
+    "pass_rate_ci_95": [
+      0.2695,
+      0.8591
+    ],
+    "ucr_mean": 0.2558,
+    "ucr_std": 0.0567,
+    "ucr_ci_95": [
+      0.1854,
+      0.3263
+    ],
+    "route_accuracy_mean": 0.9714,
+    "route_accuracy_std": 0.0639,
+    "route_accuracy_ci_95": [
+      0.8921,
+      1.0507
+    ],
+    "total_contradictions": 6,
+    "fold_details": [
+      {
+        "fold": 1,
+        "n_cases": 8,
+        "pass_rate": 0.25,
+        "ucr": 0.2692,
+        "route_accuracy": 1.0,
+        "contradictions": 3
+      },
+      {
+        "fold": 2,
+        "n_cases": 7,
+        "pass_rate": 0.5714,
+        "ucr": 0.2759,
+        "route_accuracy": 1.0,
+        "contradictions": 1
+      },
+      {
+        "fold": 3,
+        "n_cases": 7,
+        "pass_rate": 0.8571,
+        "ucr": 0.3333,
+        "route_accuracy": 1.0,
+        "contradictions": 0
+      },
+      {
+        "fold": 4,
+        "n_cases": 7,
+        "pass_rate": 0.7143,
+        "ucr": 0.2083,
+        "route_accuracy": 0.8571,
+        "contradictions": 0
+      },
+      {
+        "fold": 5,
+        "n_cases": 7,
+        "pass_rate": 0.4286,
+        "ucr": 0.1923,
+        "route_accuracy": 1.0,
+        "contradictions": 2
+      }
+    ]
+  },
+  "qwen3:14b": {
+    "n_folds": 5,
+    "total_cases": 36,
+    "pass_rate_mean": 0.7536,
+    "pass_rate_std": 0.1013,
+    "pass_rate_ci_95": [
+      0.6278,
+      0.8794
+    ],
+    "ucr_mean": 0.2423,
+    "ucr_std": 0.1389,
+    "ucr_ci_95": [
+      0.0699,
+      0.4148
+    ],
+    "route_accuracy_mean": 0.9429,
+    "route_accuracy_std": 0.0782,
+    "route_accuracy_ci_95": [
+      0.8457,
+      1.04
+    ],
+    "total_contradictions": 2,
+    "fold_details": [
+      {
+        "fold": 1,
+        "n_cases": 8,
+        "pass_rate": 0.625,
+        "ucr": 0.3571,
+        "route_accuracy": 1.0,
+        "contradictions": 1
+      },
+      {
+        "fold": 2,
+        "n_cases": 7,
+        "pass_rate": 0.7143,
+        "ucr": 0.4118,
+        "route_accuracy": 1.0,
+        "contradictions": 1
+      },
+      {
+        "fold": 3,
+        "n_cases": 7,
+        "pass_rate": 0.8571,
+        "ucr": 0.1094,
+        "route_accuracy": 1.0,
+        "contradictions": 0
+      },
+      {
+        "fold": 4,
+        "n_cases": 7,
+        "pass_rate": 0.8571,
+        "ucr": 0.2222,
+        "route_accuracy": 0.8571,
+        "contradictions": 0
+      },
+      {
+        "fold": 5,
+        "n_cases": 7,
+        "pass_rate": 0.7143,
+        "ucr": 0.1111,
+        "route_accuracy": 0.8571,
+        "contradictions": 0
+      }
+    ]
+  }
+}

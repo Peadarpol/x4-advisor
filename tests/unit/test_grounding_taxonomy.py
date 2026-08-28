@@ -17,11 +17,11 @@ def labeled_claims_data():
 
 
 def test_grounding_verifier_qualification(labeled_claims_data):
-    """Evaluates GroundingVerifier accuracy against 50 hand-classified real model propositions.
+    """Evaluates GroundingVerifier accuracy against hand-classified real model propositions.
 
     Pass criteria:
-    - Overall accuracy >= 48 / 50 (96.0%)
-    - CONTRADICTED recall == 10 / 10 (100.0%)
+    - Overall accuracy >= 96.0%
+    - CONTRADICTED recall == 100.0%
     """
     verifier = GroundingVerifier()
     correct = 0
@@ -36,12 +36,18 @@ def test_grounding_verifier_qualification(labeled_claims_data):
         expected_class = item["expected_class"]
         expected_fact = [item["expected_fact"]] if "expected_fact" in item else None
         prohibited = item.get("prohibited_claims")
+        structured_data = item.get("evidence_structured")
+        vector_chunks = item.get("evidence_chunks")
+        retrieval_outcome = item.get("retrieval_outcome")
 
         # Run verification
         report = verifier.verify_answer(
             answer_text=text,
+            structured_data=structured_data,
+            vector_chunks=vector_chunks,
             expected_facts=expected_fact,
             prohibited_claims=prohibited,
+            retrieval_outcome=retrieval_outcome,
         )
 
         assert len(report.claims) >= 1
@@ -62,7 +68,7 @@ def test_grounding_verifier_qualification(labeled_claims_data):
     print(f"CONTRADICTED Recall: {contra_correct}/{contra_total} (100%)")
 
     assert contra_correct == contra_total, f"CONTRADICTED recall must be 100%, got {contra_correct}/{contra_total}"
-    assert correct >= 48, f"Overall accuracy must be >= 96% (48/50), got {correct}/{total} ({accuracy:.1%})"
+    assert accuracy >= 0.960, f"Overall accuracy must be >= 96.0%, got {correct}/{total} ({accuracy:.1%})"
 
 
 def test_poisoned_answer_rejection():

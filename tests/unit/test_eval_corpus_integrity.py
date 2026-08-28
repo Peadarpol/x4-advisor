@@ -106,3 +106,23 @@ def test_eval_corpus_structured_facts_match_db(eval_corpus_data, db_conn):
         "SELECT output_amount, production_time FROM production_recipes WHERE ware_id = 'hullparts' AND method = 'default'"
     ).fetchone()
     assert hp_recipe == (294, 900.0)
+
+
+def test_eval_corpus_tool_calls_conform_to_router_schema(eval_corpus_data):
+    """Asserts that all expected_tool_calls in eval_corpus.json conform to the router schema."""
+    from x4_advisor.retrieval.router import LLMRouter
+
+    router = LLMRouter.__new__(LLMRouter)
+    for case in eval_corpus_data:
+        case_id = case["case_id"]
+        for tool_call in case.get("expected_tool_calls", []):
+            name = tool_call.get("name")
+            args = tool_call.get("arguments", {})
+            assert name in ("query_structured_data", "search_knowledge_base", "abstain"), f"Case {case_id}: unknown tool {name}"
+            if name == "query_structured_data":
+                val_err = router._validate_structured_args(args)
+                assert val_err is None, f"Case {case_id}: structured args {args} failed validation: {val_err}"
+            elif name == "search_knowledge_base":
+                assert "query_text" in args and str(args["query_text"]).strip(), f"Case {case_id}: invalid search query_text"
+            elif name == "abstain":
+                assert args.get("reason") in ("out_of_scope_dlc", "out_of_scope_other", "no_evidence"), f"Case {case_id}: invalid abstain reason"

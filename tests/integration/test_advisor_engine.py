@@ -1,5 +1,6 @@
 """Integration tests for AdvisorEngine coordinating routing, retrieval, disambiguation, and synthesis."""
 
+import json
 from pathlib import Path
 import sqlite3
 from unittest.mock import MagicMock
@@ -122,23 +123,18 @@ def test_advisor_engine_database_not_ready_raises() -> None:
 def test_advisor_engine_end_to_end_t1_structured_flow(test_db_conn: sqlite3.Connection) -> None:
     """Tests end-to-end T1 fact lookup flow with mocked client."""
     mock_client = MagicMock()
-    # 1. Router tool call response
-    router_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "fact_lookup",
-                            "entity_name": "Cerberus Vanguard",
-                        },
-                    }
-                }
-            ],
-        }
+    # 1. Router JSON schema response
+    router_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "lookup_entity",
+            "query_name": "Cerberus Vanguard",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
     }
+    router_resp = {"message": {"role": "assistant", "content": json.dumps(router_payload)}}
+
     # 2. Synthesizer chat response
     synth_resp = {
         "message": {
@@ -158,7 +154,6 @@ def test_advisor_engine_end_to_end_t1_structured_flow(test_db_conn: sqlite3.Conn
 
 def test_advisor_engine_ambiguous_entity_and_resumption(test_db_conn: sqlite3.Connection) -> None:
     """Tests returning candidate choices on ambiguous entity match and resuming with user choice."""
-    # Insert second Cerberus variant to trigger ambiguity
     test_db_conn.execute(
         "INSERT INTO ships (id, name, class, hull, shields, cargo_capacity, speed, purpose, faction_id) "
         "VALUES ('ship_arg_m_frigate_01_b', 'Cerberus Sentinel', 'ship_m', 24000, 5200, 900, 150, 'fight', 'argon')"
@@ -166,24 +161,16 @@ def test_advisor_engine_ambiguous_entity_and_resumption(test_db_conn: sqlite3.Co
     test_db_conn.commit()
 
     mock_client = MagicMock()
-    # 1. Router routes to Cerberus fact lookup
-    router_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "fact_lookup",
-                            "entity_name": "Cerberus",
-                        },
-                    }
-                }
-            ],
-        }
+    router_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "lookup_entity",
+            "query_name": "Cerberus",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
     }
-    # 2. Synthesizer resumes after entity selection
+    router_resp = {"message": {"role": "assistant", "content": json.dumps(router_payload)}}
     synth_resp = {
         "message": {
             "content": "The Cerberus Sentinel has 900 m³ cargo capacity."
@@ -214,22 +201,16 @@ def test_advisor_engine_ambiguous_entity_and_resumption(test_db_conn: sqlite3.Co
 def test_advisor_engine_t4_category_listing_ware_redirection(test_db_conn: sqlite3.Connection) -> None:
     """Tests that T4 category listing redirects ware name 'ore' to category 'minerals'."""
     mock_client = MagicMock()
-    router_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "category_listing",
-                            "category": "ore",
-                        },
-                    }
-                }
-            ],
-        }
+    router_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "list_category",
+            "category": "ore",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
     }
+    router_resp = {"message": {"role": "assistant", "content": json.dumps(router_payload)}}
     synth_resp = {"message": {"content": "Ore is in the minerals category."}}
     mock_client.chat.side_effect = [router_resp, synth_resp]
 
@@ -244,19 +225,13 @@ def test_advisor_engine_t4_category_listing_ware_redirection(test_db_conn: sqlit
 def test_advisor_engine_dlc_abstention(test_db_conn: sqlite3.Connection) -> None:
     """Tests abstaining when router flags out_of_scope_dlc."""
     mock_client = MagicMock()
-    router_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "abstain",
-                        "arguments": {"reason": "out_of_scope_dlc"},
-                    }
-                }
-            ],
-        }
+    router_payload = {
+        "route_type": "ABSTAIN",
+        "structured": {"operation": "none"},
+        "vector": {"query_text": ""},
+        "abstain_reason": "OUT_OF_SCOPE_DLC",
     }
+    router_resp = {"message": {"role": "assistant", "content": json.dumps(router_payload)}}
     mock_client.chat.return_value = router_resp
 
     engine = AdvisorEngine(conn=test_db_conn, client=mock_client, config=Config(validate=False))
@@ -271,14 +246,11 @@ def test_advisor_engine_dlc_abstention(test_db_conn: sqlite3.Connection) -> None
 def test_advisor_engine_shared_connection_lifecycle(test_db_conn: sqlite3.Connection) -> None:
     """Tests that sub-engines do not close the shared connection, and AdvisorEngine closes it properly."""
     engine = AdvisorEngine(conn=test_db_conn, client=MagicMock(), config=Config(validate=False))
-    # Sub-engines have _close_conn_on_exit = False
     assert engine.structured_engine._close_conn_on_exit is False
     assert engine.vector_engine._close_conn_on_exit is False
     assert engine._close_conn_on_exit is False
 
-    # Close should not close externally-passed connection
     engine.close()
-    # Connection is still open and usable
     cursor = test_db_conn.cursor()
     assert cursor.execute("SELECT 1").fetchone()[0] == 1
 
@@ -287,46 +259,35 @@ def test_advisor_engine_catches_unknown_filter_value_and_retries(test_db_conn: s
     """Confirms AdvisorEngine catches UnknownFilterValue and feeds valid values into router retry path."""
     mock_client = MagicMock()
     # First router call: invalid ware category 'unobtainium'
-    invalid_router_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "category_listing",
-                            "category": "unobtainium",
-                        },
-                    }
-                }
-            ],
-        }
+    first_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "list_category",
+            "category": "unobtainium",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
     }
     # Second router call (retry): corrected category 'minerals'
-    corrected_router_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "category_listing",
-                            "category": "minerals",
-                        },
-                    }
-                }
-            ],
-        }
+    second_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "list_category",
+            "category": "minerals",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
     }
     synth_resp = {"message": {"content": "Found 1 mineral ware: Ore."}}
-    mock_client.chat.side_effect = [invalid_router_resp, corrected_router_resp, synth_resp]
+    mock_client.chat.side_effect = [
+        {"message": {"role": "assistant", "content": json.dumps(first_payload)}},
+        {"message": {"role": "assistant", "content": json.dumps(second_payload)}},
+        synth_resp,
+    ]
 
     engine = AdvisorEngine(conn=test_db_conn, client=mock_client, config=Config(validate=False))
     resp = engine.answer("List all unobtainium items")
 
-    # Should have retried and resolved to minerals category
     assert resp.structured_result is not None
     assert resp.structured_result.category_type == "category"
     assert resp.structured_result.category_value == "minerals"
@@ -337,39 +298,31 @@ def test_advisor_engine_catches_unknown_filter_value_and_retries(test_db_conn: s
 def test_advisor_engine_unresolved_unknown_filter_value_names_invalid_value(test_db_conn: sqlite3.Connection) -> None:
     """Confirms that when retry still fails, the user message explicitly names the invalid value asked about."""
     mock_client = MagicMock()
-    invalid_router_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "category_listing",
-                            "category": "nonexistent_space_magic",
-                        },
-                    }
-                }
-            ],
-        }
+    first_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "list_category",
+            "category": "nonexistent_space_magic",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
     }
-    # Retry returns abstain
-    retry_abstain_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {"function": {"name": "abstain", "arguments": {"reason": "malformed_tool_call"}}}
-            ],
-        }
+    retry_payload = {
+        "route_type": "ABSTAIN",
+        "structured": {"operation": "none"},
+        "vector": {"query_text": ""},
+        "abstain_reason": "OUT_OF_SCOPE_OTHER",
     }
-    mock_client.chat.side_effect = [invalid_router_resp, retry_abstain_resp]
+    mock_client.chat.side_effect = [
+        {"message": {"role": "assistant", "content": json.dumps(first_payload)}},
+        {"message": {"role": "assistant", "content": json.dumps(retry_payload)}},
+    ]
 
     engine = AdvisorEngine(conn=test_db_conn, client=mock_client, config=Config(validate=False))
     resp = engine.answer("List all nonexistent_space_magic items")
 
     assert resp.synthesis_result is not None
     ans = resp.synthesis_result.answer_text
-    # Must explicitly name the invalid value 'nonexistent_space_magic' and field 'category'
     assert "nonexistent_space_magic" in ans
     assert "category" in ans
     assert resp.synthesis_result.has_evidence is False

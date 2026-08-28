@@ -1,5 +1,6 @@
-"""Unit tests for LLMRouter tool-calling classification, parameter validation, and retry logic."""
+"""Unit tests for LLMRouter grammar-constrained JSON schema classification, parameter validation, and retry logic."""
 
+import json
 from unittest.mock import MagicMock
 
 import pytest
@@ -9,23 +10,29 @@ from x4_advisor.retrieval.router import LLMRouter
 
 
 def test_router_structured_fact_lookup() -> None:
-    """Tests routing a fact lookup question to query_structured_data."""
+    """Tests routing a fact lookup question via structured JSON schema."""
     mock_client = MagicMock()
     mock_client.timeout_router = 15.0
+    mock_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "lookup_entity",
+            "query_name": "Cerberus Vanguard",
+            "metric": "none",
+            "ship_class": "none",
+            "purpose": "none",
+            "category": "none",
+            "faction": "",
+            "resource_id": "none",
+            "production_method": "none",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
+    }
     mock_client.chat.return_value = {
         "message": {
             "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "fact_lookup",
-                            "entity_name": "Cerberus Vanguard",
-                        },
-                    }
-                }
-            ],
+            "content": json.dumps(mock_payload),
         }
     }
 
@@ -43,24 +50,28 @@ def test_router_structured_fact_lookup() -> None:
 def test_router_structured_ranking_with_sort_desc_false() -> None:
     """Tests routing ranking query with sort_desc=False and purpose."""
     mock_client = MagicMock()
+    mock_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "compare_entities",
+            "query_name": "none",
+            "metric": "speed",
+            "ship_class": "s",
+            "purpose": "fight",
+            "category": "none",
+            "faction": "",
+            "resource_id": "none",
+            "production_method": "none",
+            "sort_desc": False,
+            "limit": 5,
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
+    }
     mock_client.chat.return_value = {
         "message": {
             "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "ranking",
-                            "ship_class": "s",
-                            "metric": "speed",
-                            "purpose": "fight",
-                            "sort_desc": False,
-                            "limit": 5,
-                        },
-                    }
-                }
-            ],
+            "content": json.dumps(mock_payload),
         }
     }
 
@@ -71,24 +82,22 @@ def test_router_structured_ranking_with_sort_desc_false() -> None:
     assert res.tool_calls[0].arguments["sort_desc"] is False
     assert res.tool_calls[0].arguments["purpose"] == "fight"
     assert res.tool_calls[0].arguments["ship_class"] == "s"
+    assert res.tool_calls[0].arguments["metric"] == "speed"
 
 
 def test_router_vector_search() -> None:
     """Tests routing strategy/heuristic query to search_knowledge_base."""
     mock_client = MagicMock()
+    mock_payload = {
+        "route_type": "VECTOR",
+        "structured": {"operation": "none"},
+        "vector": {"query_text": "effective early game trading routes and tactics"},
+        "abstain_reason": "NONE",
+    }
     mock_client.chat.return_value = {
         "message": {
             "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "search_knowledge_base",
-                        "arguments": {
-                            "query_text": "effective early game trading routes and tactics",
-                        },
-                    }
-                }
-            ],
+            "content": json.dumps(mock_payload),
         }
     }
 
@@ -104,28 +113,26 @@ def test_router_vector_search() -> None:
 def test_router_hybrid_both() -> None:
     """Tests routing a hybrid question to both structured and vector tools."""
     mock_client = MagicMock()
+    mock_payload = {
+        "route_type": "BOTH",
+        "structured": {
+            "operation": "production_chain",
+            "query_name": "Hull Parts",
+            "metric": "none",
+            "ship_class": "none",
+            "purpose": "none",
+            "category": "none",
+            "faction": "",
+            "resource_id": "none",
+            "production_method": "default",
+        },
+        "vector": {"query_text": "Hull Parts strategic importance universe economy demand"},
+        "abstain_reason": "NONE",
+    }
     mock_client.chat.return_value = {
         "message": {
             "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "production_chain",
-                            "entity_name": "Hull Parts",
-                        },
-                    }
-                },
-                {
-                    "function": {
-                        "name": "search_knowledge_base",
-                        "arguments": {
-                            "query_text": "Hull Parts strategic importance universe economy demand",
-                        },
-                    }
-                },
-            ],
+            "content": json.dumps(mock_payload),
         }
     }
 
@@ -142,20 +149,16 @@ def test_router_hybrid_both() -> None:
 def test_router_abstain_dlc() -> None:
     """Tests explicit abstention on DLC content."""
     mock_client = MagicMock()
+    mock_payload = {
+        "route_type": "ABSTAIN",
+        "structured": {"operation": "none"},
+        "vector": {"query_text": ""},
+        "abstain_reason": "OUT_OF_SCOPE_DLC",
+    }
     mock_client.chat.return_value = {
         "message": {
             "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "abstain",
-                        "arguments": {
-                            "reason": "out_of_scope_dlc",
-                            "explanation": "Terran Protectorate is part of Cradle of Humanity DLC.",
-                        },
-                    }
-                }
-            ],
+            "content": json.dumps(mock_payload),
         }
     }
 
@@ -169,45 +172,31 @@ def test_router_abstain_dlc() -> None:
 def test_router_parameter_coherence_retry_and_recovery() -> None:
     """Tests that incoherent parameters (e.g. ship metric + ware category) trigger a retry with feedback."""
     mock_client = MagicMock()
-    # First call returns incoherent parameters (cargo_capacity with ware category)
-    first_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "ranking",
-                            "metric": "cargo_capacity",
-                            "category": "minerals",
-                        },
-                    }
-                }
-            ],
-        }
+    bad_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "compare_entities",
+            "metric": "cargo_capacity",
+            "category": "minerals",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
+    }
+    good_payload = {
+        "route_type": "STRUCTURED",
+        "structured": {
+            "operation": "compare_entities",
+            "metric": "volume",
+            "category": "minerals",
+        },
+        "vector": {"query_text": ""},
+        "abstain_reason": "NONE",
     }
 
-    # Second call (retry) returns corrected parameters
-    second_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "query_structured_data",
-                        "arguments": {
-                            "query_type": "ranking",
-                            "metric": "volume",
-                            "category": "minerals",
-                        },
-                    }
-                }
-            ],
-        }
-    }
-
-    mock_client.chat.side_effect = [first_resp, second_resp]
+    mock_client.chat.side_effect = [
+        {"message": {"role": "assistant", "content": json.dumps(bad_payload)}},
+        {"message": {"role": "assistant", "content": json.dumps(good_payload)}},
+    ]
 
     router = LLMRouter(client=mock_client)
     res = router.route("Which minerals take the most cargo space?")
@@ -218,21 +207,9 @@ def test_router_parameter_coherence_retry_and_recovery() -> None:
 
 
 def test_router_malformed_tool_call_retry_fallback() -> None:
-    """Tests that unrecoverable malformed tool calls fall back to ABSTAIN."""
+    """Tests that unrecoverable malformed content falls back to ABSTAIN."""
     mock_client = MagicMock()
-    bad_resp = {
-        "message": {
-            "role": "assistant",
-            "tool_calls": [
-                {
-                    "function": {
-                        "name": "unknown_tool",
-                        "arguments": {},
-                    }
-                }
-            ],
-        }
-    }
+    bad_resp = {"message": {"role": "assistant", "content": "not-valid-json{"}}
 
     mock_client.chat.side_effect = [bad_resp, bad_resp]
 

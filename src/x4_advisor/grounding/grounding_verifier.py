@@ -1,7 +1,7 @@
 """Grounding verifier evaluating synthesis answers against retrieved structured data and knowledge chunks."""
 
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from x4_advisor.grounding.claim_extractor import ClaimExtractor
 from x4_advisor.grounding.taxonomy import ClaimClass, GroundedClaim, GroundingReport
@@ -20,6 +20,7 @@ class GroundingVerifier:
         vector_chunks: Optional[List[Any]] = None,
         expected_facts: Optional[List[Dict[str, Any]]] = None,
         prohibited_claims: Optional[List[str]] = None,
+        retrieval_outcome: Optional[Dict[str, Any]] = None,
     ) -> GroundingReport:
         """Evaluates an answer and produces a GroundingReport containing 5-class classified claims."""
         if not answer_text or answer_text.strip() == "":
@@ -28,52 +29,72 @@ class GroundingVerifier:
         propositions = self.extractor.extract_propositions(answer_text)
         grounded_claims: List[GroundedClaim] = []
 
-        # Prepare normalized evidence text
-        chunk_texts = []
+        # 1. Parse vector chunk sentence windows
+        chunk_sentences: List[str] = []
+        all_chunk_text_lower = ""
         if vector_chunks:
+            all_text_list = []
             for c in vector_chunks:
-                if hasattr(c, "text"):
-                    chunk_texts.append(c.text.lower())
-                elif hasattr(c, "content"):
-                    chunk_texts.append(c.content.lower())
-                elif isinstance(c, str):
-                    chunk_texts.append(c.lower())
-        all_chunk_text = " ".join(chunk_texts)
+                content = getattr(c, "content", getattr(c, "text", str(c) if isinstance(c, str) else ""))
+                all_text_list.append(content)
+                sents = [s.strip() for s in re.split(r"(?<=[.!?])\s+", content) if s.strip()]
+                for i in range(len(sents)):
+                    chunk_sentences.append(sents[i])
+                    if i + 1 < len(sents):
+                        chunk_sentences.append(f"{sents[i]} {sents[i+1]}")
+            all_chunk_text_lower = " ".join(all_text_list).lower()
 
-        # Prepare structured text / values
-        structured_elements = []
+        # 2. Parse structured evidence rows / units
+        structured_units: List[str] = []
+        structured_numbers: List[float] = []
         if structured_data is not None:
-            if hasattr(structured_data, "items") and structured_data.items:
+            if isinstance(structured_data, list):
+                for item in structured_data:
+                    structured_units.append(str(item).lower())
+                    structured_numbers.extend(self._extract_numbers(str(item)))
+            elif hasattr(structured_data, "items") and structured_data.items:
                 for item in structured_data.items:
-                    structured_elements.append(str(item).lower())
-                    if hasattr(item, "name"):
-                        structured_elements.append(str(item.name).lower())
-            if hasattr(structured_data, "ware"):
-                structured_elements.append(str(structured_data.ware).lower())
-            if hasattr(structured_data, "nodes"):
-                structured_elements.append(str(structured_data.nodes).lower())
-            structured_elements.append(str(structured_data).lower())
-        structured_str = " ".join(structured_elements)
+                    structured_units.append(str(item).lower())
+                    structured_numbers.extend(self._extract_numbers(str(item)))
+            elif hasattr(structured_data, "data"):
+                structured_units.append(str(structured_data.data).lower())
+                structured_numbers.extend(self._extract_numbers(str(structured_data.data)))
+            elif hasattr(structured_data, "total_raw_materials"):
+                structured_units.append(str(structured_data.total_raw_materials).lower())
+                structured_numbers.extend(self._extract_numbers(str(structured_data.total_raw_materials)))
+            else:
+                structured_units.append(str(structured_data).lower())
+                structured_numbers.extend(self._extract_numbers(str(structured_data)))
 
         for idx, (prop_text, modality) in enumerate(propositions, start=1):
             claim_id = f"claim_{idx:03d}"
             lower_prop = prop_text.lower()
+            prop_numbers = self._extract_numbers(prop_text)
 
-            # 1. Prohibited / Contradicted Check (with Refutation Context Awareness)
+            # -----------------------------------------------------------------
+            # Stage 1: Golden Corpus Prohibited / Contradicted Check
+            # -----------------------------------------------------------------
             if prohibited_claims:
                 matched_prohibited = [p.lower() for p in prohibited_claims if p.lower() in lower_prop]
                 if matched_prohibited:
-                    # Check if prohibited term is being asserted or actively refuted
-                    # Adversarial decoy check: "some claim <correct> but it is actually <prohibited>" -> asserted
                     is_asserted = True
-                    refutation_cues = ["not", "differs from", "contradicts", "rather than", "outdated claim of", "disregards", "forum post claiming", "guide claim of", "instead of"]
-                    adversarial_assert_cues = ["actually", "is actually", "in fact", "the real value is", "price is", "recipe produces", "produces"]
+                    refutation_cues = [
+                        "not", "differs from", "contradicts", "rather than",
+                        "outdated claim of", "disregards", "forum post claiming",
+                        "guide claim of", "instead of"
+                    ]
+                    adversarial_assert_cues = [
+                        "actually", "is actually", "in fact", "the real value is",
+                        "price is", "recipe produces", "produces"
+                    ]
 
                     has_refutation = any(rc in lower_prop for rc in refutation_cues)
-                    has_adversarial_assert = any(f"{ac} {p}" in lower_prop or f"{ac} **{p}**" in lower_prop for ac in adversarial_assert_cues for p in matched_prohibited)
+                    has_adversarial_assert = any(
+                        f"{ac} {p}" in lower_prop or f"{ac} **{p}**" in lower_prop
+                        for ac in adversarial_assert_cues for p in matched_prohibited
+                    )
 
                     if has_refutation and not has_adversarial_assert:
-                        # Proposition is explicitly refuting/contrasting the prohibited claim
                         is_asserted = False
 
                     if is_asserted:
@@ -92,50 +113,26 @@ class GroundingVerifier:
                                 claim_id=claim_id,
                                 text=prop_text,
                                 classification=ClaimClass.FACT,
-                                rationale=f"Claim correctly refutes/contrasts stale or prohibited value: {matched_prohibited}",
+                                rationale=f"Claim correctly refutes/contrasts prohibited value: {matched_prohibited}",
                             )
                         )
                         continue
 
-            # 2. Negative Evidence Disclaimers
-            if modality == "NEGATIVE_EVIDENCE":
-                grounded_claims.append(
-                    GroundedClaim(
-                        claim_id=claim_id,
-                        text=prop_text,
-                        classification=ClaimClass.FACT,
-                        rationale="Grounded negative-evidence assertion regarding data boundaries.",
-                    )
-                )
-                continue
-
-            # 3. Advice Classification
-            if modality == "ADVICE":
-                # Check if advice has topical anchor in vector chunks
-                grounded_claims.append(
-                    GroundedClaim(
-                        claim_id=claim_id,
-                        text=prop_text,
-                        classification=ClaimClass.ADVICE,
-                        rationale="Prescriptive heuristic or strategic advice statement.",
-                    )
-                )
-                continue
-
-            # 4. Expected Structured Facts Check (String & Numeric)
+            # -----------------------------------------------------------------
+            # Stage 2: Golden Expected Structured Facts Check
+            # -----------------------------------------------------------------
             if expected_facts:
                 matched_fact = False
                 contradicted_fact = False
 
-                numbers = re.findall(r"\b\d+(?:,\d+)*(?:\.\d+)?\b", prop_text)
-                clean_numbers = [float(n.replace(",", "")) for n in numbers]
-
                 for ef in expected_facts:
                     raw_val = ef["expected_value"]
                     field_name = ef.get("field", "").replace("_", " ").lower()
-                    field_keywords = [w for w in field_name.split() if w not in ("total", "input", "output", "min", "max", "sec", "minutes")]
+                    field_keywords = [
+                        w for w in field_name.split()
+                        if w not in ("total", "input", "output", "min", "max", "sec", "minutes", "combined", "single")
+                    ]
 
-                    # A. String Fact (e.g. category='hightech')
                     if isinstance(raw_val, str):
                         str_val = raw_val.strip().lower()
                         if str_val in lower_prop:
@@ -143,22 +140,18 @@ class GroundingVerifier:
                             break
                         elif any(kw in lower_prop for kw in field_keywords) and ("is" in lower_prop or "category" in lower_prop):
                             contradicted_fact = True
-
-                    # B. Numeric Fact
                     else:
                         exp_val = float(raw_val)
                         tol = float(ef.get("tolerance", 0.0))
 
-                        # Check if any number in claim matches expected fact
-                        for num in clean_numbers:
+                        for num in prop_numbers:
                             if abs(num - exp_val) <= (tol + 1e-5):
                                 matched_fact = True
                                 break
                         if matched_fact:
                             break
 
-                        # Check if this proposition is specifically asserting this field with an incorrect value
-                        if clean_numbers and (
+                        if prop_numbers and (
                             any(kw in lower_prop for kw in field_keywords)
                             or (len(expected_facts) == 1 and not any(w in lower_prop for w in ["combat", "ship", "ware", "tier", "class"]))
                         ):
@@ -185,61 +178,225 @@ class GroundingVerifier:
                     )
                     continue
 
-            # 4. Supported Inference Check
-            if modality == "SUPPORTED_INFERENCE" or any(w in lower_prop for w in ["combined", "total", "approximately", "take"]):
+            # -----------------------------------------------------------------
+            # Stage 3: Negative Evidence Disclaimers (Conditions A, B, C)
+            # -----------------------------------------------------------------
+            is_neg_marker = any(m in lower_prop for m in [
+                "no information", "not contain", "does not contain", "no evidence",
+                "not found", "not available", "no matching", "outside the scope",
+                "there is no", "do not have"
+            ])
+            if modality == "NEGATIVE_EVIDENCE" or is_neg_marker:
+                cond_a = False
+                if retrieval_outcome:
+                    cond_a = (retrieval_outcome.get("row_count", 0) == 0 and (
+                        retrieval_outcome.get("chunk_count", 0) == 0 or
+                        retrieval_outcome.get("max_similarity", 0.0) < retrieval_outcome.get("threshold", 0.50)
+                    ))
+
+                cond_b = any(
+                    "cannot" in s.lower() or "not available" in s.lower() or "no support" in s.lower()
+                    for s in chunk_sentences
+                )
+
+                key_nouns = [w for w in re.findall(r"\b[a-z]{4,}\b", lower_prop) if w not in [
+                    "information", "contain", "evidence", "found", "available",
+                    "matching", "outside", "scope", "there", "about", "regarding",
+                    "provided", "database", "query", "please"
+                ]]
+                cond_c = False
+                if key_nouns and all_chunk_text_lower:
+                    if all(kn not in all_chunk_text_lower for kn in key_nouns):
+                        cond_c = True
+
+                if cond_a or cond_b or cond_c or not all_chunk_text_lower:
+                    grounded_claims.append(
+                        GroundedClaim(
+                            claim_id=claim_id,
+                            text=prop_text,
+                            classification=ClaimClass.FACT,
+                            rationale="Grounded negative-evidence disclaimer verified against retrieval outcome and context.",
+                        )
+                    )
+                    continue
+                else:
+                    grounded_claims.append(
+                        GroundedClaim(
+                            claim_id=claim_id,
+                            text=prop_text,
+                            classification=ClaimClass.CONTRADICTED,
+                            rationale="Claim asserted no evidence, but target topic is present in retrieved chunks.",
+                        )
+                    )
+                    continue
+
+            # -----------------------------------------------------------------
+            # Stage 4: Structured Unit Matching
+            # -----------------------------------------------------------------
+            if structured_units:
+                matched_unit = False
+                contra_unit = False
+
+                for unit_str in structured_units:
+                    content_words = [w for w in re.findall(r"\b[a-z0-9]{3,}\b", lower_prop) if w not in ["the", "has", "and", "for", "with", "per"]]
+                    if not content_words:
+                        continue
+                    word_match_ratio = sum(1 for w in content_words if w in unit_str) / len(content_words)
+                    if word_match_ratio >= 0.50:
+                        unit_nums = self._extract_numbers(unit_str)
+                        if prop_numbers:
+                            all_nums_matched = all(
+                                any(abs(pn - un) < 1e-4 for un in unit_nums)
+                                for pn in prop_numbers
+                            )
+                            if all_nums_matched:
+                                matched_unit = True
+                                break
+                            elif unit_nums:
+                                contra_unit = True
+                        else:
+                            matched_unit = True
+                            break
+
+                if matched_unit:
+                    cls = ClaimClass.SUPPORTED_INFERENCE if (modality == "SUPPORTED_INFERENCE" or any(w in lower_prop for w in ["combined", "approximately", "more", "expensive", "total"])) else ClaimClass.FACT
+                    grounded_claims.append(
+                        GroundedClaim(
+                            claim_id=claim_id,
+                            text=prop_text,
+                            classification=cls,
+                            rationale="Directly entailed by structured database record.",
+                        )
+                    )
+                    continue
+                elif contra_unit:
+                    grounded_claims.append(
+                        GroundedClaim(
+                            claim_id=claim_id,
+                            text=prop_text,
+                            classification=ClaimClass.CONTRADICTED,
+                            rationale="Numeric value in claim conflicts with structured database record.",
+                        )
+                    )
+                    continue
+
+            # -----------------------------------------------------------------
+            # Stage 5: Sentence-Localized Vector Chunk Entailment
+            # -----------------------------------------------------------------
+            if chunk_sentences:
+                matched_sent = False
+                contra_sent = False
+
+                for sent in chunk_sentences:
+                    sent_lower = sent.lower()
+                    content_words = [
+                        w for w in re.findall(r"\b[a-z0-9]{4,}\b", lower_prop)
+                        if w not in ["with", "that", "this", "from", "have", "been", "will", "about", "your", "more", "then", "into"]
+                    ]
+                    if not content_words:
+                        continue
+
+                    match_ratio = sum(1 for w in content_words if w in sent_lower) / len(content_words)
+                    if match_ratio >= 0.50:
+                        sent_nums = self._extract_numbers(sent)
+                        has_explicit_neg_prop = any(n in lower_prop for n in ["cannot", "never", "not be used", "not allowed"])
+                        has_explicit_neg_sent = any(n in sent_lower for n in ["cannot", "never", "not be used", "not allowed"])
+
+                        if has_explicit_neg_prop != has_explicit_neg_sent:
+                            contra_sent = True
+                            continue
+
+                        if prop_numbers:
+                            all_nums_in_sent = all(
+                                any(abs(pn - sn) < 1e-4 for sn in sent_nums)
+                                for pn in prop_numbers
+                            )
+                            if all_nums_in_sent:
+                                matched_sent = True
+                                break
+                            elif sent_nums:
+                                contra_sent = True
+                        else:
+                            matched_sent = True
+                            break
+
+                if matched_sent:
+                    cls = ClaimClass.ADVICE if modality == "ADVICE" else (
+                        ClaimClass.SUPPORTED_INFERENCE if modality == "SUPPORTED_INFERENCE" else ClaimClass.FACT
+                    )
+                    grounded_claims.append(
+                        GroundedClaim(
+                            claim_id=claim_id,
+                            text=prop_text,
+                            classification=cls,
+                            rationale="Entailed within sentence-localized retrieved knowledge window.",
+                        )
+                    )
+                    continue
+                elif contra_sent:
+                    grounded_claims.append(
+                        GroundedClaim(
+                            claim_id=claim_id,
+                            text=prop_text,
+                            classification=ClaimClass.CONTRADICTED,
+                            rationale="Factual assertion conflicts with retrieved knowledge sentence window.",
+                        )
+                    )
+                    continue
+
+            # -----------------------------------------------------------------
+            # Stage 6: Mathematical Inferences / Comparison Extrapolations
+            # -----------------------------------------------------------------
+            if modality == "SUPPORTED_INFERENCE" or any(w in lower_prop for w in ["combined", "total", "approximately", "spread", "takes", "batches", "operate", "more", "expensive", "difference"]):
                 grounded_claims.append(
                     GroundedClaim(
                         claim_id=claim_id,
                         text=prop_text,
                         classification=ClaimClass.SUPPORTED_INFERENCE,
-                        rationale="Mathematically derived or logically entailed inference.",
+                        rationale="Derived mathematical calculation or logical extrapolation.",
                     )
                 )
                 continue
 
-            # 5. Semantic Vector Entailment Check
-            if all_chunk_text:
-                # Key phrase overlap
-                words = [w for w in re.findall(r"\b\w{4,}\b", lower_prop) if w not in ["with", "that", "this", "from", "have", "been", "will"]]
-                if words:
-                    matches = sum(1 for w in words if w in all_chunk_text)
-                    ratio = matches / len(words)
-                    if ratio >= 0.5:
+            # -----------------------------------------------------------------
+            # Stage 7: Advice Anchors
+            # -----------------------------------------------------------------
+            if modality == "ADVICE":
+                if all_chunk_text_lower:
+                    words = [w for w in re.findall(r"\b[a-z]{4,}\b", lower_prop) if w not in ["should", "recommend", "advisable", "consider", "suggest"]]
+                    if words and sum(1 for w in words if w in all_chunk_text_lower) / len(words) >= 0.30:
                         grounded_claims.append(
                             GroundedClaim(
                                 claim_id=claim_id,
                                 text=prop_text,
-                                classification=ClaimClass.FACT,
-                                rationale="Substantially entailed by retrieved knowledge chunks.",
+                                classification=ClaimClass.ADVICE,
+                                rationale="Strategically anchored advice statement.",
                             )
                         )
                         continue
 
-            # 6. Structured Content Overlap Check
-            if structured_str:
-                words = [w for w in re.findall(r"\b\w{4,}\b", lower_prop) if w not in ["with", "that", "this", "from", "have", "been", "will"]]
-                if words:
-                    matches = sum(1 for w in words if w in structured_str)
-                    ratio = matches / len(words)
-                    if ratio >= 0.5:
-                        grounded_claims.append(
-                            GroundedClaim(
-                                claim_id=claim_id,
-                                text=prop_text,
-                                classification=ClaimClass.FACT,
-                                rationale="Directly grounded in structured SQL table items.",
-                            )
-                        )
-                        continue
-
-            # 7. Unsupported Fallthrough
+            # -----------------------------------------------------------------
+            # Stage 8: Unsupported Fallthrough
+            # -----------------------------------------------------------------
             grounded_claims.append(
                 GroundedClaim(
                     claim_id=claim_id,
                     text=prop_text,
                     classification=ClaimClass.UNSUPPORTED,
-                    rationale="Proposition contains factual claims not present in retrieved evidence.",
+                    rationale="Proposition contains factual claims not substantiated by retrieved evidence units.",
                 )
             )
 
         return GroundingReport.from_claims(grounded_claims)
+
+    @staticmethod
+    def _extract_numbers(text: str) -> List[float]:
+        """Extracts cleaned floating point numbers from text."""
+        raw_matches = re.findall(r"\b\d+(?:,\d+)*(?:\.\d+)?\b", text)
+        clean = []
+        for rm in raw_matches:
+            try:
+                clean.append(float(rm.replace(",", "")))
+            except ValueError:
+                pass
+        return clean

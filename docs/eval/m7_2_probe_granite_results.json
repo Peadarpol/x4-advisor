@@ -1,0 +1,4073 @@
+{
+  "granite4.1:8b": {
+    "model_name": "granite4.1:8b",
+    "total_cases": 36,
+    "overall_pass_rate": 0.1944,
+    "route_accuracy": 0.9444,
+    "structured_precision": 0.2,
+    "abstain_accuracy": 0.25,
+    "total_claims": 274,
+    "facts_count": 160,
+    "inferences_count": 9,
+    "advice_count": 1,
+    "advice_rate": 0.0036,
+    "unsupported_count": 88,
+    "contradicted_count": 16,
+    "unsupported_claim_rate": 0.3212,
+    "latency_all": {
+      "mean": 14.41,
+      "p90": 23.08,
+      "max": 33.67
+    },
+    "latency_single_path": {
+      "mean": 13.39,
+      "p90": 21.71,
+      "max": 33.67
+    },
+    "latency_hybrid": {
+      "mean": 22.59,
+      "p90": 23.39,
+      "max": 23.39
+    },
+    "retrieval_chunk_recall": 0.4783,
+    "retrieval_chunk_precision": 0.2391,
+    "gate_passed": false,
+    "case_details": [
+      {
+        "case_id": "eval_t1_001",
+        "category": "T1_FACT_LOOKUP",
+        "question": "What is the cargo capacity and speed of the Cerberus Vanguard?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Cerberus Vanguard"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Cerberus Vanguard",
+              "limit": 1
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": true,
+        "is_grounded": true,
+        "claims_count": 1,
+        "facts_count": 1,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 0,
+        "contradicted_count": 0,
+        "latency_seconds": 16.45,
+        "answer_text": "The cargo capacity of the Cerberus Vanguard is **1760.0 m\u00b3**, and its speed is **300.0 m/s**.",
+        "structured_result": [
+          {
+            "entity_id": "ship_arg_m_frigate_01_a_macro",
+            "entity_name": "Cerberus Vanguard",
+            "data": {
+              "id": "ship_arg_m_frigate_01_a_macro",
+              "name": "Cerberus Vanguard",
+              "ship_class": "ship_m",
+              "hull": 19000.0,
+              "shields": 0.0,
+              "cargo_capacity": 1760.0,
+              "cargo_type": "container",
+              "speed": 300.0,
+              "weapon_slots": 0,
+              "turret_slots": 0,
+              "shield_slots": 0,
+              "purpose": "fight",
+              "faction_id": "argon",
+              "faction_name": "Argon Federation",
+              "ware_id": "ship_arg_m_frigate_01_a"
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 1,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 347,
+            "eval_count": 83,
+            "prompt_eval_duration_ms": 130.48,
+            "eval_duration_ms": 794.65,
+            "total_duration_ms": 8840.04,
+            "load_duration_ms": 7910.17,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 402,
+            "eval_count": 31,
+            "prompt_eval_duration_ms": 134.56,
+            "eval_duration_ms": 257.4,
+            "total_duration_ms": 3521.64,
+            "load_duration_ms": 3124.96,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t1_002",
+        "category": "T1_FACT_LOOKUP",
+        "question": "What are the minimum, average, and maximum prices of Claytronics?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Claytronics"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Claytronics",
+              "metric": "min_price",
+              "resource_id": "ore"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": true,
+        "is_grounded": true,
+        "claims_count": 1,
+        "facts_count": 1,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 0,
+        "contradicted_count": 0,
+        "latency_seconds": 11.47,
+        "answer_text": "The minimum price of Claytronics is **1734 Cr**, the average price is **2040 Cr**, and the maximum price is **2346 Cr**.",
+        "structured_result": [
+          {
+            "entity_id": "claytronics",
+            "entity_name": "Claytronics",
+            "data": {
+              "id": "claytronics",
+              "name": "Claytronics",
+              "category": "shiptech",
+              "min_price": 1734,
+              "avg_price": 2040,
+              "max_price": 2346,
+              "volume": 24
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 1,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 348,
+            "eval_count": 95,
+            "prompt_eval_duration_ms": 130.33,
+            "eval_duration_ms": 905.61,
+            "total_duration_ms": 3886.98,
+            "load_duration_ms": 2846.44,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 341,
+            "eval_count": 34,
+            "prompt_eval_duration_ms": 122.21,
+            "eval_duration_ms": 282.07,
+            "total_duration_ms": 3508.96,
+            "load_duration_ms": 3099.97,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t1_003",
+        "category": "T1_FACT_LOOKUP",
+        "question": "What is the sunlight rating of the Grand Exchange I sector?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Grand Exchange I"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "sector_yield",
+              "entity_name": "Grand Exchange I",
+              "resource_id": "silicon"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": true,
+        "claims_count": 3,
+        "facts_count": 1,
+        "inferences_count": 1,
+        "advice_count": 0,
+        "unsupported_count": 1,
+        "contradicted_count": 0,
+        "latency_seconds": 11.54,
+        "answer_text": "The provided evidence does not contain any information about the sunlight rating of the Grand Exchange I sector. The evidence only lists sectors with high silicon yield, but none of them mention sunlight ratings or include Grand Exchange I. Therefore, based on the given data, the sunlight rating of Grand Exchange I cannot be determined.",
+        "structured_result": [
+          {
+            "id": "Cluster_17_Sector001_macro",
+            "name": "Matrix #9",
+            "value": 60.0,
+            "metric": "silicon_yield",
+            "unit": "yield"
+          },
+          {
+            "id": "Cluster_25_Sector001_macro",
+            "name": "Faulty Logic I",
+            "value": 60.0,
+            "metric": "silicon_yield",
+            "unit": "yield"
+          },
+          {
+            "id": "Cluster_25_Sector002_macro",
+            "name": "Faulty Logic VII",
+            "value": 60.0,
+            "metric": "silicon_yield",
+            "unit": "yield"
+          },
+          {
+            "id": "Cluster_26_Sector002_macro",
+            "name": "Atiya's Misfortune III",
+            "value": 60.0,
+            "metric": "silicon_yield",
+            "unit": "yield"
+          },
+          {
+            "id": "Cluster_32_Sector001_macro",
+            "name": "Tharka's Cascade XV",
+            "value": 60.0,
+            "metric": "silicon_yield",
+            "unit": "yield"
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 5,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 345,
+            "eval_count": 75,
+            "prompt_eval_duration_ms": 131.33,
+            "eval_duration_ms": 701.14,
+            "total_duration_ms": 3699.85,
+            "load_duration_ms": 2862.5,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 492,
+            "eval_count": 62,
+            "prompt_eval_duration_ms": 146.17,
+            "eval_duration_ms": 522.49,
+            "total_duration_ms": 3784.86,
+            "load_duration_ms": 3112.26,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t1_004",
+        "category": "T1_FACT_LOOKUP",
+        "question": "What ware category and volume does Hull Parts have?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Hull Parts"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "entity_name": "Hull Parts",
+              "category": "generalitem"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 3,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 0,
+        "contradicted_count": 3,
+        "latency_seconds": 14.45,
+        "answer_text": "The provided evidence does not include any entry for \"Hull Parts\" within the `generalitem` category listing. Therefore, based on the given data, there is no information available regarding the ware category or volume for Hull Parts. \n\n**Note:** The evidence only lists 16 items under the `generalitem` category, none of which are named \"Hull Parts.\" Consequently, the question cannot be answered with the supplied data.",
+        "structured_result": [
+          {
+            "id": "inv_algaescrubber",
+            "name": "Algae Scrubber",
+            "category": "generalitem",
+            "min_price": 742,
+            "avg_price": 872,
+            "max_price": 1003,
+            "volume": 1
+          },
+          {
+            "id": "inv_bandages",
+            "name": "Bandages",
+            "category": "generalitem",
+            "min_price": 96,
+            "avg_price": 112,
+            "max_price": 129,
+            "volume": 1
+          },
+          {
+            "id": "inv_carbonfilter",
+            "name": "Carbon Filter",
+            "category": "generalitem",
+            "min_price": 691,
+            "avg_price": 812,
+            "max_price": 934,
+            "volume": 1
+          },
+          {
+            "id": "inv_crystalbinder",
+            "name": "Crystal Binder",
+            "category": "generalitem",
+            "min_price": 708,
+            "avg_price": 833,
+            "max_price": 958,
+            "volume": 1
+          },
+          {
+            "id": "inv_electronics",
+            "name": "Electronics",
+            "category": "generalitem",
+            "min_price": 17058,
+            "avg_price": 20068,
+            "max_price": 23078,
+            "volume": 1
+          },
+          {
+            "id": "inv_firstaidkit",
+            "name": "First Aid Kit",
+            "category": "generalitem",
+            "min_price": 8944,
+            "avg_price": 10523,
+            "max_price": 12101,
+            "volume": 1
+          },
+          {
+            "id": "inv_fluxcapacitor",
+            "name": "Flux Capacitor",
+            "category": "generalitem",
+            "min_price": 97365,
+            "avg_price": 129819,
+            "max_price": 162274,
+            "volume": 1
+          },
+          {
+            "id": "inv_herbicide",
+            "name": "Herbicide",
+            "category": "generalitem",
+            "min_price": 201,
+            "avg_price": 236,
+            "max_price": 272,
+            "volume": 1
+          },
+          {
+            "id": "inv_hydraulicpump",
+            "name": "Hydraulic Pump",
+            "category": "generalitem",
+            "min_price": 408,
+            "avg_price": 479,
+            "max_price": 551,
+            "volume": 1
+          },
+          {
+            "id": "inv_microgimble",
+            "name": "Micro-Gimbal",
+            "category": "generalitem",
+            "min_price": 553,
+            "avg_price": 650,
+            "max_price": 748,
+            "volume": 1
+          },
+          {
+            "id": "inv_micromotor",
+            "name": "Micro-Motor",
+            "category": "generalitem",
+            "min_price": 482,
+            "avg_price": 567,
+            "max_price": 653,
+            "volume": 1
+          },
+          {
+            "id": "inv_needle",
+            "name": "Needle",
+            "category": "generalitem",
+            "min_price": 544,
+            "avg_price": 640,
+            "max_price": 736,
+            "volume": 1
+          },
+          {
+            "id": "inv_rapidsandfilter",
+            "name": "Rapid Sand Filter",
+            "category": "generalitem",
+            "min_price": 673,
+            "avg_price": 791,
+            "max_price": 910,
+            "volume": 1
+          },
+          {
+            "id": "inv_salvagedelectronics",
+            "name": "Salvaged Electronics",
+            "category": "generalitem",
+            "min_price": 124,
+            "avg_price": 145,
+            "max_price": 167,
+            "volume": 1
+          },
+          {
+            "id": "inv_securecontainer",
+            "name": "Secure Container",
+            "category": "generalitem",
+            "min_price": 3877,
+            "avg_price": 4561,
+            "max_price": 5246,
+            "volume": 1
+          },
+          {
+            "id": "inv_sedative",
+            "name": "Sedative",
+            "category": "generalitem",
+            "min_price": 223,
+            "avg_price": 262,
+            "max_price": 302,
+            "volume": 1
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 16,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 343,
+            "eval_count": 63,
+            "prompt_eval_duration_ms": 131.07,
+            "eval_duration_ms": 580.47,
+            "total_duration_ms": 3564.11,
+            "load_duration_ms": 2847.28,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 549,
+            "eval_count": 68,
+            "prompt_eval_duration_ms": 56.32,
+            "eval_duration_ms": 569.09,
+            "total_duration_ms": 632.97,
+            "load_duration_ms": 2.9,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1057,
+            "eval_count": 88,
+            "prompt_eval_duration_ms": 269.26,
+            "eval_duration_ms": 746.8,
+            "total_duration_ms": 4151.96,
+            "load_duration_ms": 3130.19,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t2_001",
+        "category": "T2_COMPARISON",
+        "question": "Compare the cargo capacity of the Magnetar (Mineral) Vanguard and Magnetar (Mineral) Sentinel.",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Magnetar (Mineral) Vanguard"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "ranking",
+              "metric": "cargo_capacity",
+              "ship_class": "m",
+              "limit": 2
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 5,
+        "facts_count": 1,
+        "inferences_count": 1,
+        "advice_count": 0,
+        "unsupported_count": 3,
+        "contradicted_count": 0,
+        "latency_seconds": 12.33,
+        "answer_text": "The provided evidence does not contain any information about the cargo capacity of the Magnetar (Mineral) Vanguard or Magnetar (Mineral) Sentinel ships. The evidence only lists the cargo capacities of the Vulture Sentinel and Tern Sentinel ships, which are unrelated to the Magnetar ships mentioned in the user's question. Therefore, a direct comparison of the cargo capacities of the Magnetar (Mineral) Vanguard and Magnetar (Mineral) Sentinel cannot be made based on the given evidence. \n\n**Note:** This answer is derived directly from the evidence provided, adhering to the rules of grounding and transparency. No additional assumptions or extrapolations are made.",
+        "structured_result": [
+          {
+            "id": "ship_tel_m_trans_container_01_b_macro",
+            "name": "Vulture Sentinel",
+            "value": 15100.0,
+            "metric": "cargo_capacity",
+            "unit": "m\u00b3"
+          },
+          {
+            "id": "ship_tel_m_trans_container_02_b_macro",
+            "name": "Tern Sentinel",
+            "value": 13600.0,
+            "metric": "cargo_capacity",
+            "unit": "m\u00b3"
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 2,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 355,
+            "eval_count": 94,
+            "prompt_eval_duration_ms": 132.59,
+            "eval_duration_ms": 885.19,
+            "total_duration_ms": 3896.14,
+            "load_duration_ms": 2873.45,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 417,
+            "eval_count": 133,
+            "prompt_eval_duration_ms": 136.41,
+            "eval_duration_ms": 1115.55,
+            "total_duration_ms": 4381.49,
+            "load_duration_ms": 3125.3,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t2_002",
+        "category": "T2_COMPARISON",
+        "question": "What are the fastest S-class scout ships?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "ranking",
+              "metric": "speed",
+              "ship_class": "ship_s",
+              "sort_desc": true
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "ranking",
+              "metric": "speed",
+              "ship_class": "s"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 8,
+        "facts_count": 5,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 3,
+        "contradicted_count": 0,
+        "latency_seconds": 12.26,
+        "answer_text": "Based on the provided structured data, the fastest S-class ships (class=ship_s) are:\n\n1. **Pulsar Vanguard** \u2013 Speed: 400.00 m/s  \n2. **Discoverer Vanguard** \u2013 Speed: 400.00 m/s  \n3. **Discoverer Sentinel** \u2013 Speed: 400.00 m/s  \n4. **Courier Vanguard** \u2013 Speed: 400.00 m/s  \n5. **Ares** \u2013 Speed: 400.00 m/s  \n\nAll listed S-class ships share the same maximum speed of 400.00 m/s, making them equally the fastest in this category. Note that the purpose field indicates various roles (fight, trade), but speed is uniform across them.",
+        "structured_result": [
+          {
+            "id": "ship_arg_s_fighter_03_a_macro",
+            "name": "Pulsar Vanguard",
+            "value": 400.0,
+            "metric": "speed",
+            "unit": "m/s"
+          },
+          {
+            "id": "ship_arg_s_scout_01_a_macro",
+            "name": "Discoverer Vanguard",
+            "value": 400.0,
+            "metric": "speed",
+            "unit": "m/s"
+          },
+          {
+            "id": "ship_arg_s_scout_01_b_macro",
+            "name": "Discoverer Sentinel",
+            "value": 400.0,
+            "metric": "speed",
+            "unit": "m/s"
+          },
+          {
+            "id": "ship_arg_s_trans_container_01_a_macro",
+            "name": "Courier Vanguard",
+            "value": 400.0,
+            "metric": "speed",
+            "unit": "m/s"
+          },
+          {
+            "id": "ship_par_s_heavyfighter_01_a_macro",
+            "name": "Ares",
+            "value": 400.0,
+            "metric": "speed",
+            "unit": "m/s"
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 5,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 342,
+            "eval_count": 76,
+            "prompt_eval_duration_ms": 130.83,
+            "eval_duration_ms": 673.46,
+            "total_duration_ms": 3652.83,
+            "load_duration_ms": 2843.81,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 548,
+            "eval_count": 152,
+            "prompt_eval_duration_ms": 156.75,
+            "eval_duration_ms": 1274.5,
+            "total_duration_ms": 4558.91,
+            "load_duration_ms": 3123.28,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t2_003",
+        "category": "T2_COMPARISON",
+        "question": "Which M-class combat ships have the highest hull points?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "ranking",
+              "metric": "hull",
+              "ship_class": "ship_m",
+              "purpose": "fight",
+              "sort_desc": true
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "ranking",
+              "metric": "hull",
+              "ship_class": "m",
+              "faction": "all"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 4,
+        "facts_count": 2,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 11.62,
+        "answer_text": "The M-class combat ships with the highest hull points are:\n\n1. **Osprey Sentinel** \u2013 41,000 hull points  \n2. **Osprey Vanguard** \u2013 36,000 hull points  \n\nThese are the top two entries in the ranking of M-class ships by hull points.",
+        "structured_result": [
+          {
+            "id": "ship_tel_m_frigate_01_b_macro",
+            "name": "Osprey Sentinel",
+            "value": 41000.0,
+            "metric": "hull",
+            "unit": "points"
+          },
+          {
+            "id": "ship_tel_m_frigate_01_a_macro",
+            "name": "Osprey Vanguard",
+            "value": 36000.0,
+            "metric": "hull",
+            "unit": "points"
+          },
+          {
+            "id": "ship_par_m_frigate_01_b_macro",
+            "name": "Gorgon Sentinel",
+            "value": 23000.0,
+            "metric": "hull",
+            "unit": "points"
+          },
+          {
+            "id": "ship_arg_m_frigate_01_b_macro",
+            "name": "Cerberus Sentinel",
+            "value": 22000.0,
+            "metric": "hull",
+            "unit": "points"
+          },
+          {
+            "id": "ship_par_m_frigate_01_a_macro",
+            "name": "Gorgon Vanguard",
+            "value": 20500.0,
+            "metric": "hull",
+            "unit": "points"
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 5,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 344,
+            "eval_count": 92,
+            "prompt_eval_duration_ms": 129.91,
+            "eval_duration_ms": 831.04,
+            "total_duration_ms": 3792.69,
+            "load_duration_ms": 2826.82,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 555,
+            "eval_count": 62,
+            "prompt_eval_duration_ms": 156.86,
+            "eval_duration_ms": 518.71,
+            "total_duration_ms": 3756.06,
+            "load_duration_ms": 3083.97,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t2_004",
+        "category": "T2_COMPARISON",
+        "question": "Compare the average prices of Ore and Silicon.",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Ore"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "ranking",
+              "entity_name": "Ore, Silicon",
+              "metric": "avg_price"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": true,
+        "claims_count": 3,
+        "facts_count": 1,
+        "inferences_count": 1,
+        "advice_count": 0,
+        "unsupported_count": 1,
+        "contradicted_count": 0,
+        "latency_seconds": 11.76,
+        "answer_text": "The provided evidence does not contain any information about the average prices of Ore or Silicon. The data only lists the average prices of various ship fabrication and maintenance bays under the category \"wares (any).\" Therefore, a direct comparison of the average prices of Ore and Silicon cannot be made based on the given evidence. \n\n**Note:** The evidence does not include Ore or Silicon, so the request cannot be fulfilled with the current data.",
+        "structured_result": [
+          {
+            "id": "module_par_def_claim_story_01",
+            "name": "Paranid Faction Capital",
+            "value": 450000000.0,
+            "metric": "avg_price",
+            "unit": "credits"
+          },
+          {
+            "id": "module_gen_build_xl_01",
+            "name": "XL Ship Fabrication Bay",
+            "value": 215570740.0,
+            "metric": "avg_price",
+            "unit": "credits"
+          },
+          {
+            "id": "module_gen_build_l_01",
+            "name": "L Ship Fabrication Bay",
+            "value": 211937860.0,
+            "metric": "avg_price",
+            "unit": "credits"
+          },
+          {
+            "id": "module_gen_build_dockarea_m_01",
+            "name": "S/M Ship Fabrication Bay",
+            "value": 101186848.0,
+            "metric": "avg_price",
+            "unit": "credits"
+          },
+          {
+            "id": "module_gen_equip_xl_01",
+            "name": "XL Ship Maintenance Bay",
+            "value": 57977136.0,
+            "metric": "avg_price",
+            "unit": "credits"
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 5,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 342,
+            "eval_count": 74,
+            "prompt_eval_duration_ms": 131.6,
+            "eval_duration_ms": 678.88,
+            "total_duration_ms": 3666.53,
+            "load_duration_ms": 2851.53,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 495,
+            "eval_count": 87,
+            "prompt_eval_duration_ms": 145.24,
+            "eval_duration_ms": 733.05,
+            "total_duration_ms": 4011.98,
+            "load_duration_ms": 3129.49,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t3_001",
+        "category": "T3_PRODUCTION_CHAIN",
+        "question": "What inputs and quantities are needed to produce Claytronics with the default production method?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Claytronics",
+              "production_method": "default"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Claytronics"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": true,
+        "claims_count": 7,
+        "facts_count": 6,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 1,
+        "contradicted_count": 0,
+        "latency_seconds": 11.81,
+        "answer_text": "To produce Claytronics using the default production method, the following raw materials and quantities are required:\n\n- **Energycells**: 9 units  \n- **Hydrogen**: 3 units  \n- **Silicon**: 9 units  \n- **Methane**: 4 units  \n- **Helium**: 1 unit  \n\nThese amounts are directly specified in the structured data for Claytronics under the default production method. The production will take 900.0 seconds.",
+        "structured_result": [
+          {
+            "target_ware_id": "claytronics",
+            "target_ware_name": "Claytronics",
+            "method": "default",
+            "output_amount": 108,
+            "production_time": 900.0,
+            "total_raw_materials": {
+              "energycells": 9,
+              "hydrogen": 3,
+              "silicon": 9,
+              "methane": 4,
+              "helium": 1
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 5,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 350,
+            "eval_count": 76,
+            "prompt_eval_duration_ms": 132.62,
+            "eval_duration_ms": 698.33,
+            "total_duration_ms": 3680.89,
+            "load_duration_ms": 2845.44,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 438,
+            "eval_count": 99,
+            "prompt_eval_duration_ms": 136.03,
+            "eval_duration_ms": 830.74,
+            "total_duration_ms": 4077.76,
+            "load_duration_ms": 3106.61,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t3_002",
+        "category": "T3_PRODUCTION_CHAIN",
+        "question": "What are the required inputs and production time for Hull Parts under the default method?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts",
+              "production_method": "default"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 6,
+        "facts_count": 4,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 11.45,
+        "answer_text": "The required inputs for Hull Parts under the default method are:\n- 3 units of ore\n- 1 unit of methane\n- 3 units of energycells\n\nThe production time for Hull Parts under the default method is 900.0 seconds.\n\nThis information is directly derived from the provided structured data evidence.",
+        "structured_result": [
+          {
+            "target_ware_id": "hullparts",
+            "target_ware_name": "Hull Parts",
+            "method": "default",
+            "output_amount": 294,
+            "production_time": 900.0,
+            "total_raw_materials": {
+              "energycells": 3,
+              "methane": 1,
+              "ore": 3
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 3,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 349,
+            "eval_count": 66,
+            "prompt_eval_duration_ms": 133.06,
+            "eval_duration_ms": 615.52,
+            "total_duration_ms": 3613.62,
+            "load_duration_ms": 2860.38,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 384,
+            "eval_count": 65,
+            "prompt_eval_duration_ms": 123.13,
+            "eval_duration_ms": 539.87,
+            "total_duration_ms": 3747.76,
+            "load_duration_ms": 3080.32,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t3_003",
+        "category": "T3_PRODUCTION_CHAIN",
+        "question": "What are the primary ingredients for Advanced Electronics?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Advanced Electronics",
+              "production_method": "default"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Advanced Electronics"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 6,
+        "facts_count": 4,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 11.47,
+        "answer_text": "The primary ingredients for Advanced Electronics, as specified in the provided structured data, are:\n\n- Energycells: 7 units\n- Silicon: 5 units\n- Methane: 2 units\n- Helium: 1 unit\n\nThese quantities are directly listed in the evidence for the target \"Advanced Electronics.\"",
+        "structured_result": [
+          {
+            "target_ware_id": "advancedelectronics",
+            "target_ware_name": "Advanced Electronics",
+            "method": "default",
+            "output_amount": 54,
+            "production_time": 720.0,
+            "total_raw_materials": {
+              "energycells": 7,
+              "silicon": 5,
+              "methane": 2,
+              "helium": 1
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 4,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 342,
+            "eval_count": 64,
+            "prompt_eval_duration_ms": 131.61,
+            "eval_duration_ms": 581.38,
+            "total_duration_ms": 3617.79,
+            "load_duration_ms": 2900.1,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 396,
+            "eval_count": 65,
+            "prompt_eval_duration_ms": 133.69,
+            "eval_duration_ms": 539.98,
+            "total_duration_ms": 3802.07,
+            "load_duration_ms": 3124.11,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t3_004",
+        "category": "T3_PRODUCTION_CHAIN",
+        "question": "What inputs are required to produce Smart Chips?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Smart Chips",
+              "production_method": "default"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Smart Chips"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 4,
+        "facts_count": 2,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 11.11,
+        "answer_text": "To produce Smart Chips, the required inputs are:\n\n- **Energycells**: 2 units  \n- **Silicon**: 1 unit  \n\nThese quantities are directly specified in the structured data for Smart Chips production.",
+        "structured_result": [
+          {
+            "target_ware_id": "smartchips",
+            "target_ware_name": "Smart Chips",
+            "method": "default",
+            "output_amount": 143,
+            "production_time": 600.0,
+            "total_raw_materials": {
+              "energycells": 2,
+              "silicon": 1
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 2,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 342,
+            "eval_count": 48,
+            "prompt_eval_duration_ms": 131.53,
+            "eval_duration_ms": 477.6,
+            "total_duration_ms": 3477.89,
+            "load_duration_ms": 2863.91,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 352,
+            "eval_count": 45,
+            "prompt_eval_duration_ms": 121.56,
+            "eval_duration_ms": 373.11,
+            "total_duration_ms": 3596.06,
+            "load_duration_ms": 3097.32,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t4_001",
+        "category": "T4_CATEGORY_LISTING",
+        "question": "List all ships belonging to the Argon faction.",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "faction": "argon"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "entity_name": "Argon",
+              "category": "shiptech"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 3,
+        "facts_count": 0,
+        "inferences_count": 1,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 11.76,
+        "answer_text": "The provided evidence contains structured data about **ship technology categories** (shiptech) and their pricing/volume information, but it does **not** include any information about ships or factions, specifically the Argon faction. Therefore, based strictly on the given evidence, it is impossible to list all ships belonging to the Argon faction.\n\n**Conclusion:** No ships belonging to the Argon faction can be listed from the supplied evidence.",
+        "structured_result": [
+          {
+            "id": "advancedelectronics",
+            "name": "Advanced Electronics",
+            "category": "shiptech",
+            "min_price": 710,
+            "avg_price": 1014,
+            "max_price": 1318,
+            "volume": 30
+          },
+          {
+            "id": "antimatterconverters",
+            "name": "Antimatter Converters",
+            "category": "shiptech",
+            "min_price": 248,
+            "avg_price": 354,
+            "max_price": 461,
+            "volume": 10
+          },
+          {
+            "id": "claytronics",
+            "name": "Claytronics",
+            "category": "shiptech",
+            "min_price": 1734,
+            "avg_price": 2040,
+            "max_price": 2346,
+            "volume": 24
+          },
+          {
+            "id": "dronecomponents",
+            "name": "Drone Components",
+            "category": "shiptech",
+            "min_price": 685,
+            "avg_price": 914,
+            "max_price": 1142,
+            "volume": 30
+          },
+          {
+            "id": "fieldcoils",
+            "name": "Field Coils",
+            "category": "shiptech",
+            "min_price": 247,
+            "avg_price": 412,
+            "max_price": 576,
+            "volume": 15
+          },
+          {
+            "id": "missilecomponents",
+            "name": "Missile Components",
+            "category": "shiptech",
+            "min_price": 6,
+            "avg_price": 9,
+            "max_price": 13,
+            "volume": 1
+          },
+          {
+            "id": "shieldcomponents",
+            "name": "Shield Components",
+            "category": "shiptech",
+            "min_price": 113,
+            "avg_price": 188,
+            "max_price": 264,
+            "volume": 10
+          },
+          {
+            "id": "smartchips",
+            "name": "Smart Chips",
+            "category": "shiptech",
+            "min_price": 46,
+            "avg_price": 57,
+            "max_price": 69,
+            "volume": 2
+          },
+          {
+            "id": "turretcomponents",
+            "name": "Turret Components",
+            "category": "shiptech",
+            "min_price": 164,
+            "avg_price": 273,
+            "max_price": 383,
+            "volume": 20
+          },
+          {
+            "id": "weaponcomponents",
+            "name": "Weapon Components",
+            "category": "shiptech",
+            "min_price": 171,
+            "avg_price": 285,
+            "max_price": 399,
+            "volume": 20
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 10,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 343,
+            "eval_count": 70,
+            "prompt_eval_duration_ms": 132.04,
+            "eval_duration_ms": 662.04,
+            "total_duration_ms": 3645.83,
+            "load_duration_ms": 2846.7,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 790,
+            "eval_count": 87,
+            "prompt_eval_duration_ms": 218.14,
+            "eval_duration_ms": 734.05,
+            "total_duration_ms": 4040.76,
+            "load_duration_ms": 3083.46,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t4_002",
+        "category": "T4_CATEGORY_LISTING",
+        "question": "List ships in the Medium (ship_m) class.",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "ship_class": "ship_m"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "entity_name": "ship_m"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": true,
+        "claims_count": 2,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 8.17,
+        "answer_text": "The requested category '' was not recognized in the database. Valid options are: agricultural, contraband, countermeasures, curiosity, drones, energy, engines, food, gases, general, generalitem, hardware, hightech, ice, luxuryitem, minerals, missiles, pharmaceutical, refined, shields, shiptech, software, thrusters, turrets, water, weapons.",
+        "structured_result": [],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 344,
+            "eval_count": 62,
+            "prompt_eval_duration_ms": 130.8,
+            "eval_duration_ms": 571.75,
+            "total_duration_ms": 3551.52,
+            "load_duration_ms": 2844.51,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 549,
+            "eval_count": 58,
+            "prompt_eval_duration_ms": 65.12,
+            "eval_duration_ms": 485.12,
+            "total_duration_ms": 557.09,
+            "load_duration_ms": 2.09,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t4_003",
+        "category": "T4_CATEGORY_LISTING",
+        "question": "List all wares in the refined category.",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "category": "refined"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "entity_name": "refined"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": true,
+        "claims_count": 2,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 5.53,
+        "answer_text": "The requested category '' was not recognized in the database. Valid options are: agricultural, contraband, countermeasures, curiosity, drones, energy, engines, food, gases, general, generalitem, hardware, hightech, ice, luxuryitem, minerals, missiles, pharmaceutical, refined, shields, shiptech, software, thrusters, turrets, water, weapons.",
+        "structured_result": [],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 342,
+            "eval_count": 62,
+            "prompt_eval_duration_ms": 60.75,
+            "eval_duration_ms": 725.63,
+            "total_duration_ms": 792.55,
+            "load_duration_ms": 2.06,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 549,
+            "eval_count": 61,
+            "prompt_eval_duration_ms": 178.27,
+            "eval_duration_ms": 513.0,
+            "total_duration_ms": 698.01,
+            "load_duration_ms": 2.07,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_t4_004",
+        "category": "T4_CATEGORY_LISTING",
+        "question": "List all combat ships with fight purpose.",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "purpose": "fight"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "category_listing",
+              "entity_name": "combat ships",
+              "purpose": "fight",
+              "category": "shiptech"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 43,
+        "facts_count": 41,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 11.22,
+        "answer_text": "Based on the provided structured data, the combat ships with a \"fight\" purpose are:\n\n- Behemoth E\n- Behemoth Sentinel\n- Behemoth Vanguard\n- H\n- Odysseus E\n- Odysseus Sentinel\n- Odysseus Vanguard\n- Phoenix E\n- Phoenix Sentinel\n- Phoenix Vanguard\n- Ravager\n- B\n- Cerberus Sentinel\n- Cerberus Vanguard\n- Gorgon Sentinel\n- Gorgon Vanguard\n- Hive Guard\n- Minotaur Raider\n- Minotaur Sentinel\n- Minotaur Vanguard\n- Nemesis Sentinel\n- Nemesis Vanguard\n- Osprey Sentinel\n- Osprey Vanguard\n- P\n- PE\n- Peregrine Sentinel\n- Peregrine Vanguard\n- Queen's Guard\n- Ares\n- Buzzard Sentinel\n- Buzzard Vanguard\n- Defence Drone (appears twice)\n- Discoverer Sentinel\n- Discoverer Vanguard\n- Eclipse Sentinel\n- Eclipse Vanguard (appears twice)\n- Elite Sentinel\n- Elite Vanguard\n- F\n- Falcon Sentinel\n- Falcon Vanguard\n- Forager\n- Guillemot Sentinel\n- Guillemot Vanguard\n- Kestrel Sentinel\n- Kestrel Vanguard\n- M\n\nThese entries are all listed under the \"purpose = fight\" category in the structured data.",
+        "structured_result": [
+          {
+            "id": "ship_arg_l_destroyer_02_a_macro",
+            "name": "Behemoth E",
+            "ship_class": "ship_l",
+            "hull": 153000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_l_destroyer_01_b_macro",
+            "name": "Behemoth Sentinel",
+            "ship_class": "ship_l",
+            "hull": 111000.0,
+            "cargo_capacity": 2760.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_l_destroyer_01_a_macro",
+            "name": "Behemoth Vanguard",
+            "ship_class": "ship_l",
+            "hull": 93000.0,
+            "cargo_capacity": 2300.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_xen_l_terraformer_01_a_macro",
+            "name": "H",
+            "ship_class": "ship_l",
+            "hull": 112000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_l_destroyer_02_a_macro",
+            "name": "Odysseus E",
+            "ship_class": "ship_l",
+            "hull": 140000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_l_destroyer_01_b_macro",
+            "name": "Odysseus Sentinel",
+            "ship_class": "ship_l",
+            "hull": 119000.0,
+            "cargo_capacity": 2040.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_l_destroyer_01_a_macro",
+            "name": "Odysseus Vanguard",
+            "ship_class": "ship_l",
+            "hull": 99000.0,
+            "cargo_capacity": 1700.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_l_destroyer_02_a_macro",
+            "name": "Phoenix E",
+            "ship_class": "ship_l",
+            "hull": 123200.0,
+            "cargo_capacity": 0.0,
+            "speed": 400.0
+          },
+          {
+            "id": "ship_tel_l_destroyer_01_b_macro",
+            "name": "Phoenix Sentinel",
+            "ship_class": "ship_l",
+            "hull": 124000.0,
+            "cargo_capacity": 4440.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_l_destroyer_01_a_macro",
+            "name": "Phoenix Vanguard",
+            "ship_class": "ship_l",
+            "hull": 104000.0,
+            "cargo_capacity": 3700.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_kha_l_destroyer_01_a_macro",
+            "name": "Ravager",
+            "ship_class": "ship_l",
+            "hull": 136000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_xen_m_corvette_01_a_macro",
+            "name": "B",
+            "ship_class": "ship_m",
+            "hull": 16600.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_m_frigate_01_b_macro",
+            "name": "Cerberus Sentinel",
+            "ship_class": "ship_m",
+            "hull": 22000.0,
+            "cargo_capacity": 2112.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_m_frigate_01_a_macro",
+            "name": "Cerberus Vanguard",
+            "ship_class": "ship_m",
+            "hull": 19000.0,
+            "cargo_capacity": 1760.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_m_frigate_01_b_macro",
+            "name": "Gorgon Sentinel",
+            "ship_class": "ship_m",
+            "hull": 23000.0,
+            "cargo_capacity": 1956.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_m_frigate_01_a_macro",
+            "name": "Gorgon Vanguard",
+            "ship_class": "ship_m",
+            "hull": 20500.0,
+            "cargo_capacity": 1630.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_kha_m_fighter_02_a_macro",
+            "name": "Hive Guard",
+            "ship_class": "ship_m",
+            "hull": 3000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_m_bomber_02_a_macro",
+            "name": "Minotaur Raider",
+            "ship_class": "ship_m",
+            "hull": 14600.0,
+            "cargo_capacity": 2370.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_m_bomber_01_b_macro",
+            "name": "Minotaur Sentinel",
+            "ship_class": "ship_m",
+            "hull": 18800.0,
+            "cargo_capacity": 1056.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_m_bomber_01_a_macro",
+            "name": "Minotaur Vanguard",
+            "ship_class": "ship_m",
+            "hull": 16500.0,
+            "cargo_capacity": 880.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_m_corvette_01_b_macro",
+            "name": "Nemesis Sentinel",
+            "ship_class": "ship_m",
+            "hull": 15000.0,
+            "cargo_capacity": 672.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_m_corvette_01_a_macro",
+            "name": "Nemesis Vanguard",
+            "ship_class": "ship_m",
+            "hull": 13000.0,
+            "cargo_capacity": 560.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_m_frigate_01_b_macro",
+            "name": "Osprey Sentinel",
+            "ship_class": "ship_m",
+            "hull": 41000.0,
+            "cargo_capacity": 2916.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_m_frigate_01_a_macro",
+            "name": "Osprey Vanguard",
+            "ship_class": "ship_m",
+            "hull": 36000.0,
+            "cargo_capacity": 2430.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_xen_m_fighter_01_a_macro",
+            "name": "P",
+            "ship_class": "ship_m",
+            "hull": 10000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_xen_m_corvette_02_a_macro",
+            "name": "PE(pronounce the letters \"P\" and \"E\" separately)",
+            "ship_class": "ship_m",
+            "hull": 12600.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_m_bomber_01_b_macro",
+            "name": "Peregrine Sentinel",
+            "ship_class": "ship_m",
+            "hull": 17400.0,
+            "cargo_capacity": 1020.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_m_bomber_01_a_macro",
+            "name": "Peregrine Vanguard",
+            "ship_class": "ship_m",
+            "hull": 16000.0,
+            "cargo_capacity": 850.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_kha_m_fighter_01_a_macro",
+            "name": "Queen's Guard",
+            "ship_class": "ship_m",
+            "hull": 4000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_par_s_heavyfighter_01_a_macro",
+            "name": "Ares",
+            "ship_class": "ship_s",
+            "hull": 4800.0,
+            "cargo_capacity": 0.0,
+            "speed": 400.0
+          },
+          {
+            "id": "ship_tel_s_fighter_02_b_macro",
+            "name": "Buzzard Sentinel",
+            "ship_class": "ship_s",
+            "hull": 5000.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_s_fighter_02_a_macro",
+            "name": "Buzzard Vanguard",
+            "ship_class": "ship_s",
+            "hull": 4100.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_gen_s_fightingdrone_01_a_macro",
+            "name": "Defence Drone",
+            "ship_class": "ship_s",
+            "hull": 1900.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_gen_s_fightingdrone_explosive_01_a_macro",
+            "name": "Defence Drone",
+            "ship_class": "ship_s",
+            "hull": 1200.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_s_scout_01_b_macro",
+            "name": "Discoverer Sentinel",
+            "ship_class": "ship_s",
+            "hull": 1700.0,
+            "cargo_capacity": 648.0,
+            "speed": 400.0
+          },
+          {
+            "id": "ship_arg_s_scout_01_a_macro",
+            "name": "Discoverer Vanguard",
+            "ship_class": "ship_s",
+            "hull": 1400.0,
+            "cargo_capacity": 540.0,
+            "speed": 400.0
+          },
+          {
+            "id": "ship_arg_s_heavyfighter_01_b_macro",
+            "name": "Eclipse Sentinel",
+            "ship_class": "ship_s",
+            "hull": 5300.0,
+            "cargo_capacity": 420.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_s_heavyfighter_01_a_macro",
+            "name": "Eclipse Vanguard",
+            "ship_class": "ship_s",
+            "hull": 4400.0,
+            "cargo_capacity": 350.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_s_heavyfighter_02_a_macro",
+            "name": "Eclipse Vanguard",
+            "ship_class": "ship_s",
+            "hull": 4000.0,
+            "cargo_capacity": 320.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_s_fighter_02_b_macro",
+            "name": "Elite Sentinel",
+            "ship_class": "ship_s",
+            "hull": 2200.0,
+            "cargo_capacity": 180.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_arg_s_fighter_02_a_macro",
+            "name": "Elite Vanguard",
+            "ship_class": "ship_s",
+            "hull": 1800.0,
+            "cargo_capacity": 150.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_xen_s_heavyfighter_01_a_macro",
+            "name": "F",
+            "ship_class": "ship_s",
+            "hull": 4800.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_s_fighter_01_b_macro",
+            "name": "Falcon Sentinel",
+            "ship_class": "ship_s",
+            "hull": 4600.0,
+            "cargo_capacity": 730.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_s_fighter_01_a_macro",
+            "name": "Falcon Vanguard",
+            "ship_class": "ship_s",
+            "hull": 3900.0,
+            "cargo_capacity": 612.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_kha_s_fighter_02_a_macro",
+            "name": "Forager",
+            "ship_class": "ship_s",
+            "hull": 600.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_s_scout_02_b_macro",
+            "name": "Guillemot Sentinel",
+            "ship_class": "ship_s",
+            "hull": 3300.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_s_scout_02_a_macro",
+            "name": "Guillemot Vanguard",
+            "ship_class": "ship_s",
+            "hull": 2800.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_s_scout_01_b_macro",
+            "name": "Kestrel Sentinel",
+            "ship_class": "ship_s",
+            "hull": 3100.0,
+            "cargo_capacity": 912.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_tel_s_scout_01_a_macro",
+            "name": "Kestrel Vanguard",
+            "ship_class": "ship_s",
+            "hull": 2500.0,
+            "cargo_capacity": 760.0,
+            "speed": 300.0
+          },
+          {
+            "id": "ship_xen_s_fighter_02_a_macro",
+            "name": "M",
+            "ship_class": "ship_s",
+            "hull": 2900.0,
+            "cargo_capacity": 0.0,
+            "speed": 300.0
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 50,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 341,
+            "eval_count": 79,
+            "prompt_eval_duration_ms": 56.34,
+            "eval_duration_ms": 845.89,
+            "total_duration_ms": 908.7,
+            "load_duration_ms": 2.35,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 2734,
+            "eval_count": 280,
+            "prompt_eval_duration_ms": 632.29,
+            "eval_duration_ms": 2492.36,
+            "total_duration_ms": 6246.99,
+            "load_duration_ms": 3114.75,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_vec_001",
+        "category": "VECTOR_STRATEGY",
+        "question": "How do fleet commands and assignments work in X4, specifically regarding escort and patrol behavior?",
+        "expected_route": "VECTOR",
+        "actual_route": "VECTOR",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "fleet commands assignments escort patrol behavior"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "Explain fleet commands and assignments in X4: Foundations, focusing on escort and patrol behaviors, including how to set up escorts, patrol routes, and the underlying mechanics that govern ship movement and AI responses."
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 14,
+        "facts_count": 10,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 2,
+        "contradicted_count": 2,
+        "latency_seconds": 22.34,
+        "answer_text": "In X4, fleet commands and assignments govern how ships behave under a commander's control, with distinct roles for escort and patrol:\n\n1. **Escort Behavior**:\n   - The **\"Defend Commander\"** command assigns ships to protect only the designated commander ship. If the commander is attacked, these ships respond, but they do **not** automatically defend other ships in the group. This means each ship only guards the commander it is assigned to, not the entire fleet.\n   - The **\"Attack with Commander\"** command directs all assigned ships to target the same enemy selected by the commander, regardless of nearby threats. The group shifts to a new target only after the current one is destroyed.\n\n2. **Patrol Behavior**:\n   - The **\"Follow Commander\"** command is the simplest patrol option, where ships merely follow the commander's movements. They defend themselves if directly attacked but do not proactively seek out enemies.\n   - The **\"Intercept for Commander\"** command is tailored for smaller threats, engaging medium and small-class ships near the commander. This allows the commander, often a larger ship, to focus on major battles while assigned ships handle nearby smaller enemies.\n\nAdditionally, **assignments** such as **\"Supply Commander's Fleet\"** are specialized for auxiliary support ships, distinct from the five standard fleet commands above.\n\nThus, escort behavior is primarily managed through **Defend Commander** (for dedicated protection) and **Attack with Commander** (for coordinated assaults), while patrol duties rely on **Follow Commander** for basic movement tracking and **Intercept for Commander** for localized threat interception.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_egosoft_orders_001_002",
+            "content": "X4 distinguishes three layers of ship control. **Orders** are one-off, direct instructions \u2014 \"mine here,\" \"fly there\" \u2014 given by left-clicking a ship, then right-clicking a target to open the order menu; once complete, the ship reverts to its default behavior. **Default Behaviours** are what a ship does automatically when no order is active \u2014 generally fire-and-forget, requiring no ongoing micromanagement. **Assignments** are standing roles a ship performs on behalf of a commander (another ship or a station), set up via the \"Assign Role for\" order.",
+            "similarity": 0.7338
+          },
+          {
+            "chunk_id": "chunk_src_man_fleet2_001_001",
+            "content": "*Curated from a Q&A-format YouTube video answering common questions about fleet command behavior. The video's illustrative example uses a specific Terran ship to demonstrate one of the mechanics below \u2014 that specific example has been generalized here rather than named, given uncertainty over whether that particular ship requires DLC ownership.*",
+            "similarity": 0.618
+          },
+          {
+            "chunk_id": "chunk_src_man_fleet2_001_002",
+            "content": "When assigning ships to serve under a fleet commander, there are five standard commands, each with genuinely different behavior \u2014 and understanding the differences explains why fleets sometimes don't act the way a player expects.\n\n**Defend Commander** is narrower than it sounds: assigned ships defend *only* the commander itself. If the commander comes under attack, they respond \u2014 but if a fellow squadmate who's also on Defend Commander gets attacked instead, the rest of the group won't come to that ship's aid. The defense is scoped strictly to the one commander, not the group as a whole.\n\n**Attack with Commander** works differently: whatever target the commander picks, every assigned ship attacks that same target \u2014 even if a different, perhaps closer, enemy is sitting right next to it. Only once the commander's chosen target is destroyed, and a new one selected, does the whole group shift together.\n\n**Intercept for Commander** is specifically built for handling smaller threats: it engages small and medium-class ships that come near the commander. This is particularly useful when the commander itself is a large ship tied up fighting other large enemies \u2014 assigning some ships to intercept lets them clean up the smaller threats nearby while the commander stays focused on the big fight.\n\n**Follow Commander** is the simplest of the five: ships just follow the commander's movement, defending themselves if directly attacked, but never actively hunting for a fight on their own.",
+            "similarity": 0.5884
+          },
+          {
+            "chunk_id": "chunk_src_man_fleet2_001_004",
+            "content": "**Supply Commander's Fleet** is a separate assignment altogether, intended for auxiliary or support ships within a fleet rather than combat ships \u2014 distinct from all five commands above.",
+            "similarity": 0.5842
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_009",
+            "content": "Set a ship's Default Behaviour to Repeat Orders, then manually configure a Buy From instruction at one station or sector (at maximum buy price) and a Sell To instruction at another (at minimum sell price) \u2014 this creates an automated back-and-forth route between the two, regardless of price. A sell instruction can also target an entire sector instead of a single station, selling to whichever station in it meets the minimum price.",
+            "similarity": 0.5745
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 5,
+          "max_similarity": 0.7338,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_egosoft_orders_001_002",
+          "chunk_src_man_egosoft_orders_001_003",
+          "chunk_src_man_egosoft_orders_001_004"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_egosoft_orders_001_002",
+          "chunk_src_man_fleet2_001_001",
+          "chunk_src_man_fleet2_001_002",
+          "chunk_src_man_fleet2_001_004",
+          "chunk_src_man_jkninja_station_001_009"
+        ],
+        "chunk_recall": 0.3333,
+        "chunk_precision": 0.2,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 351,
+            "eval_count": 103,
+            "prompt_eval_duration_ms": 132.97,
+            "eval_duration_ms": 917.4,
+            "total_duration_ms": 3917.89,
+            "load_duration_ms": 2862.84,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1250,
+            "eval_count": 326,
+            "prompt_eval_duration_ms": 306.9,
+            "eval_duration_ms": 2811.61,
+            "total_duration_ms": 11265.7,
+            "load_duration_ms": 8138.94,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_vec_002",
+        "category": "VECTOR_STRATEGY",
+        "question": "What is the recommended strategy for early-game trading and setting up basic pilot automation?",
+        "expected_route": "VECTOR",
+        "actual_route": "VECTOR",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "early game trading pilot automation seminar"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "early-game trading strategy and basic pilot automation setup in X4 Foundations"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 12,
+        "facts_count": 9,
+        "inferences_count": 0,
+        "advice_count": 1,
+        "unsupported_count": 2,
+        "contradicted_count": 0,
+        "latency_seconds": 21.71,
+        "answer_text": "**Recommended Early-Game Trading Strategy and Pilot Automation**\n\n1. **Pilot Skill Acquisition**:  \n   - Enroll a pilot in a basic piloting seminar to reach **one star** in piloting skill. This unlocks the **Repeat Orders** feature, essential for automated trading.\n\n2. **Configure Automated Trade Route**:  \n   - Set the pilot\u2019s **Default Behavior** to **Repeat Orders**.  \n   - Manually create a **Buy From** instruction targeting a specific station or an entire sector at the **maximum buy price** for the bottlenecked ware.  \n   - Create a **Sell To** instruction targeting another station or sector at the **minimum sell price**.  \n   - This setup enables a continuous, hands\u2011off loop of buying and selling the selected ware, generating passive income without further manual intervention.\n\n3. **Supporting Early Routine**:  \n   - Before initiating trading, place the starting **Nav Beacons**, equip a **Trading Computer Extension**, and hire a **backup pilot** to ensure reliability and redundancy in operations.\n\nBy following these steps, you establish a stable, AI\u2011driven trade economy that reliably funds subsequent ship purchases and station construction throughout the early game.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_005",
+            "content": "Get a pilot to one star via a basic piloting seminar, set their behavior to Repeat Order, then configure Buy In and Sell In targets \u2014 either a whole sector or a specific station \u2014 for the bottlenecked ware. This turns a single trader into ongoing passive income without further manual management.",
+            "similarity": 0.6946
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_002",
+            "content": "The aim isn't to make money as fast as possible \u2014 it's to build a stable, AI-driven economy that reliably funds ship purchases and station construction over time. Before starting, a sensible early routine is: drop the starting Nav Beacons, pick up a Trading Computer Extension, and hire a backup pilot.",
+            "similarity": 0.6032
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_009",
+            "content": "Set a ship's Default Behaviour to Repeat Orders, then manually configure a Buy From instruction at one station or sector (at maximum buy price) and a Sell To instruction at another (at minimum sell price) \u2014 this creates an automated back-and-forth route between the two, regardless of price. A sell instruction can also target an entire sector instead of a single station, selling to whichever station in it meets the minimum price.",
+            "similarity": 0.5799
+          },
+          {
+            "chunk_id": "chunk_src_man_egosoft_orders_001_002",
+            "content": "X4 distinguishes three layers of ship control. **Orders** are one-off, direct instructions \u2014 \"mine here,\" \"fly there\" \u2014 given by left-clicking a ship, then right-clicking a target to open the order menu; once complete, the ship reverts to its default behavior. **Default Behaviours** are what a ship does automatically when no order is active \u2014 generally fire-and-forget, requiring no ongoing micromanagement. **Assignments** are standing roles a ship performs on behalf of a commander (another ship or a station), set up via the \"Assign Role for\" order.",
+            "similarity": 0.5656
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_003",
+            "content": "Local Auto Trade \u2014 the automation available to a brand-new, zero-star pilot \u2014 only handles one ware at a time. Repeat Orders, which let you manually configure a specific back-and-forth trade route, need at least one star of pilot skill before they're available at all.\n\nShip size matters less than it might seem for pure trading: a bigger ship just means fewer, larger runs instead of many small ones \u2014 it doesn't change how much profit you make per unit traded. The real edge of a bigger ship is usually better shields and weapons, which can offset the higher upfront cost.",
+            "similarity": 0.5474
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 5,
+          "max_similarity": 0.6946,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_economy_primer_001_004",
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_ruggedgamer_trading_001_003"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_economy_primer_001_002",
+          "chunk_src_man_jkninja_station_001_009",
+          "chunk_src_man_egosoft_orders_001_002",
+          "chunk_src_man_ruggedgamer_trading_001_003"
+        ],
+        "chunk_recall": 0.6667,
+        "chunk_precision": 0.4,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 349,
+            "eval_count": 73,
+            "prompt_eval_duration_ms": 130.83,
+            "eval_duration_ms": 662.55,
+            "total_duration_ms": 3909.7,
+            "load_duration_ms": 3111.97,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1100,
+            "eval_count": 243,
+            "prompt_eval_duration_ms": 271.2,
+            "eval_duration_ms": 2086.0,
+            "total_duration_ms": 10563.22,
+            "load_duration_ms": 8199.37,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_vec_003",
+        "category": "VECTOR_STRATEGY",
+        "question": "How does the scrap recycling loop work between scrap processors and scrap recyclers?",
+        "expected_route": "VECTOR",
+        "actual_route": "VECTOR",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "scrap recycling loop processor recycler energy cells"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "Explain the scrap recycling loop between scrap processors and scrap recyclers in X4: Foundations, including how scrap is generated, transported, and converted back into raw materials."
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": true,
+        "is_grounded": true,
+        "claims_count": 10,
+        "facts_count": 8,
+        "inferences_count": 1,
+        "advice_count": 0,
+        "unsupported_count": 1,
+        "contradicted_count": 0,
+        "latency_seconds": 21.4,
+        "answer_text": "The scrap recycling loop in X4: Foundations operates through two specialized modules:\n\n1. **Processor**: This module converts raw scrap into Scrap Metal. It has a processing capacity of 150 raw scrap per minute, yielding a maximum of 150 Scrap Metal per minute. The Processor requires a fully built M-class dock to run unattended.\n\n2. **Recycler**: The Recycler transforms Scrap Metal into either Hull Parts or Claytronics. By default, it alternates between producing Hull Parts and Claytronics every 5 minutes. Specifically, it produces 200 Hull Parts per cycle (costing 3,500 Energy Cells and 75 Scrap Metal) or 60 Claytronics per cycle (costing 12,000 Energy Cells and 300 Scrap Metal). Limiting the storage of one output forces the Recycler to focus solely on the other type.\n\nBoth modules' blueprints are available for purchase from base-game factions, such as the Teladi Company, and the entire process requires no additional DLCs. This chain effectively recycles scrap into essential materials for station and ship construction within the base game.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_005",
+            "content": "Two modules handle the conversion. The **Processor** turns raw scrap into Scrap Metal (a solid ware, needing solid storage), capped at 150 raw scrap processed per one-minute cycle \u2014 150 Scrap Metal per minute at most \u2014 and needs a fully-built M-class dock before it can run unattended.\n\nThe **Recycler** then turns that Scrap Metal into Hull Parts and Claytronics, alternating between the two by default each 5-minute cycle: 200 Hull Parts per cycle (costing 3,500 Energy Cells + 75 Scrap Metal), or 60 Claytronics per cycle (costing 12,000 Energy Cells + 300 Scrap Metal). Limiting one output's container storage to a single unit forces the Recycler to focus on producing only the other.\n\nBoth modules' blueprints are purchasable from multiple base-game factions, including Teladi Company.",
+            "similarity": 0.6629
+          },
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_007",
+            "content": "Scrap-derived Hull Parts and Claytronics are a genuinely useful supplement to a station-building or shipbuilding operation's material needs, and the entire Processor-to-Recycler chain described here requires no DLC ownership at all.",
+            "similarity": 0.6584
+          },
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_001",
+            "content": "*Curated from a community guide covering scrapping mechanics. This excerpt covers only the confirmed base-game portions \u2014 the guide's Tides of Avarice-specific content (the Teuta ship, Terran Recycler, and its centralized-recycling strategy) has been deliberately excluded, as has its Closed Loop Economy discussion, both explicitly DLC-gated features.*",
+            "similarity": 0.5645
+          },
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_004",
+            "content": "Among confirmed base-game sectors, natural scrap concentration is highest at Silent Witness XII (roughly 4.88 million), followed by Getsu Fune (~4.17 million), Hewa's Twin V (~1.63 million), Faulty Logic I (~305,000), and Circle of Deceit (~279,000) \u2014 approximate figures based on the guide author's own observation and in-game encyclopedia data.",
+            "similarity": 0.5326
+          },
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_002",
+            "content": "Raw scrap occurs naturally in two forms, both shown as blue markers on the map: wrecks, and loose scrap pieces. The Manticore \u2014 an M-class scrapping ship classified as a Tug, fitted with three Scrap Tractors \u2014 collects the loose-piece form directly and independently, with no dependency on any other ship. Its blueprint is purchasable from multiple base-game factions, including Teladi Company. Piloting it manually is simple: target a scrap object and press the tug key to begin towing it (movement slows while towing, though travel drive still works), then press the key again once docked at a compatible processor to deposit the load.\n\nBecause the AI doesn't run large-scale scrap-collection fleets of its own, a natural scrap field is unlikely to run dry from player use alone.",
+            "similarity": 0.5311
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 5,
+          "max_similarity": 0.6629,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_scrappy_guide_001_002",
+          "chunk_src_man_scrappy_guide_001_005",
+          "chunk_src_man_scrappy_guide_001_006"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_scrappy_guide_001_005",
+          "chunk_src_man_scrappy_guide_001_007",
+          "chunk_src_man_scrappy_guide_001_001",
+          "chunk_src_man_scrappy_guide_001_004",
+          "chunk_src_man_scrappy_guide_001_002"
+        ],
+        "chunk_recall": 0.6667,
+        "chunk_precision": 0.4,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 348,
+            "eval_count": 93,
+            "prompt_eval_duration_ms": 131.58,
+            "eval_duration_ms": 826.35,
+            "total_duration_ms": 3793.66,
+            "load_duration_ms": 2830.83,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1199,
+            "eval_count": 225,
+            "prompt_eval_duration_ms": 298.34,
+            "eval_duration_ms": 1931.9,
+            "total_duration_ms": 10383.31,
+            "load_duration_ms": 8146.37,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_vec_004",
+        "category": "VECTOR_STRATEGY",
+        "question": "How should a player manage station budget allocation and revenue transfers?",
+        "expected_route": "VECTOR",
+        "actual_route": "VECTOR",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "station budget allocation revenue account transfer"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "strategic guidance on managing station budget allocation and revenue transfers in X4: Foundations, including optimal allocation of funds to modules, balancing operational costs, maximizing revenue through trade and services, and efficient transfer of profits to central accounts or other stations."
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 13,
+        "facts_count": 6,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 7,
+        "contradicted_count": 0,
+        "latency_seconds": 23.44,
+        "answer_text": "Based on the provided evidence, the management of station budget allocation and revenue transfers in X4: Foundations involves setting up automated trade routes and leveraging AI-driven behaviors to ensure a stable, self-sustaining economy:\n\n1. **Automate Trade Routes**:  \n   - Assign a pilot a **Repeat Order** behavior.  \n   - Configure **Buy In** and **Sell In** targets for bottlenecked wares, either at a specific station or an entire sector. This creates an ongoing passive income stream without further manual intervention (see evidence from *Economy Primer: Building a Self-Sustaining Trade Economy > Automating the First Trade Route*).\n\n2. **Scale the Economy**:  \n   - Once a single trade chain is operational, replicate the method for additional factions or convert **Repeat-Order traders** into **Station Traders** to consolidate multiple wares under one station, enhancing efficiency and storage for future station construction (refer to *Economy Primer: Building a Self-Sustaining Trade Economy > Scaling Beyond One Chain*).\n\n3. **Direct Revenue Transfers**:  \n   - Use **Repeat Orders** to set up automated transport between stations or sectors, configuring **Buy From** and **Sell To** instructions to move goods automatically. A **Sell To** instruction can target an entire sector, selling to the station that meets the minimum price, ensuring revenue is efficiently transferred to your station's budget (see *Building Your First Station: The Practical Basics > Automating Transport with Repeat Orders*).\n\n4. **Early Routine for Stability**:  \n   - Before launching these automated systems, establish early routines such as placing **Nav Beacons**, acquiring a **Trading Computer Extension**, and hiring a **backup pilot** to support the initial setup and ensure reliability (as outlined in *Economy Primer: Building a Self-Sustaining Trade Economy > Goal of This Approach*).\n\nIn summary, manage station budget allocation and revenue transfers by automating trade routes with Repeat Orders, scaling the economy through station traders and miners, and following an early setup routine to build a stable, AI-driven economic foundation.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_005",
+            "content": "Get a pilot to one star via a basic piloting seminar, set their behavior to Repeat Order, then configure Buy In and Sell In targets \u2014 either a whole sector or a specific station \u2014 for the bottlenecked ware. This turns a single trader into ongoing passive income without further manual management.",
+            "similarity": 0.6348
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_007",
+            "content": "Once a single economy runs smoothly, there are several ways to expand: apply the same method to a second faction's economy, convert Repeat-Order traders into Station Traders (consolidating multiple wares under one station, which also stores cheap goods useful for future player-built stations), or convert independent miners into Station Miners (parking in dense resource areas and auto-selling to the best buyer, while also being able to directly supply player stations).",
+            "similarity": 0.5665
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_009",
+            "content": "Set a ship's Default Behaviour to Repeat Orders, then manually configure a Buy From instruction at one station or sector (at maximum buy price) and a Sell To instruction at another (at minimum sell price) \u2014 this creates an automated back-and-forth route between the two, regardless of price. A sell instruction can also target an entire sector instead of a single station, selling to whichever station in it meets the minimum price.",
+            "similarity": 0.5657
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_001",
+            "content": "*Curated from a YouTube tutorial on station-building fundamentals. One section covering Terran-specific mechanics (solar panel behavior at Mercury, the Computronic Substrate dual-refinery limitation) has been deliberately excluded \u2014 its DLC status was genuinely unclear from the source, so it was left out of caution rather than guessed at.*",
+            "similarity": 0.5471
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_002",
+            "content": "The aim isn't to make money as fast as possible \u2014 it's to build a stable, AI-driven economy that reliably funds ship purchases and station construction over time. Before starting, a sensible early routine is: drop the starting Nav Beacons, pick up a Trading Computer Extension, and hire a backup pilot.",
+            "similarity": 0.5226
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 5,
+          "max_similarity": 0.6348,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_jkninja_station_001_007",
+          "chunk_src_man_jkninja_station_001_010"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_economy_primer_001_007",
+          "chunk_src_man_jkninja_station_001_009",
+          "chunk_src_man_jkninja_station_001_001",
+          "chunk_src_man_economy_primer_001_002"
+        ],
+        "chunk_recall": 0.0,
+        "chunk_precision": 0.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 345,
+            "eval_count": 110,
+            "prompt_eval_duration_ms": 130.92,
+            "eval_duration_ms": 973.52,
+            "total_duration_ms": 4235.11,
+            "load_duration_ms": 3126.19,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 973,
+            "eval_count": 421,
+            "prompt_eval_duration_ms": 251.21,
+            "eval_duration_ms": 3613.61,
+            "total_duration_ms": 12001.79,
+            "load_duration_ms": 8130.41,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_vec_005",
+        "category": "VECTOR_STRATEGY",
+        "question": "How do you set up repeat orders for a trading ship?",
+        "expected_route": "VECTOR",
+        "actual_route": "VECTOR",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "set up repeat orders default behaviour trade"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "How to configure repeat orders for a trading ship in X4: Foundations, including setting up automatic replenishment of cargo and scheduling deliveries."
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 12,
+        "facts_count": 6,
+        "inferences_count": 1,
+        "advice_count": 0,
+        "unsupported_count": 5,
+        "contradicted_count": 0,
+        "latency_seconds": 33.67,
+        "answer_text": "To set up repeat orders for a trading ship in X4: Foundations, follow these steps based on the provided evidence:\n\n1. **Ensure Pilot Skill Requirement**: According to the evidence from *X4 6.00 - Guide - Trading - Basic to Advanced Trading*, a pilot must have at least one star of skill to access Repeat Orders. Therefore, first ensure your pilot has achieved the required skill level.\n\n2. **Configure Default Behavior**: Set the ship's **Default Behaviour** to **Repeat Orders**. This setting allows the ship to automatically execute the configured trade route repeatedly.\n\n3. **Set Buy and Sell Instructions**:\n   - Open the order menu by left-clicking the ship, then right-clicking a target to access the order options.\n   - Configure a **Buy From** instruction at a specific station or sector, setting the purchase price to the maximum available price.\n   - Configure a **Sell To** instruction at another station or sector, setting the sale price to the minimum acceptable price.\n   - As noted in the *Building Your First Station* guide, a sell instruction can target an entire sector, selling to the station within that sector that meets the minimum price.\n\n4. **Activate the Route**: Once the instructions are set, the ship will automatically execute the back-and-forth trade route between the Buy From and Sell To targets, regardless of fluctuating market prices, as described in the *Building Your First Station* and *Economy Primer* sections.\n\nBy following these steps, you establish an automated trading loop that generates passive income without ongoing manual intervention.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_009",
+            "content": "Set a ship's Default Behaviour to Repeat Orders, then manually configure a Buy From instruction at one station or sector (at maximum buy price) and a Sell To instruction at another (at minimum sell price) \u2014 this creates an automated back-and-forth route between the two, regardless of price. A sell instruction can also target an entire sector instead of a single station, selling to whichever station in it meets the minimum price.",
+            "similarity": 0.7102
+          },
+          {
+            "chunk_id": "chunk_src_man_egosoft_orders_001_002",
+            "content": "X4 distinguishes three layers of ship control. **Orders** are one-off, direct instructions \u2014 \"mine here,\" \"fly there\" \u2014 given by left-clicking a ship, then right-clicking a target to open the order menu; once complete, the ship reverts to its default behavior. **Default Behaviours** are what a ship does automatically when no order is active \u2014 generally fire-and-forget, requiring no ongoing micromanagement. **Assignments** are standing roles a ship performs on behalf of a commander (another ship or a station), set up via the \"Assign Role for\" order.",
+            "similarity": 0.6626
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_005",
+            "content": "Get a pilot to one star via a basic piloting seminar, set their behavior to Repeat Order, then configure Buy In and Sell In targets \u2014 either a whole sector or a specific station \u2014 for the bottlenecked ware. This turns a single trader into ongoing passive income without further manual management.",
+            "similarity": 0.6086
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_003",
+            "content": "Local Auto Trade \u2014 the automation available to a brand-new, zero-star pilot \u2014 only handles one ware at a time. Repeat Orders, which let you manually configure a specific back-and-forth trade route, need at least one star of pilot skill before they're available at all.\n\nShip size matters less than it might seem for pure trading: a bigger ship just means fewer, larger runs instead of many small ones \u2014 it doesn't change how much profit you make per unit traded. The real edge of a bigger ship is usually better shields and weapons, which can offset the higher upfront cost.",
+            "similarity": 0.5971
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_006",
+            "content": "Most failed trade orders just mean no matching trade was available at that moment \u2014 this becomes rarer as automation and skill mature, and ships typically self-correct by shifting to a different resource rather than staying stuck.",
+            "similarity": 0.5903
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 5,
+          "max_similarity": 0.7102,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_jkninja_station_001_009"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_jkninja_station_001_009",
+          "chunk_src_man_egosoft_orders_001_002",
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_ruggedgamer_trading_001_003",
+          "chunk_src_man_ruggedgamer_trading_001_006"
+        ],
+        "chunk_recall": 1.0,
+        "chunk_precision": 0.2,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 345,
+            "eval_count": 72,
+            "prompt_eval_duration_ms": 153.6,
+            "eval_duration_ms": 642.59,
+            "total_duration_ms": 14156.02,
+            "load_duration_ms": 13355.63,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1104,
+            "eval_count": 319,
+            "prompt_eval_duration_ms": 275.01,
+            "eval_duration_ms": 2731.89,
+            "total_duration_ms": 11140.56,
+            "load_duration_ms": 8126.59,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_vec_006",
+        "category": "VECTOR_STRATEGY",
+        "question": "What is the difference between Local Auto Trade and advanced sector auto trade?",
+        "expected_route": "VECTOR",
+        "actual_route": "VECTOR",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "difference local auto trade advanced auto trade pilot skill"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "difference between Local Auto Trade and Advanced Sector Auto Trade in X4: Foundations, including functionality, scope, and strategic implications"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 12,
+        "facts_count": 6,
+        "inferences_count": 3,
+        "advice_count": 0,
+        "unsupported_count": 3,
+        "contradicted_count": 0,
+        "latency_seconds": 21.67,
+        "answer_text": "**Difference between Local Auto Trade and Advanced Sector Auto Trade**\n\n- **Local Auto Trade** (available to a brand\u2011new, zero\u2011star pilot):\n  - Handles **only one ware at a time**.\n  - Automatically buys and sells the selected ware locally within the ship\u2019s current sector.\n  - No manual configuration of routes or price targets is required.\n  - Limited to basic, low\u2011skill trading automation.\n\n- **Advanced Sector Auto Trade** (accessed via Repeat Orders after gaining at least one star of pilot skill):\n  - Allows **manual configuration of a specific back\u2011and\u2011forth trade route** between two stations or entire sectors.\n  - You set a **Buy From** instruction at one location (or sector) and a **Sell To** instruction at another, targeting either a single station or an entire sector.\n  - Supports selling to any station within a sector that meets the minimum price, enabling broader market reach.\n  - Requires higher pilot skill (\u22651 star) and provides greater flexibility in managing larger, more complex trade networks.\n\nThus, Local Auto Trade is a simple, single\u2011ware, local automation for beginners, while Advanced Sector Auto Trade offers more sophisticated, multi\u2011ware, sector\u2011wide automation for pilots with higher skill levels.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_005",
+            "content": "Get a pilot to one star via a basic piloting seminar, set their behavior to Repeat Order, then configure Buy In and Sell In targets \u2014 either a whole sector or a specific station \u2014 for the bottlenecked ware. This turns a single trader into ongoing passive income without further manual management.",
+            "similarity": 0.62
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_009",
+            "content": "Set a ship's Default Behaviour to Repeat Orders, then manually configure a Buy From instruction at one station or sector (at maximum buy price) and a Sell To instruction at another (at minimum sell price) \u2014 this creates an automated back-and-forth route between the two, regardless of price. A sell instruction can also target an entire sector instead of a single station, selling to whichever station in it meets the minimum price.",
+            "similarity": 0.6055
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_002",
+            "content": "The map reveals trade information at three different levels of freshness: a sector under active satellite coverage shows genuinely current pricing; a sector visited before but no longer covered shows remembered, possibly stale offers; and a sector never visited at all shows nothing whatsoever. The trade filter panel lets you narrow the displayed offers down to specific wares (up to five at once), filter by minimum offer size, include or exclude particular factions, and restrict results to whatever storage type your ship can actually carry.",
+            "similarity": 0.5992
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_003",
+            "content": "Local Auto Trade \u2014 the automation available to a brand-new, zero-star pilot \u2014 only handles one ware at a time. Repeat Orders, which let you manually configure a specific back-and-forth trade route, need at least one star of pilot skill before they're available at all.\n\nShip size matters less than it might seem for pure trading: a bigger ship just means fewer, larger runs instead of many small ones \u2014 it doesn't change how much profit you make per unit traded. The real edge of a bigger ship is usually better shields and weapons, which can offset the higher upfront cost.",
+            "similarity": 0.5697
+          },
+          {
+            "chunk_id": "chunk_src_man_reddit_001_004",
+            "content": "Whether to convert an energy station into a refinery, or simply build another energy station, is framed as depending on whether local refineries are actually buying the raw material being mined. Player-owned refineries should have a trade rule (set under Global Orders \u2192 Player Information) restricting raw-material purchases to the player's own faction. Refined goods should initially be priced below market rate so AI ships come to buy them, avoiding the overhead of running a dedicated trade fleet; the in-game trade overlay (with filters) can be used to check current prices.\n\nLater Mid Game\n\nRelying on AI-driven purchases to move goods elsewhere is said to sacrifice roughly 20 percent or more of potential price compared to self-directed export. At this stage the source recommends using the Custom Tabs mod with at least three tabs \u2014 Production, Supply, and Distribution \u2014 with refineries placed in Production.\n\nDeadTater is described as supporting four primary transport roles: supplying a station manager's build storage, acting as a sector supply captain, acting as a sector distribution captain, and repeat-ordering specific wares. At this stage the source focuses mainly on the build-storage and sector-distribution-captain roles. A typical sector distribution captain is set with its home sector at the refinery, a buy range of 0 jumps, a sell range of 4 jumps, \"Prefer my sell orders\" enabled, and a minimum capacity threshold of 80 percent; supplying a sector is described as the inverse setup.\n\nCombined with UI Trade Analytics station profiles, refineries are recommended to use the \"Factory\" profile. The source suggests initially leaving the sell restriction off refined goods (letting other factions buy directly), since the player's own transport fleet likely can't move full volume yet, and later reinstating the restriction or building a dedicated factory outlet station as the player's own trade network matures. It's also recommended to hold back credits for sector defense frigates and corvettes as new threats emerge.\n\nLate Mid Game",
+            "similarity": 0.5288
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 5,
+          "max_similarity": 0.62,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_ruggedgamer_trading_001_003",
+          "chunk_src_man_ruggedgamer_trading_001_004"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_jkninja_station_001_009",
+          "chunk_src_man_ruggedgamer_trading_001_002",
+          "chunk_src_man_ruggedgamer_trading_001_003",
+          "chunk_src_man_reddit_001_004"
+        ],
+        "chunk_recall": 0.5,
+        "chunk_precision": 0.2,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 347,
+            "eval_count": 88,
+            "prompt_eval_duration_ms": 131.47,
+            "eval_duration_ms": 806.88,
+            "total_duration_ms": 3798.49,
+            "load_duration_ms": 2863.35,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1403,
+            "eval_count": 258,
+            "prompt_eval_duration_ms": 336.03,
+            "eval_duration_ms": 2227.31,
+            "total_duration_ms": 10672.35,
+            "load_duration_ms": 8100.74,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_both_001",
+        "category": "HYBRID_BOTH",
+        "question": "What are the required input materials for Hull Parts, and why are Hull Parts strategically vital for the economy?",
+        "expected_route": "BOTH",
+        "actual_route": "BOTH",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts",
+              "production_method": "default"
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "Hull Parts strategic importance shipbuilding bottleneck"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts"
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "Explain the strategic importance of Hull Parts in X4: Foundations economy, including required input materials and economic impact."
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 17,
+        "facts_count": 10,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 6,
+        "contradicted_count": 1,
+        "latency_seconds": 23.39,
+        "answer_text": "**Required Input Materials for Hull Parts**\n\nAccording to the structured data evidence ([STRUCTURED_DATA]), the production of Hull Parts requires the following raw materials:\n\n- **Energycells:** 3 units  \n- **Methane:** 1 unit  \n- **Ore:** 3 units  \n\n**Strategic Importance of Hull Parts for the Economy**\n\nThe strategic importance of Hull Parts is highlighted in multiple pieces of curated community text:\n\n1. **Universal Demand:**  \n   The trading fundamentals section notes that *\u201cEnergy Cells and Hull Parts are the two most consistently valuable trade goods to focus on \u2014 nearly every station except a solar power plant itself needs a steady supply of energy cells, making it close to a universal demand.\u201d* This implies that Hull Parts, like Energy Cells, are essential across the economy, supporting a wide range of station and ship operations.\n\n2. **Bottleneck Indicator:**  \n   The Economy Primer section states that *\u201cHull Parts is usually the first real bottleneck, because a minimum-loadout ship needs only a hull and engines to leave the dock \u2014 and hull parts make up the largest share of that basic chassis.\u201d* This indicates that Hull Parts are a critical limiting factor in ship production, directly affecting the ability to expand fleets and station capacities.\n\n3. **Production Payback Sensitivity:**  \n   The primer further explains that *\u201cHull Parts production is much more sensitive to self-sufficiency \u2014 roughly 50 hours to pay back if every input is purchased, 15 hours if raw resources are bought and refined in-house, and just 4 hours if the whole chain runs on self-supplied raw resources.\u201d* This sensitivity underscores that efficient Hull Parts production is pivotal for maintaining a self-sustaining economy, as delays or shortages can quickly cascade into broader production constraints.\n\n**Conclusion**\n\nHull Parts are strategically vital because they are universally required across the economy, often become the first production bottleneck, and their efficient production significantly impacts the overall economic sustainability and profitability of station and ship operations. The required inputs are 3 energycells, 1 methane, and 3 ore per Hull Part. \n\n(Evidence used: [STRUCTURED_DATA] for material requirements; <evidence_9b1178> sections from \"Scrapping Basics,\" \"Economy Primer,\" and \"Trading Fundamentals\" for strategic importance.)",
+        "structured_result": [
+          {
+            "target_ware_id": "hullparts",
+            "target_ware_name": "Hull Parts",
+            "method": "default",
+            "output_amount": 294,
+            "production_time": 900.0,
+            "total_raw_materials": {
+              "energycells": 3,
+              "methane": 1,
+              "ore": 3
+            }
+          }
+        ],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_007",
+            "content": "Scrap-derived Hull Parts and Claytronics are a genuinely useful supplement to a station-building or shipbuilding operation's material needs, and the entire Processor-to-Recycler chain described here requires no DLC ownership at all.",
+            "similarity": 0.6364
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_006",
+            "content": "Once Hull Parts flow is secured, Hull Parts production itself typically bottlenecks on Refined Metals, which in turn depends on a steady Ore supply from miners and enough transporters to move it before storage overflows. The general method is recursive: whenever a station in the chain can't keep up, apply the same scan-satellite-storage-check process to *its* own inputs, and keep tracing upstream until the actual constraint is found.\n\nWeapon Components commonly emerge as the next bottleneck once Hull Parts stabilizes, since ship orders need both.",
+            "similarity": 0.6237
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_007",
+            "content": "Above everything else, Energy Cells and Hull Parts are the two most consistently valuable trade goods to focus on \u2014 nearly every station except a solar power plant itself needs a steady supply of energy cells, making it close to a universal demand.",
+            "similarity": 0.6122
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_004",
+            "content": "The core technique is: scan a target station to 30%, drop a satellite nearby, then read its storage bar. The bar's colors tell the real story \u2014 blue is current stock, black is available space, a green modifier shows incoming reserved trades, and a brown modifier shows outgoing reserved trades. This reveals which input is actually running short, rather than guessing from surface-level demand indicators.\n\nHull Parts is usually the first real bottleneck, because a minimum-loadout ship needs only a hull and engines to leave the dock \u2014 and hull parts make up the largest share of that basic chassis. When buying ships to fly this loop, buying at Minimum or Low preset and refitting later at an Equipment Dock is more cost-effective than buying a fully-loaded ship outright.",
+            "similarity": 0.5593
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_009",
+            "content": "Build a new station only to fill a demand gap the existing AI economy genuinely can't cover \u2014 building purely for profit risks flooding the market past what it can absorb. Rough payback estimates given: an Energy Cell factory pays for itself in about 7 hours at average sale prices. Hull Parts production is much more sensitive to self-sufficiency \u2014 roughly 50 hours to pay back if every input is purchased, 15 hours if raw resources are bought and refined in-house, and just 4 hours if the whole chain runs on self-supplied raw resources.",
+            "similarity": 0.5543
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 3,
+          "chunk_count": 5,
+          "max_similarity": 0.6364,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_economy_primer_001_003",
+          "chunk_src_man_economy_primer_001_006",
+          "chunk_src_man_ruggedgamer_trading_001_007"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_scrappy_guide_001_007",
+          "chunk_src_man_economy_primer_001_006",
+          "chunk_src_man_ruggedgamer_trading_001_007",
+          "chunk_src_man_economy_primer_001_004",
+          "chunk_src_man_economy_primer_001_009"
+        ],
+        "chunk_recall": 0.6667,
+        "chunk_precision": 0.4,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 354,
+            "eval_count": 83,
+            "prompt_eval_duration_ms": 131.97,
+            "eval_duration_ms": 740.6,
+            "total_duration_ms": 3724.89,
+            "load_duration_ms": 2847.43,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1242,
+            "eval_count": 474,
+            "prompt_eval_duration_ms": 305.0,
+            "eval_duration_ms": 4090.02,
+            "total_duration_ms": 12533.59,
+            "load_duration_ms": 8131.09,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_both_002",
+        "category": "HYBRID_BOTH",
+        "question": "What are the energy cell requirements for recycling Hull Parts, and how does scrap processing scale in the late game?",
+        "expected_route": "BOTH",
+        "actual_route": "BOTH",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts",
+              "production_method": "recycling"
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "scrap processing energy cells late game economy"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts"
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "energy cell requirements for recycling Hull Parts and scaling of scrap processing in the late game"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 15,
+        "facts_count": 5,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 5,
+        "contradicted_count": 5,
+        "latency_seconds": 22.05,
+        "answer_text": "**Energy Cell Requirement for Recycling Hull Parts**\n\nAccording to the structured data, the production of Hull Parts involves the following raw material costs:\n\n- **Energy Cells:** 3 units per Hull Part  \n- **Methane:** 1 unit per Hull Part  \n- **Ore:** 3 units per Hull Part  \n\nThus, the energy cell requirement for recycling Hull Parts is **3 Energy Cells per Hull Part**.\n\n**Scrap Processing Scaling in the Late Game**\n\nThe evidence indicates that the Processor module, which converts raw scrap into Scrap Metal, has a fixed processing capacity of **150 raw scrap per one-minute cycle**, producing a maximum of **150 Scrap Metal per minute**. This capacity does not increase with game progression or late-game upgrades; it remains constant as defined in the base game mechanics.\n\nTherefore, while the amount of scrap you can process per minute is capped at 150, the Recycler module can convert Scrap Metal into Hull Parts (and Claytronics) with a cycle time of 5 minutes, producing **200 Hull Parts per cycle** at a cost of **3,500 Energy Cells + 75 Scrap Metal**. The scaling of scrap processing is thus limited by the Processor's fixed throughput, and any late-game strategies would focus on optimizing the use of this fixed capacity rather than increasing it.\n\n**Summary**\n\n- **Energy Cells needed per Hull Part:** 3  \n- **Scrap processing scaling:** Fixed at 150 raw scrap per minute by the Processor; no late-game scaling beyond this limit.",
+        "structured_result": [
+          {
+            "target_ware_id": "hullparts",
+            "target_ware_name": "Hull Parts",
+            "method": "default",
+            "output_amount": 294,
+            "production_time": 900.0,
+            "total_raw_materials": {
+              "energycells": 3,
+              "methane": 1,
+              "ore": 3
+            }
+          }
+        ],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_007",
+            "content": "Scrap-derived Hull Parts and Claytronics are a genuinely useful supplement to a station-building or shipbuilding operation's material needs, and the entire Processor-to-Recycler chain described here requires no DLC ownership at all.",
+            "similarity": 0.7333
+          },
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_005",
+            "content": "Two modules handle the conversion. The **Processor** turns raw scrap into Scrap Metal (a solid ware, needing solid storage), capped at 150 raw scrap processed per one-minute cycle \u2014 150 Scrap Metal per minute at most \u2014 and needs a fully-built M-class dock before it can run unattended.\n\nThe **Recycler** then turns that Scrap Metal into Hull Parts and Claytronics, alternating between the two by default each 5-minute cycle: 200 Hull Parts per cycle (costing 3,500 Energy Cells + 75 Scrap Metal), or 60 Claytronics per cycle (costing 12,000 Energy Cells + 300 Scrap Metal). Limiting one output's container storage to a single unit forces the Recycler to focus on producing only the other.\n\nBoth modules' blueprints are purchasable from multiple base-game factions, including Teladi Company.",
+            "similarity": 0.6769
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_007",
+            "content": "Above everything else, Energy Cells and Hull Parts are the two most consistently valuable trade goods to focus on \u2014 nearly every station except a solar power plant itself needs a steady supply of energy cells, making it close to a universal demand.",
+            "similarity": 0.6446
+          },
+          {
+            "chunk_id": "chunk_src_man_scrappy_guide_001_001",
+            "content": "*Curated from a community guide covering scrapping mechanics. This excerpt covers only the confirmed base-game portions \u2014 the guide's Tides of Avarice-specific content (the Teuta ship, Terran Recycler, and its centralized-recycling strategy) has been deliberately excluded, as has its Closed Loop Economy discussion, both explicitly DLC-gated features.*",
+            "similarity": 0.6233
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_009",
+            "content": "Build a new station only to fill a demand gap the existing AI economy genuinely can't cover \u2014 building purely for profit risks flooding the market past what it can absorb. Rough payback estimates given: an Energy Cell factory pays for itself in about 7 hours at average sale prices. Hull Parts production is much more sensitive to self-sufficiency \u2014 roughly 50 hours to pay back if every input is purchased, 15 hours if raw resources are bought and refined in-house, and just 4 hours if the whole chain runs on self-supplied raw resources.",
+            "similarity": 0.618
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 3,
+          "chunk_count": 5,
+          "max_similarity": 0.7333,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_scrappy_guide_001_006",
+          "chunk_src_man_scrappy_guide_001_007"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_scrappy_guide_001_007",
+          "chunk_src_man_scrappy_guide_001_005",
+          "chunk_src_man_ruggedgamer_trading_001_007",
+          "chunk_src_man_scrappy_guide_001_001",
+          "chunk_src_man_economy_primer_001_009"
+        ],
+        "chunk_recall": 0.5,
+        "chunk_precision": 0.2,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 355,
+            "eval_count": 81,
+            "prompt_eval_duration_ms": 128.35,
+            "eval_duration_ms": 731.93,
+            "total_duration_ms": 3726.7,
+            "load_duration_ms": 2861.65,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1239,
+            "eval_count": 308,
+            "prompt_eval_duration_ms": 304.58,
+            "eval_duration_ms": 2653.55,
+            "total_duration_ms": 11093.27,
+            "load_duration_ms": 8127.91,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_both_003",
+        "category": "HYBRID_BOTH",
+        "question": "What are the production inputs for Smart Chips, and how should stations assign miners and traders for them?",
+        "expected_route": "BOTH",
+        "actual_route": "BOTH",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Smart Chips",
+              "production_method": "default"
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "station assign miners traders silicon"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Smart Chips"
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "Explain the production inputs required for manufacturing Smart Chips in X4: Foundations and provide strategic recommendations for assigning miners and traders to stations producing these items, considering resource availability and market dynamics."
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 18,
+        "facts_count": 11,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 7,
+        "contradicted_count": 0,
+        "latency_seconds": 21.84,
+        "answer_text": "**Production Inputs for Smart Chips**\n\nAccording to the structured data ([STRUCTURED_DATA]), the production inputs for Smart Chips are:\n\n- **Raw Material 1:** Energycells \u2013 **2 units**  \n- **Raw Material 2:** Silicon \u2013 **1 unit**  \n\n**Station Configuration Guidance**\n\nThe evidence from the knowledge section (<evidence_d5568c>) provides insight into station setup for silicon-related production:\n\n- A **silicon station** requires:\n  - Docking facilities\n  - Container storage for trade ware\n  - Solid storage for raw silicon\n  - A pier for large-ship access\n  - **Wafer\u2011refining modules** to process silicon into wafers.\n\n- **Miner and Trader Assignment:**\n  - The note highlights the ratio of wafer modules to factories: a single wafer module supports 1 microchip factory and 7 smart chip factories, which is lopsided.  \n  - Running **two wafer modules** balances the production, supporting **3 microchip factories** and **5 smart chip factories**, while generating a modest wafer surplus (~80/hour).\n\nThus, for optimal Smart Chip production, assign **two wafer\u2011refining modules** at the silicon station. Ensure miners are positioned to supply the required **energycells** and **silicon** efficiently, and traders handle the output of Smart Chips to market. This setup aligns with the provided ratios and maximizes throughput.",
+        "structured_result": [
+          {
+            "target_ware_id": "smartchips",
+            "target_ware_name": "Smart Chips",
+            "method": "default",
+            "output_amount": 143,
+            "production_time": 600.0,
+            "total_raw_materials": {
+              "energycells": 2,
+              "silicon": 1
+            }
+          }
+        ],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_005",
+            "content": "A **silicon station** needs only a dock, container storage for the trade ware, solid storage for the raw silicon, a pier (required for large-ship access), and wafer-refining modules. Watch the ratio here: a single wafer module only supports 1 microchip factory and 7 smart chip factories, which is lopsided \u2014 running two wafer modules instead supports 3 microchip and 5 smart chip factories, with a modest ~80/hour wafer surplus.\n\nA **hull parts station** needs ore and methane as inputs \u2014 but since miners with a two-star-or-better manager can range up to two sectors from home, the station doesn't need both resources sitting right in the same sector. That gives real flexibility in where to place it.",
+            "similarity": 0.6184
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 2,
+          "chunk_count": 1,
+          "max_similarity": 0.6184,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_jkninja_station_001_005",
+          "chunk_src_man_jkninja_station_001_007"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_jkninja_station_001_005"
+        ],
+        "chunk_recall": 0.5,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 353,
+            "eval_count": 96,
+            "prompt_eval_duration_ms": 132.82,
+            "eval_duration_ms": 842.02,
+            "total_duration_ms": 3827.75,
+            "load_duration_ms": 2848.21,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 595,
+            "eval_count": 299,
+            "prompt_eval_duration_ms": 169.78,
+            "eval_duration_ms": 2524.55,
+            "total_duration_ms": 10810.27,
+            "load_duration_ms": 8111.38,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_both_004",
+        "category": "HYBRID_BOTH",
+        "question": "Compare the cargo capacity of the Discoverer Vanguard and Pegasus Vanguard, and explain how to use them as fleet scouts.",
+        "expected_route": "BOTH",
+        "actual_route": "BOTH",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Discoverer Vanguard"
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "fleet scouts reconnaissance behavior"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "ranking",
+              "metric": "cargo_capacity",
+              "ship_class": "s",
+              "limit": 2
+            }
+          },
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "How to use Discoverer Vanguard and Pegasus Vanguard as fleet scouts in X4: Foundations, comparing their cargo capacity and tactical advantages."
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 15,
+        "facts_count": 6,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 7,
+        "contradicted_count": 2,
+        "latency_seconds": 23.08,
+        "answer_text": "**Cargo Capacity Comparison**\n\nThe provided evidence lists the cargo capacities for two ships:\n\n- **Courier Vanguard**: 1960.00 m\u00b3 (Rank\u202f1)\n- **Kestrel Sentinel**: 912.00 m\u00b3 (Rank\u202f2)\n\nThere is **no entry** for either the **Discoverer Vanguard** or **Pegasus Vanguard** in the structured data about cargo capacity. Consequently, we cannot directly compare the cargo capacities of the Discoverer Vanguard and Pegasus Vanguard because the necessary data is absent.\n\n**Using Ships as Fleet Scouts**\n\nWhile the evidence does not specify the Discoverer Vanguard or Pegasus Vanguard, general guidance for using ships as fleet scouts in X4: Foundations can be inferred from related sections:\n\n1. **Assign a Pilot**: Ensure the scout ship is equipped with a pilot trained in basic piloting (e.g., via a piloting seminar).\n2. **Set Behavior to Repeat Order**: Configure the scout\u2019s behavior to \u201cRepeat Order\u201d so it continuously follows a predefined route.\n3. **Define Buy/Sell Targets**: For a trade-focused scout, set Buy In and Sell In targets at specific stations or sectors to automate passive income while scouting.\n4. **Utilize Satellite Coverage**: Deploy a satellite near the target sector to monitor real-time pricing and station stock levels, helping identify bottlenecks and optimal trade routes.\n5. **Monitor Storage Bars**: Use the station\u2019s storage bar colors (blue for current stock, black for available space, green for incoming reserved trades, brown for outgoing reserved trades) to gauge actual supply constraints.\n\n**Conclusion**\n\n- **Cargo Capacity**: Cannot be directly compared for Discoverer Vanguard and Pegasus Vanguard due to missing data.\n- **Scout Usage**: Follow standard scout configuration steps\u2014assign a pilot, set repeat behavior, define trade targets, and leverage satellite coverage and storage bar analysis for effective fleet scouting.",
+        "structured_result": [
+          {
+            "id": "ship_arg_s_trans_container_01_a_macro",
+            "name": "Courier Vanguard",
+            "value": 1960.0,
+            "metric": "cargo_capacity",
+            "unit": "m\u00b3"
+          },
+          {
+            "id": "ship_tel_s_scout_01_b_macro",
+            "name": "Kestrel Sentinel",
+            "value": 912.0,
+            "metric": "cargo_capacity",
+            "unit": "m\u00b3"
+          }
+        ],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_002",
+            "content": "The map reveals trade information at three different levels of freshness: a sector under active satellite coverage shows genuinely current pricing; a sector visited before but no longer covered shows remembered, possibly stale offers; and a sector never visited at all shows nothing whatsoever. The trade filter panel lets you narrow the displayed offers down to specific wares (up to five at once), filter by minimum offer size, include or exclude particular factions, and restrict results to whatever storage type your ship can actually carry.",
+            "similarity": 0.5318
+          },
+          {
+            "chunk_id": "chunk_src_man_reddit_001_002",
+            "content": "Early moneymaking options are, in the source's assessment, limited. Pirating ships is presented as the strongest method for building early credits and fleet size. A second option, informally called being a \"trash panda,\" involves looting active faction-conflict zones while avoiding stray missiles; this can be improved by keeping a transport ship nearby to gather larger drops, and the source notes stations under attack by an opposing faction often drop valuable items (sometimes requiring a black market trader to sell). This looting strategy is reported to have been recently nerfed. A related tactic is destroying transport ships carrying valuable cargo (Claytronics is given as an example) through neutral territory, which requires having a player-owned transport ship ready to collect the resulting drop. Asteroid crystal mining is described as having been heavily nerfed, now yielding roughly 100,000 credits about once per hour.\n\nScanning stations is recommended early on, both for uncovering early missions and for progress toward unlocking the Personal Headquarters (PHQ), which the source treats as a top early priority. Main missions for factions such as Hatikvah (HAT), and the DLC factions Terrans (TER) and Split (SPL), are described as offering good rewards, though completing them may require credits. General sector exploration is framed as enjoyable and useful for revealing the map and factions, but not profitable; pairing a scout ship with the Sector Explorer mod's automated behavior is suggested to save time. The source separately expresses frustration that pirating is essentially the only lucrative combat-based path for most of the game.\n\nLater Early Game\n\nOnce a player has roughly 500,000\u20131,000,000 credits, the source recommends shifting toward passive income via medium miners or transport ships. Miners should be placed near a refinery for ore and/or silicon, or near a graphene source for gas mining, with mineral mining suggested as likely more profitable than gas. Recommended miner loadout: combat engines, as full a crew as possible, and (for mineral mining) the best affordable mining laser; ships should be chosen for good cargo capacity and speed.",
+            "similarity": 0.5141
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_004",
+            "content": "The core technique is: scan a target station to 30%, drop a satellite nearby, then read its storage bar. The bar's colors tell the real story \u2014 blue is current stock, black is available space, a green modifier shows incoming reserved trades, and a brown modifier shows outgoing reserved trades. This reveals which input is actually running short, rather than guessing from surface-level demand indicators.\n\nHull Parts is usually the first real bottleneck, because a minimum-loadout ship needs only a hull and engines to leave the dock \u2014 and hull parts make up the largest share of that basic chassis. When buying ships to fly this loop, buying at Minimum or Low preset and refitting later at an Equipment Dock is more cost-effective than buying a fully-loaded ship outright.",
+            "similarity": 0.5116
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_005",
+            "content": "Get a pilot to one star via a basic piloting seminar, set their behavior to Repeat Order, then configure Buy In and Sell In targets \u2014 either a whole sector or a specific station \u2014 for the bottlenecked ware. This turns a single trader into ongoing passive income without further manual management.",
+            "similarity": 0.5035
+          },
+          {
+            "chunk_id": "chunk_src_man_fleet2_001_004",
+            "content": "**Supply Commander's Fleet** is a separate assignment altogether, intended for auxiliary or support ships within a fleet rather than combat ships \u2014 distinct from all five commands above.",
+            "similarity": 0.5026
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 2,
+          "chunk_count": 5,
+          "max_similarity": 0.5318,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [
+          "chunk_src_man_egosoft_orders_001_004",
+          "chunk_src_man_fleet2_001_002"
+        ],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_ruggedgamer_trading_001_002",
+          "chunk_src_man_reddit_001_002",
+          "chunk_src_man_economy_primer_001_004",
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_fleet2_001_004"
+        ],
+        "chunk_recall": 0.0,
+        "chunk_precision": 0.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 357,
+            "eval_count": 112,
+            "prompt_eval_duration_ms": 133.25,
+            "eval_duration_ms": 1039.56,
+            "total_duration_ms": 4050.87,
+            "load_duration_ms": 2873.58,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1552,
+            "eval_count": 381,
+            "prompt_eval_duration_ms": 369.02,
+            "eval_duration_ms": 3299.85,
+            "total_duration_ms": 11844.41,
+            "load_duration_ms": 8166.73,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_ambig_001",
+        "category": "AMBIGUOUS_ENTITY",
+        "question": "What is the speed of the Cerberus?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Cerberus"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Cerberus",
+              "metric": "speed"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": true,
+        "is_grounded": true,
+        "claims_count": 4,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 4,
+        "contradicted_count": 0,
+        "latency_seconds": 5.66,
+        "answer_text": "Your query matches multiple possible entities in the database:\n\n- **Cerberus Vanguard** (ID: `ship_arg_m_frigate_01_a_macro`, Type: ship)\n- **Cerberus Sentinel** (ID: `ship_arg_m_frigate_01_b_macro`, Type: ship)\n- **Jar of \"Cerberus\" Brand Hotdogs** (ID: `inv_hotdogs`, Type: ware)\n\nPlease specify which entity you would like information on.",
+        "structured_result": [],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 343,
+            "eval_count": 70,
+            "prompt_eval_duration_ms": 132.02,
+            "eval_duration_ms": 635.7,
+            "total_duration_ms": 3618.33,
+            "load_duration_ms": 2846.36,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_ambig_002",
+        "category": "AMBIGUOUS_ENTITY",
+        "question": "What is the cargo capacity of the Magnetar?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Magnetar"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Magnetar",
+              "metric": "cargo_capacity"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": true,
+        "is_grounded": true,
+        "claims_count": 5,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 5,
+        "contradicted_count": 0,
+        "latency_seconds": 2.7,
+        "answer_text": "Your query matches multiple possible entities in the database:\n\n- **Magnetar (Gas) Vanguard** (ID: `ship_arg_l_miner_liquid_01_a_macro`, Type: ship)\n- **Magnetar (Gas) Sentinel** (ID: `ship_arg_l_miner_liquid_01_b_macro`, Type: ship)\n- **Magnetar (Mineral) Vanguard** (ID: `ship_arg_l_miner_solid_01_a_macro`, Type: ship)\n- **Magnetar (Mineral) Sentinel** (ID: `ship_arg_l_miner_solid_01_b_macro`, Type: ship)\n\nPlease specify which entity you would like information on.",
+        "structured_result": [],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 343,
+            "eval_count": 71,
+            "prompt_eval_duration_ms": 25.85,
+            "eval_duration_ms": 660.35,
+            "total_duration_ms": 692.31,
+            "load_duration_ms": 2.12,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_noev_001",
+        "category": "NO_EVIDENCE",
+        "question": "What is the breeding cycle time of Spaceflies in player aquariums?",
+        "expected_route": "VECTOR",
+        "actual_route": "ABSTAIN",
+        "route_passed": false,
+        "expected_tool_calls": [],
+        "emitted_tool_calls": [
+          {
+            "name": "abstain",
+            "arguments": {
+              "reason": "out_of_scope_other"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": true,
+        "claims_count": 0,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 0,
+        "contradicted_count": 0,
+        "latency_seconds": 2.81,
+        "answer_text": "This question is outside the scope of X4: Foundations gameplay and base-game reference data.",
+        "structured_result": [],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 347,
+            "eval_count": 66,
+            "prompt_eval_duration_ms": 53.2,
+            "eval_duration_ms": 709.42,
+            "total_duration_ms": 769.28,
+            "load_duration_ms": 2.43,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_noev_002",
+        "category": "NO_EVIDENCE",
+        "question": "What are the casino minigame rules on pirate stations in the base game?",
+        "expected_route": "VECTOR",
+        "actual_route": "VECTOR",
+        "route_passed": true,
+        "expected_tool_calls": [],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "casino minigame rules pirate stations base game X4 Foundations"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 3,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 1,
+        "contradicted_count": 2,
+        "latency_seconds": 17.33,
+        "answer_text": "The provided evidence does not contain any information regarding casino minigame rules on pirate stations in the base game of X4: Foundations. The retrieved passages focus on trade automation, ship behaviors, and trade filtering, but none mention casino mechanics or pirate station specifics. Therefore, based strictly on the given evidence, there is no answer to the user's question about casino minigame rules on pirate stations.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_005",
+            "content": "Get a pilot to one star via a basic piloting seminar, set their behavior to Repeat Order, then configure Buy In and Sell In targets \u2014 either a whole sector or a specific station \u2014 for the bottlenecked ware. This turns a single trader into ongoing passive income without further manual management.",
+            "similarity": 0.6253
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_009",
+            "content": "Set a ship's Default Behaviour to Repeat Orders, then manually configure a Buy From instruction at one station or sector (at maximum buy price) and a Sell To instruction at another (at minimum sell price) \u2014 this creates an automated back-and-forth route between the two, regardless of price. A sell instruction can also target an entire sector instead of a single station, selling to whichever station in it meets the minimum price.",
+            "similarity": 0.5285
+          },
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_001",
+            "content": "*Curated from a community guide (author reviewed for 9.0; originally written for 6.2, with core reasoning noted as still applicable). Strategic reasoning preserved; specific numbers treated as author estimates, not verified game data.*",
+            "similarity": 0.5215
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_002",
+            "content": "The map reveals trade information at three different levels of freshness: a sector under active satellite coverage shows genuinely current pricing; a sector visited before but no longer covered shows remembered, possibly stale offers; and a sector never visited at all shows nothing whatsoever. The trade filter panel lets you narrow the displayed offers down to specific wares (up to five at once), filter by minimum offer size, include or exclude particular factions, and restrict results to whatever storage type your ship can actually carry.",
+            "similarity": 0.5085
+          },
+          {
+            "chunk_id": "chunk_src_man_egosoft_orders_001_002",
+            "content": "X4 distinguishes three layers of ship control. **Orders** are one-off, direct instructions \u2014 \"mine here,\" \"fly there\" \u2014 given by left-clicking a ship, then right-clicking a target to open the order menu; once complete, the ship reverts to its default behavior. **Default Behaviours** are what a ship does automatically when no order is active \u2014 generally fire-and-forget, requiring no ongoing micromanagement. **Assignments** are standing roles a ship performs on behalf of a commander (another ship or a station), set up via the \"Assign Role for\" order.",
+            "similarity": 0.5065
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 5,
+          "max_similarity": 0.6253,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_jkninja_station_001_009",
+          "chunk_src_man_economy_primer_001_001",
+          "chunk_src_man_ruggedgamer_trading_001_002",
+          "chunk_src_man_egosoft_orders_001_002"
+        ],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 349,
+            "eval_count": 77,
+            "prompt_eval_duration_ms": 58.83,
+            "eval_duration_ms": 842.78,
+            "total_duration_ms": 908.14,
+            "load_duration_ms": 2.35,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 1079,
+            "eval_count": 81,
+            "prompt_eval_duration_ms": 272.74,
+            "eval_duration_ms": 718.03,
+            "total_duration_ms": 9222.75,
+            "load_duration_ms": 8224.55,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_dlc_001",
+        "category": "OUT_OF_SCOPE_DLC",
+        "question": "What are the main weapon slots and speed of the Terran Syn destroyer from Cradle of Humanity?",
+        "expected_route": "ABSTAIN",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "abstain",
+            "arguments": {
+              "reason": "out_of_scope_dlc"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Terran Syn Destroyer",
+              "category": "shiptech"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": true,
+        "claims_count": 0,
+        "facts_count": 0,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 0,
+        "contradicted_count": 0,
+        "latency_seconds": 5.86,
+        "answer_text": "No matching records or relevant strategic guidance were found in the database for this query. Please verify the entity name or try rephrasing your question.",
+        "structured_result": [],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 353,
+            "eval_count": 56,
+            "prompt_eval_duration_ms": 132.1,
+            "eval_duration_ms": 570.45,
+            "total_duration_ms": 3817.04,
+            "load_duration_ms": 3110.15,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_dlc_002",
+        "category": "OUT_OF_SCOPE_DLC",
+        "question": "How do Boron Kingdom End water supply mechanics work for the Queendom?",
+        "expected_route": "ABSTAIN",
+        "actual_route": "VECTOR",
+        "route_passed": false,
+        "expected_tool_calls": [
+          {
+            "name": "abstain",
+            "arguments": {
+              "reason": "out_of_scope_dlc"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "search_knowledge_base",
+            "arguments": {
+              "query_text": "Boron Kingdom End water supply mechanics for the Queendom in X4: Foundations, including how water is produced, distributed, and managed within the Queendom's infrastructure."
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 6,
+        "facts_count": 2,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 4,
+        "contradicted_count": 0,
+        "latency_seconds": 17.8,
+        "answer_text": "The provided evidence does not contain any information about the Boron Kingdom's water supply mechanics for the Queendom in X4: Foundations. The retrieved passages discuss topics such as automating trade routes, station plot costs relative to proximity to jump gates, configuring repeat orders for automated transport, and filtering trade offers based on sector freshness and ware availability. None of these sections address water supply mechanics for the Boron Kingdom. Therefore, based strictly on the given evidence, there is no information available to answer the question about Boron Kingdom End water supply mechanics. \n\n**Note:** This answer is limited by the absence of relevant data in the provided evidence. If water supply mechanics for the Boron Kingdom were included in other parts of the X4 Advisor Knowledge base not retrieved here, those would need to be consulted for a complete response.",
+        "structured_result": [],
+        "retrieved_chunks": [
+          {
+            "chunk_id": "chunk_src_man_economy_primer_001_005",
+            "content": "Get a pilot to one star via a basic piloting seminar, set their behavior to Repeat Order, then configure Buy In and Sell In targets \u2014 either a whole sector or a specific station \u2014 for the bottlenecked ware. This turns a single trader into ongoing passive income without further manual management.",
+            "similarity": 0.6145
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_004",
+            "content": "Base plot cost rises the farther a location is from a jump gate or highway.",
+            "similarity": 0.5298
+          },
+          {
+            "chunk_id": "chunk_src_man_jkninja_station_001_009",
+            "content": "Set a ship's Default Behaviour to Repeat Orders, then manually configure a Buy From instruction at one station or sector (at maximum buy price) and a Sell To instruction at another (at minimum sell price) \u2014 this creates an automated back-and-forth route between the two, regardless of price. A sell instruction can also target an entire sector instead of a single station, selling to whichever station in it meets the minimum price.",
+            "similarity": 0.5161
+          },
+          {
+            "chunk_id": "chunk_src_man_ruggedgamer_trading_001_002",
+            "content": "The map reveals trade information at three different levels of freshness: a sector under active satellite coverage shows genuinely current pricing; a sector visited before but no longer covered shows remembered, possibly stale offers; and a sector never visited at all shows nothing whatsoever. The trade filter panel lets you narrow the displayed offers down to specific wares (up to five at once), filter by minimum offer size, include or exclude particular factions, and restrict results to whatever storage type your ship can actually carry.",
+            "similarity": 0.5037
+          }
+        ],
+        "retrieval_outcome": {
+          "row_count": 0,
+          "chunk_count": 4,
+          "max_similarity": 0.6145,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [
+          "chunk_src_man_economy_primer_001_005",
+          "chunk_src_man_jkninja_station_001_004",
+          "chunk_src_man_jkninja_station_001_009",
+          "chunk_src_man_ruggedgamer_trading_001_002"
+        ],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 349,
+            "eval_count": 82,
+            "prompt_eval_duration_ms": 26.63,
+            "eval_duration_ms": 732.49,
+            "total_duration_ms": 765.39,
+            "load_duration_ms": 2.06,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 849,
+            "eval_count": 166,
+            "prompt_eval_duration_ms": 223.74,
+            "eval_duration_ms": 1405.71,
+            "total_duration_ms": 9765.59,
+            "load_duration_ms": 8129.38,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_auth_001",
+        "category": "STRUCTURED_VS_COMMUNITY_CONFLICT",
+        "question": "A community guide claims that Claytronics average market price is 1,500 Credits. What is the actual official database price?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Claytronics"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Claytronics"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": true,
+        "is_grounded": true,
+        "claims_count": 3,
+        "facts_count": 3,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 0,
+        "contradicted_count": 0,
+        "latency_seconds": 11.53,
+        "answer_text": "The official database price for the average market price of Claytronics is **2040 Credits**. This directly contradicts the community guide's claim of 1,500 Credits, as the structured data explicitly states the `avg_price` as 2040 Cr. \n\n**Answer:** The actual official database price for Claytronics is 2040 Credits.",
+        "structured_result": [
+          {
+            "entity_id": "claytronics",
+            "entity_name": "Claytronics",
+            "data": {
+              "id": "claytronics",
+              "name": "Claytronics",
+              "category": "shiptech",
+              "min_price": 1734,
+              "avg_price": 2040,
+              "max_price": 2346,
+              "volume": 24
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 1,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 359,
+            "eval_count": 64,
+            "prompt_eval_duration_ms": 133.67,
+            "eval_duration_ms": 590.92,
+            "total_duration_ms": 3596.87,
+            "load_duration_ms": 2867.47,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 352,
+            "eval_count": 73,
+            "prompt_eval_duration_ms": 122.35,
+            "eval_duration_ms": 608.56,
+            "total_duration_ms": 3854.19,
+            "load_duration_ms": 3119.24,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_auth_002",
+        "category": "STRUCTURED_VS_COMMUNITY_CONFLICT",
+        "question": "An outdated forum post states Hull Parts default recipe outputs 400 parts per cycle. What does the authoritative game recipe actually produce?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts",
+              "production_method": "default"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts"
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 3,
+        "facts_count": 2,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 0,
+        "contradicted_count": 1,
+        "latency_seconds": 11.56,
+        "answer_text": "According to the authoritative game data ([STRUCTURED_DATA]), the default recipe for Hull Parts produces **294 parts per cycle** (OutputAmount=294) with a production time of 900.0 seconds. This directly contradicts the outdated forum post claiming 400 parts per cycle. \n\n**Answer:** The authoritative game recipe actually produces **294 Hull Parts per cycle**.",
+        "structured_result": [
+          {
+            "target_ware_id": "hullparts",
+            "target_ware_name": "Hull Parts",
+            "method": "default",
+            "output_amount": 294,
+            "production_time": 900.0,
+            "total_raw_materials": {
+              "energycells": 3,
+              "methane": 1,
+              "ore": 3
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 3,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 358,
+            "eval_count": 63,
+            "prompt_eval_duration_ms": 133.73,
+            "eval_duration_ms": 592.56,
+            "total_duration_ms": 3599.05,
+            "load_duration_ms": 2868.51,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 393,
+            "eval_count": 75,
+            "prompt_eval_duration_ms": 134.34,
+            "eval_duration_ms": 626.77,
+            "total_duration_ms": 3892.5,
+            "load_duration_ms": 3127.54,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_inf_001",
+        "category": "SUPPORTED_INFERENCE",
+        "question": "If a player builds a fleet with 3 Cerberus Vanguard frigates, what is their combined total cargo capacity?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Cerberus Vanguard"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "fact_lookup",
+              "entity_name": "Cerberus Vanguard",
+              "metric": "cargo_capacity"
+            }
+          }
+        ],
+        "tool_calls_match": true,
+        "case_passed": true,
+        "is_grounded": true,
+        "claims_count": 4,
+        "facts_count": 3,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 1,
+        "contradicted_count": 0,
+        "latency_seconds": 11.71,
+        "answer_text": "The Cerberus Vanguard frigate has a cargo capacity of 1760.0 m\u00b3. With 3 such frigates in a fleet, the combined total cargo capacity is:\n\n3 \u00d7 1760.0 m\u00b3 = **5280.0 m\u00b3**. \n\nThis calculation is directly grounded in the provided structured data for the Cerberus Vanguard's cargo capacity.",
+        "structured_result": [
+          {
+            "entity_id": "ship_arg_m_frigate_01_a_macro",
+            "entity_name": "Cerberus Vanguard",
+            "data": {
+              "id": "ship_arg_m_frigate_01_a_macro",
+              "name": "Cerberus Vanguard",
+              "ship_class": "ship_m",
+              "hull": 19000.0,
+              "shields": 0.0,
+              "cargo_capacity": 1760.0,
+              "cargo_type": "container",
+              "speed": 300.0,
+              "weapon_slots": 0,
+              "turret_slots": 0,
+              "shield_slots": 0,
+              "purpose": "fight",
+              "faction_id": "argon",
+              "faction_name": "Argon Federation",
+              "ware_id": "ship_arg_m_frigate_01_a"
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 1,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 358,
+            "eval_count": 73,
+            "prompt_eval_duration_ms": 130.65,
+            "eval_duration_ms": 681.21,
+            "total_duration_ms": 3714.97,
+            "load_duration_ms": 2897.79,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 413,
+            "eval_count": 79,
+            "prompt_eval_duration_ms": 134.99,
+            "eval_duration_ms": 660.03,
+            "total_duration_ms": 3909.65,
+            "load_duration_ms": 3110.41,
+            "done_reason": "stop"
+          }
+        ]
+      },
+      {
+        "case_id": "eval_inf_002",
+        "category": "SUPPORTED_INFERENCE",
+        "question": "How many units of Refined Metals are required to run 2 standard Hull Parts production cycles simultaneously?",
+        "expected_route": "STRUCTURED",
+        "actual_route": "STRUCTURED",
+        "route_passed": true,
+        "expected_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts",
+              "production_method": "default"
+            }
+          }
+        ],
+        "emitted_tool_calls": [
+          {
+            "name": "query_structured_data",
+            "arguments": {
+              "query_type": "production_chain",
+              "entity_name": "Hull Parts",
+              "metric": "min_price",
+              "resource_id": "methane",
+              "limit": 2
+            }
+          }
+        ],
+        "tool_calls_match": false,
+        "case_passed": false,
+        "is_grounded": false,
+        "claims_count": 7,
+        "facts_count": 4,
+        "inferences_count": 0,
+        "advice_count": 0,
+        "unsupported_count": 3,
+        "contradicted_count": 0,
+        "latency_seconds": 12.8,
+        "answer_text": "To determine the number of units of Refined Metals required for 2 simultaneous standard Hull Parts production cycles, we need to focus on the raw material \"ore\" as it is the precursor for Refined Metals.\n\nFrom the provided evidence:\n- **E4** states that for each Hull Parts production, **3 units of ore** are needed.\n\nSince we are running **2 simultaneous production cycles**:\n\\[ \\text{Total ore required} = 3 \\, \\text{units/cycle} \\times 2 \\, \\text{cycles} = 6 \\, \\text{units of ore} \\]\n\nAssuming each unit of ore is directly converted to Refined Metals (as no further conversion steps are specified), the requirement for Refined Metals is also **6 units**.\n\n**Answer:** 6 units of Refined Metals are required to run 2 standard Hull Parts production cycles simultaneously.",
+        "structured_result": [
+          {
+            "target_ware_id": "hullparts",
+            "target_ware_name": "Hull Parts",
+            "method": "default",
+            "output_amount": 294,
+            "production_time": 900.0,
+            "total_raw_materials": {
+              "energycells": 3,
+              "methane": 1,
+              "ore": 3
+            }
+          }
+        ],
+        "retrieved_chunks": [],
+        "retrieval_outcome": {
+          "row_count": 3,
+          "chunk_count": 0,
+          "max_similarity": 0.0,
+          "threshold": 0.5
+        },
+        "expected_chunk_ids": [],
+        "retrieved_chunk_ids": [],
+        "chunk_recall": 1.0,
+        "chunk_precision": 1.0,
+        "llm_telemetry": [
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 353,
+            "eval_count": 91,
+            "prompt_eval_duration_ms": 131.03,
+            "eval_duration_ms": 891.07,
+            "total_duration_ms": 3883.27,
+            "load_duration_ms": 2856.31,
+            "done_reason": "stop"
+          },
+          {
+            "call_type": "chat",
+            "model": "granite4.1:8b",
+            "prompt_eval_count": 388,
+            "eval_count": 184,
+            "prompt_eval_duration_ms": 133.2,
+            "eval_duration_ms": 1545.63,
+            "total_duration_ms": 4830.17,
+            "load_duration_ms": 3147.4,
+            "done_reason": "stop"
+          }
+        ]
+      }
+    ]
+  }
+}

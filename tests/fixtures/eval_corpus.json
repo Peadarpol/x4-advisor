@@ -160,11 +160,8 @@
       {
         "name": "query_structured_data",
         "arguments": {
-          "query_type": "comparison",
-          "entity_names": [
-            "Magnetar (Mineral) Vanguard",
-            "Magnetar (Mineral) Sentinel"
-          ]
+          "query_type": "fact_lookup",
+          "entity_name": "Magnetar (Mineral) Vanguard"
         }
       }
     ],
@@ -203,9 +200,9 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "ranking",
-          "category": "ship",
-          "sort_field": "speed",
-          "order": "desc"
+          "metric": "speed",
+          "ship_class": "ship_s",
+          "sort_desc": true
         }
       }
     ],
@@ -229,9 +226,10 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "ranking",
-          "category": "ship",
-          "sort_field": "hull",
-          "order": "desc"
+          "metric": "hull",
+          "ship_class": "ship_m",
+          "purpose": "fight",
+          "sort_desc": true
         }
       }
     ],
@@ -254,11 +252,8 @@
       {
         "name": "query_structured_data",
         "arguments": {
-          "query_type": "comparison",
-          "entity_names": [
-            "Ore",
-            "Silicon"
-          ]
+          "query_type": "fact_lookup",
+          "entity_name": "Ore"
         }
       }
     ],
@@ -297,8 +292,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Claytronics",
-          "method": "default"
+          "entity_name": "Claytronics",
+          "production_method": "default"
         }
       }
     ],
@@ -398,8 +393,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Hull Parts",
-          "method": "default"
+          "entity_name": "Hull Parts",
+          "production_method": "default"
         }
       }
     ],
@@ -482,8 +477,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Advanced Electronics",
-          "method": "default"
+          "entity_name": "Advanced Electronics",
+          "production_method": "default"
         }
       }
     ],
@@ -570,8 +565,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Smart Chips",
-          "method": "default"
+          "entity_name": "Smart Chips",
+          "production_method": "default"
         }
       }
     ],
@@ -639,9 +634,7 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "category_listing",
-          "category": "ship",
-          "filter_field": "faction_id",
-          "filter_value": "argon"
+          "faction": "argon"
         }
       }
     ],
@@ -665,9 +658,7 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "category_listing",
-          "category": "ship",
-          "filter_field": "ship_class",
-          "filter_value": "ship_m"
+          "ship_class": "ship_m"
         }
       }
     ],
@@ -691,9 +682,7 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "category_listing",
-          "category": "ware",
-          "filter_field": "category",
-          "filter_value": "refined"
+          "category": "refined"
         }
       }
     ],
@@ -717,9 +706,7 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "category_listing",
-          "category": "ship",
-          "filter_field": "purpose",
-          "filter_value": "fight"
+          "purpose": "fight"
         }
       }
     ],
@@ -903,8 +890,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Hull Parts",
-          "method": "default"
+          "entity_name": "Hull Parts",
+          "production_method": "default"
         }
       },
       {
@@ -985,8 +972,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Hull Parts",
-          "method": "recycling"
+          "entity_name": "Hull Parts",
+          "production_method": "recycling"
         }
       },
       {
@@ -1041,8 +1028,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Smart Chips",
-          "method": "default"
+          "entity_name": "Smart Chips",
+          "production_method": "default"
         }
       },
       {
@@ -1311,8 +1298,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Hull Parts",
-          "method": "default"
+          "entity_name": "Hull Parts",
+          "production_method": "default"
         }
       }
     ],
@@ -1390,8 +1377,8 @@
         "name": "query_structured_data",
         "arguments": {
           "query_type": "production_chain",
-          "ware_name": "Hull Parts",
-          "method": "default"
+          "entity_name": "Hull Parts",
+          "production_method": "default"
         }
       }
     ],
