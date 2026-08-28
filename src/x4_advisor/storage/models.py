@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from x4_advisor.storage.schema import EXPECTED_SCHEMA_VERSION
+
 
 @dataclass
 class DatasetMetadata:
@@ -12,7 +14,7 @@ class DatasetMetadata:
     build: str
     extraction_timestamp: str
     is_base_game_only: bool
-    schema_version: str = "1.1.0"
+    schema_version: str = EXPECTED_SCHEMA_VERSION
 
 
 @dataclass

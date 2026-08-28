@@ -171,7 +171,7 @@ This addendum records implementation and governance resolutions finalized during
 - **Hang-Protection vs. SLA Enforcement Decoupling**: Socket timeouts (`timeout_router = 15.0s`, `timeout_synthesizer = 25.0s / 30.0s`) operate strictly as hang-protection circuit breakers, not SLA enforcement mechanisms (see INC-0001). The single-path SLA (<20.0s) and hybrid SLA (<30.0s) are asserted in integration tests.
 - **Case 5 Vector Latency Baseline**: On `gemma4:12b` (Q4_K_M), heavy generative vector-only strategy synthesis took 28.71s (exceeding the <20.0s target). This finding is documented, tracked as `xfail` in `tests/integration/test_m5_live_ollama.py`, and forms the primary latency baseline for comparison against `granite4.1:8b` during the M6 model bake-off.
 - **Forward Threading Note for M8**: SQLite connections default to `check_same_thread=True`. Threading in M8 CLI/interface should manage connection isolation appropriately.
-- **Dataset Staleness Check Deferral**: Version validation via `dataset_metadata` is deferred to Milestone M8.
+- **Dataset Staleness Check**: Version and schema validation via `dataset_metadata` is delivered in Milestone M8 (`x4-advisor doctor`).
 
 ---
 

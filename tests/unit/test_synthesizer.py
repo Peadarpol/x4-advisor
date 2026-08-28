@@ -173,3 +173,17 @@ def test_synthesizer_abstention_formatting() -> None:
     res_none = synthesizer.synthesize("Unknown stats", abstain_reason=AbstainReason.NO_EVIDENCE)
     assert res_none.has_evidence is False
     assert "No matching records" in res_none.answer_text
+
+
+def test_synthesizer_cancellation_propagates() -> None:
+    """Tests that OllamaCancelledError during synthesis propagates immediately rather than producing a fallback result."""
+    from unittest.mock import MagicMock
+    from x4_advisor.llm.client import OllamaCancelledError
+
+    mock_client = MagicMock()
+    mock_client.chat.side_effect = OllamaCancelledError("Request cancelled by caller")
+
+    synthesizer = GroundedSynthesizer(client=mock_client)
+    with pytest.raises(OllamaCancelledError, match="Request cancelled by caller"):
+        synthesizer.synthesize("What is the speed of Cerberus Vanguard?", structured_result=MagicMock())
+

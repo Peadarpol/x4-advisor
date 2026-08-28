@@ -24,3 +24,6 @@ markers = [
     "integration: tests requiring live Ollama endpoint or external database",
 ]
 
+[tool.poetry.scripts]
+x4-advisor = "x4_advisor.cli:main"
+

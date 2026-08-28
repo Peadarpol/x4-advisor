@@ -61,7 +61,7 @@ def main() -> None:
 
     if from_extracted_dir is not None:
         logger.info(f"Ingesting pre-extracted XML data from '{from_extracted_dir}'...")
-        install_path = None
+        install_path = args.install_path or (config.x4_install_path if config.x4_install_path_raw else None)
     elif args.install_path is not None:
         install_path = args.install_path
         logger.info(f"Extracting from X4 installation path '{install_path}'...")

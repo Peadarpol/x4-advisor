@@ -44,6 +44,10 @@ class ConfigError(ValueError):
     pass
 
 
+DEFAULT_MODEL_NAME: str = "gemma4:12b"
+DEFAULT_EMBEDDING_MODEL: str = "qwen3-embedding:0.6b"
+
+
 class Config:
     """Application settings read from environment variables or defaults."""
 
@@ -57,7 +61,7 @@ class Config:
         )
         self.model_name: Optional[str] = os.getenv("MODEL_NAME")
         self.embedding_model: str = os.getenv(
-            "EMBEDDING_MODEL", "qwen3-embedding:0.6b"
+            "EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL
         )
 
         if validate:

@@ -73,23 +73,46 @@ poetry run python -m x4_advisor.curation.cli ingest --manifest-id "src_man_001" 
 
 ## Running the advisor
 
-Run single-turn queries or interactive chat via the CLI:
+X4 Advisor provides a unified command-line tool `x4-advisor` (or `poetry run x4-advisor`):
+
+### Diagnostic Pre-Flight Check (`doctor`)
+Inspect the local Ollama daemon, model availability/VRAM residency, database schema integrity, and dataset freshness:
+```powershell
+poetry run x4-advisor doctor
+```
 
 ### Single-Turn Query (`ask`)
+Ask a natural-language question directly:
 ```powershell
-poetry run python -m x4_advisor.cli ask "What is the cargo capacity of the Cerberus Vanguard?"
+poetry run x4-advisor ask "What is the cargo capacity of the Cerberus Vanguard?"
+```
+Use `--explain` or `-v` to inspect pipeline telemetry, route decisions, chunk retrieval metadata, and latency breakdown:
+```powershell
+poetry run x4-advisor ask --explain "What is the cargo capacity of the Cerberus Vanguard?"
 ```
 
 ### Interactive Terminal Session (`interactive`)
+Start an interactive single-turn REPL:
 ```powershell
-poetry run python -m x4_advisor.cli interactive
+poetry run x4-advisor
+# or
+poetry run x4-advisor interactive
 ```
+Available in-session REPL commands:
+* `/help` — Display interactive help and available commands
+* `/doctor` — Run environment and dataset diagnostics inline
+* `/explain` — Toggle verbose routing and execution telemetry
+* `/exit` (or `quit` / `q`) — Exit session cleanly
 
-## Running the evaluation suite
-*(TODO — M6 offline grounding harness & model bake-off)*
+### Entity Disambiguation Resumption
+When queries partially match multiple entities (e.g., `"What is the speed of the Magnetar?"`), the CLI displays a formatted selection menu and directly resumes execution via the canonical ID without re-prompting the router.
+
+### Empirical Boundaries & Evidence Provenance
+* **Evidence Provenance Transparency:** Every vector-derived answer displays explicit evidence chunk citations, source titles, and similarity scores.
+* **Layer 1 Retrieval Recall Ceiling:** Unstructured chunk retrieval on strategic gameplay questions is bounded at **56.5%–65.2%**. When retrieval misses relevant evidence, the advisor produces explicit visible abstention badges (`[ABSTAIN: OUT_OF_SCOPE_DLC]`, `[ABSTAIN: NO_EVIDENCE]`, `[ABSTAIN: OUT_OF_SCOPE_OTHER]`).
 
 ## Licenses
-*(TODO — code is MIT; note that no third-party game data or community content is distributed with this repository)*
+MIT License. Note that no third-party game data or community content is distributed with this repository.
 
 ## Learning objectives
-*(TODO — this project exists partly to learn RAG/agent architecture firsthand; several design choices, like avoiding a RAG framework, are deliberate for that reason — see the ADRs)*
+This project exists to learn RAG and local SLM architecture firsthand; design choices, like avoiding monolithic RAG frameworks and enforcing grammar-constrained routing, are deliberate — see the ADRs under `docs/adr/`.

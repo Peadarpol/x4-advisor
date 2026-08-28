@@ -4,7 +4,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-from x4_advisor.llm.client import OllamaClient
+from x4_advisor.llm.client import OllamaCancelledError, OllamaClient
 from x4_advisor.retrieval.models import (
     AbstainReason,
     RouterResult,
@@ -99,6 +99,8 @@ class LLMRouter:
             if retry_valid:
                 return retry_result
             logger.warning("Router retry also failed: '%s'. Defaulting to ABSTAIN.", retry_error)
+        except OllamaCancelledError:
+            raise
         except Exception as e:
             logger.warning("Router retry exception: %s. Defaulting to ABSTAIN.", e)
 
@@ -143,6 +145,8 @@ class LLMRouter:
             if retry_valid:
                 return retry_result
             logger.warning("Router retry with feedback failed validation: '%s'", retry_error)
+        except OllamaCancelledError:
+            raise
         except Exception as e:
             logger.warning("Router retry with feedback exception: %s", e)
 
